@@ -20,3 +20,12 @@ def details(request, cluster_id):
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster}
     return render(request, 'details.html', context)
+
+
+def settings(request):
+    headline = "Settings"
+    trendingClusters = Cluster.objects.filter(pinned=0)
+    pinnedClusters = Cluster.objects.filter(pinned=1)
+
+    context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline}
+    return render(request, 'settings.html', context)
