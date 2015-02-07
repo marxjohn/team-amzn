@@ -1,17 +1,20 @@
 # Create your models here.
 from django.db import models
 
-
-class Poll(models.Model):
-    question = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
+class Cluster(models.Model):
+    name = models.CharField(max_length=32)
+    pinned = models.BooleanField(default=False)
     def __str__(self):
-        return self.question
+        return self.name
 
 
-class Choice(models.Model):
-    poll = models.ForeignKey(Poll)
-    choice = models.CharField(max_length=200)
-    votes = models.IntegerField()
+class Post(models.Model):
+    subject = models.CharField(max_length=255)
+    body = models.TextField()
+    cluster = models.ForeignKey(Cluster)
+    created_date = models.DateTimeField('date created')
     def __str__(self):
-        return self.choice
+        return self.body
+
+
+

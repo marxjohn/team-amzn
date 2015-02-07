@@ -1,20 +1,13 @@
-from Sift.models import Poll, Choice
+from Sift.models import Cluster
 from django.contrib import admin
 
-
-class ChoiceInline(admin.TabularInline):
-    model = Choice
-    extra = 3
-
-
-class PollAdmin(admin.ModelAdmin):
+class ClusterAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None,               {'fields': ['question']}),
-        ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']})
+        (None,               {'fields': ['name']}),
+        ('pinned', {'fields': ['pinned'], 'classes': ['collapse']})
     ]
-    inlines = [ChoiceInline]
-    list_display = ('question', 'pub_date')
-    search_fields = ['question']
+    # inlines = [ChoiceInline]
+    list_display = ('name', 'pinned')
+    search_fields = ['name']
 
-admin.site.register(Poll, PollAdmin)
-admin.site.register(Choice)
+admin.site.register(Cluster, ClusterAdmin)

@@ -1,12 +1,65 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>{% block head_title %}Welcome to my blog{% endblock %}</title>
-    </head>
-    <body>
-        <h1>{% block title %}Welcome to my block{% endblock %}</h1>
-        {% block content %}
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/general_analytics.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'general:general' %}">
+            <img id="logo" alt="sift-logo" height="50" width="85" src="{% static 'img/sift-logo.png' %}">
+          </a>
+            <h2 class="navbar-brand page-title">
+                {{ headline }}
+            </h2>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a id="settings" href="#">
+                <img src="{% static 'img/settings.png' %}">
+            </a></li>
+          </ul>
 
-        {% endblock %}
-    </body>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="sidebar-header"><p>TOPICS</p></li>
+
+              {% for pinned in pinnedClusters %}
+
+                  <li><a href="{% url 'general:details' pinned.id %}">{{ pinned.name }}</a></li>
+              {% endfor %}
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li class="sidebar-header"><p>TRENDING</p></li>
+
+            {% for trending in trendingClusters %}
+                  <li><a href="{% url 'general:details' trending.id %}">{{ trending.name }}</a></li>
+              {% endfor %}
+          </ul>
+
+        </div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          {% block body_block %}
+            {% endblock %}
+
+        </div>
+
+      </div>
+    </div>
+<div>
+</div>
+</body>
 </html>

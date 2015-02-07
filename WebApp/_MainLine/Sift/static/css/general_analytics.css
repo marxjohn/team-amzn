@@ -131,3 +131,8 @@ body {
     display: inline-block;
     border-radius: 50%;
 }
+@media (max-width:360px) {
+    .navbar-brand {
+        font-size:1em;
+    }
+}
