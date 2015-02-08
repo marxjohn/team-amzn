@@ -54,15 +54,28 @@ ROOT_URLCONF = 'Capstone.urls'
 WSGI_APPLICATION = 'Capstone.wsgi.application'
 
 
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+   pass
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'TEST'
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': 'sellerforums.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
+        'PORT': '3306',
+        'USER': 'teamamzn',
+        'PASSWORD': 'TeamAmazon2015!',
+        'NAME': 'sellerforums',
+        'OPTIONS': {
+            'autocommit' : True,
+        },
     }
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/

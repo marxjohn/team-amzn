@@ -4,10 +4,10 @@ from django.contrib import admin
 class ClusterAdmin(admin.ModelAdmin):
     fieldsets = [
         (None,               {'fields': ['name']}),
-        ('pinned', {'fields': ['pinned'], 'classes': ['collapse']})
+        ('ispinned', {'fields': ['ispinned'], 'classes': ['collapse']})
     ]
     # inlines = [ChoiceInline]
-    list_display = ('name', 'pinned')
+    list_display = ('name', 'ispinned')
     search_fields = ['name']
 
 admin.site.register(Cluster, ClusterAdmin)

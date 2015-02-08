@@ -1,20 +1,51 @@
 # Create your models here.
 from django.db import models
 
+class Notification(models.Model):
+    notificationid = models.IntegerField(db_column='notificationId', primary_key=True)  # Field name made lowercase.
+    sentimentvalue = models.FloatField(db_column='sentimentValue')  # Field name made lowercase.
+    email = models.CharField(max_length=45, blank=True)
+    clusterN = models.ForeignKey('Cluster', db_column='cluster')
+
+    class Meta:
+        managed = False
+        db_table = 'Notification'
+
+
 class Cluster(models.Model):
-    name = models.CharField(max_length=32)
-    pinned = models.BooleanField(default=False)
-    def __str__(self):
-        return self.name
+    name = models.CharField(primary_key=True, max_length=32)
+    ispinned = models.IntegerField(db_column='isPinned')  # Field name made lowercase.
+    notificationC = models.ForeignKey(Notification, db_column='notification', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'clusters'
+
 
 
 class Post(models.Model):
-    subject = models.CharField(max_length=255)
-    body = models.TextField()
-    cluster = models.ForeignKey(Cluster)
-    created_date = models.DateTimeField('date created')
+    threadid = models.IntegerField(db_column='threadId', primary_key=True)  # Field name made lowercase.
+    messageid = models.IntegerField(db_column='messageId')  # Field name made lowercase.
+    forumid = models.IntegerField(db_column='forumId')  # Field name made lowercase.
+    userid = models.IntegerField(db_column='userId')  # Field name made lowercase.
+    categoryid = models.IntegerField(db_column='categoryId')  # Field name made lowercase.
+    subject = models.CharField(max_length=512, blank=True)
+    body = models.TextField(blank=True)
+    postedbymoderator = models.IntegerField(db_column='postedByModerator')  # Field name made lowercase.
+    resolutionstate = models.IntegerField(db_column='resolutionState')  # Field name made lowercase.
+    helpfulanswer = models.IntegerField(db_column='helpfulAnswer')  # Field name made lowercase.
+    correctanswer = models.IntegerField(db_column='correctAnswer')  # Field name made lowercase.
+    username = models.CharField(db_column='userName', max_length=64)  # Field name made lowercase.
+    userpoints = models.IntegerField(db_column='userPoints')  # Field name made lowercase.
+    creationdate = models.DateField(db_column='creationDate')  # Field name made lowercase.
+    modificationdate = models.DateField(db_column='modificationDate')  # Field name made lowercase.
+    locale = models.CharField(max_length=64, blank=True)
+    cluster = models.ForeignKey(Cluster, db_column='cluster', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'posts'
+
     def __str__(self):
-        return self.body
-
-
+        return '\nSubject: ' + self.subject + '\nBody: ' + self.body
 
