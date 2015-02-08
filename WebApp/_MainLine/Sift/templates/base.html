@@ -43,14 +43,15 @@
 
               {% for pinned in pinnedClusters %}
 
-                  <li><a href="{% url 'general:details' pinned.id %}">{{ pinned.name }}</a></li>
+                  <li><a href="{% url 'general:details' pinned.clusterid %}">{{ pinned.name }}</a></li>
+
               {% endfor %}
           </ul>
           <ul class="nav nav-sidebar">
             <li class="sidebar-header"><p>TRENDING</p></li>
 
             {% for trending in trendingClusters %}
-                  <li><a href="{% url 'general:details' trending.id %}">{{ trending.name }}</a></li>
+                  <li><a href="{% url 'general:details' trending.clusterid %}">{{ trending.name }}</a></li>
               {% endfor %}
           </ul>
 
