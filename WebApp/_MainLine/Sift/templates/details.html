@@ -3,6 +3,15 @@
     <h1>{{ cluster.name }}</h1>
     <p>insert cluster graphs and reports here.</p>
     <canvas id="lineChart" width="800" height="400"></canvas>
+    <canvas id="pieChart" width="800" height="400"></canvas>
 
+
+    <script>
+    //Call Graphing Functions
+    $(document).ready(function() {
+        drawGraph();
+        drawPieChart({{ data }});
+    });
+    </script>
 
 {% endblock %}
