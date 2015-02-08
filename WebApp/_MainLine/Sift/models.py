@@ -13,13 +13,17 @@ class Notification(models.Model):
 
 
 class Cluster(models.Model):
-    name = models.CharField(primary_key=True, max_length=32)
+    clusterid = models.IntegerField(db_column='clusterId', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(unique=True, max_length=32)
     ispinned = models.IntegerField(db_column='isPinned')  # Field name made lowercase.
     notificationC = models.ForeignKey(Notification, db_column='notification', blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'clusters'
+
+    def __str__(self):
+        return self.name
 
 
 
