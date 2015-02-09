@@ -33,5 +33,5 @@ function drawGraph() {
 
     function drawPieChart(data) {
         var ctx = document.getElementById("pieChart").getContext("2d");
-        var myPieChart = new Chart(ctx[0]).Pie(data);
+        var myPieChart = new Chart(ctx).Pie(data);
     }

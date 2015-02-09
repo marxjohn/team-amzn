@@ -10,7 +10,9 @@
     //Call Graphing Functions
     $(document).ready(function() {
         drawGraph();
+        {% autoescape off %}
         drawPieChart({{ data }});
+        {% endautoescape %}
     });
     </script>
 
