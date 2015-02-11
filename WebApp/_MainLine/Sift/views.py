@@ -10,7 +10,6 @@ def general(request):
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline}
     return render(request, 'general_analytics.html', context)
 
-
 def details(request, cluster_id):
 
     headline = "Topic Analytics"
@@ -21,10 +20,14 @@ def details(request, cluster_id):
 
     data_dict = [{'value': Post.objects.filter(forumid=2).count(), 'label': 'red', 'color': '#F7464A'}
         , {'value': Post.objects.filter(forumid=3).count(), 'label': 'blue', 'color': '#468FBD'}]
-
     data = json.dumps(data_dict)
+
+    pie_data = json.dumps([['Forum ID', 'Number of Posts'],
+                        ['2', Post.objects.filter(forumid=2).count()],
+                        ['2', Post.objects.filter(forumid=3).count()]])
+
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
-               'cluster': cluster, 'data': data}
+               'cluster': cluster, 'data': data, 'pie_data': pie_data}
     return render(request, 'details.html', context)
 
 
