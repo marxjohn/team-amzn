@@ -11,17 +11,11 @@
     //Call Graphing Functions
     $(document).ready(function() {
         {% autoescape off %}
-            drawGooglePieChart({{ pieData }});
             drawTimeLineChart({{ lineDataCount}} , {{ lineDataDateY }}
                             , {{ lineDataDateM }}, {{ lineDataDateD }})
         {% endautoescape %}
     });
     //this allows for responsive design
-    $(window).resize(function(){
-        {% autoescape off %}
-            drawGooglePieChart({{ pieData }});
-        {% endautoescape %}
-    });
     </script>
 
 {% endblock %}

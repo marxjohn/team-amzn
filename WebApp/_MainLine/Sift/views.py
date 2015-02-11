@@ -4,13 +4,34 @@ from django.db.models import Count
 import json
 import datetime
 
+
 def general(request):
     headline = "General Analytics"
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
 
-    context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline}
+    pieData = ([['Forum ID', 'Number of Posts'],
+                ['Selling on Amazon', Post.objects.filter(forumid=2).count()],
+                ['Fulfillment by Amazon', Post.objects.filter(forumid=3).count()],
+                ['Amazon Payments', Post.objects.filter(forumid=7).count()],
+                ['MWS', Post.objects.filter(forumid=8).count()],
+                ['Amazon Webstore', Post.objects.filter(forumid=10).count()],
+                ['Amazon Sponsored Products', Post.objects.filter(forumid=22).count()],
+                ['Login With Amazon', Post.objects.filter(forumid=23).count()],
+                ['Amazon Announcements', Post.objects.filter(forumid=21).count()],
+                ['Amazon Services', Post.objects.filter(forumid=17).count()],
+                ['Seller Discussions', Post.objects.filter(forumid=23).count()],
+                ['Checkout by Amazon forums', Post.objects.filter(forumid=16).count()],
+                ['Amazon Product Ads forum', Post.objects.filter(forumid=20).count()],
+                ['Forums Feedback', Post.objects.filter(forumid=6).count()],
+                ['Your Groups', Post.objects.filter(forumid=26).count()],
+                ['Amazon Product Ads', Post.objects.filter(forumid=4).count()],
+                ['Amazon Seller Community Archive', Post.objects.filter(forumid=15).count()]
+       ])
+
+    context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,'pieData': pieData}
     return render(request, 'general_analytics.html', context)
+
 
 def details(request, cluster_id):
 
@@ -37,8 +58,24 @@ def details(request, cluster_id):
 
 
     pieData = ([['Forum ID', 'Number of Posts'],
-                        ['2', Post.objects.filter(forumid=2).count()],
-                        ['3', Post.objects.filter(forumid=3).count()]])
+                        ['Selling on Amazon', Post.objects.filter(forumid=2).count()],
+                        ['Fulfillment by Amazon', Post.objects.filter(forumid=3).count()],
+                        ['Amazon Payments', Post.objects.filter(forumid=7).count()],
+                        ['MWS', Post.objects.filter(forumid=8).count()],
+                        ['Amazon Webstore', Post.objects.filter(forumid=10).count()],
+                        ['Amazon Sponsored Products', Post.objects.filter(forumid=22).count()],
+                        ['Login With Amazon', Post.objects.filter(forumid=23).count()],
+                        ['Amazon Announcements', Post.objects.filter(forumid=21).count()],
+                        ['Amazon Services', Post.objects.filter(forumid=17).count()],
+                        ['Seller Discussions', Post.objects.filter(forumid=23).count()],
+                        ['Checkout by Amazon forums', Post.objects.filter(forumid=16).count()],
+                        ['Amazon Product Ads forum', Post.objects.filter(forumid=20).count()],
+                        ['Forums Feedback', Post.objects.filter(forumid=6).count()],
+                        ['Your Groups', Post.objects.filter(forumid=26).count()],
+                        ['Amazon Product Ads', Post.objects.filter(forumid=4).count()],
+                        ['Amazon Seller Community Archive', Post.objects.filter(forumid=15).count()]
+               ])
+
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster, 'pieData': pieData, 'lineDataCount': dateCount, 'lineDataDateY': dateY,
