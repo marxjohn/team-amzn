@@ -29,9 +29,27 @@ function drawGraph() {
         ]
     };
     var myLineChart = new Chart(ctx).Line(data);
+    document.getElementById("lineLegend").innerHTML = myLineChart.generateLegend();
 }
 
     function drawPieChart(data) {
         var ctx = document.getElementById("pieChart").getContext("2d");
         var myPieChart = new Chart(ctx).Pie(data);
+    }
+
+    function drawGooglePieChart(array) {
+        var data = google.visualization.arrayToDataTable(array);
+
+        var options = {
+          title: 'Forum Post Categories',
+          is3D: true,
+            animation: {
+                duration: 10000,
+                easing: 'out',
+                startup: true
+              }
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart.draw(data, options);
     }

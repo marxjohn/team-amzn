@@ -3,7 +3,9 @@
     <h1>{{ cluster.name }}</h1>
     <p>insert cluster graphs and reports here.</p>
     <canvas id="lineChart" width="800" height="400"></canvas>
+    <div id="lineLegend"></div>
     <canvas id="pieChart" width="800" height="400"></canvas>
+    <div id="piechart_3d" style="width: 100%; height: 500px;"></div>
 
 
     <script>
@@ -11,7 +13,16 @@
     $(document).ready(function() {
         drawGraph();
         {% autoescape off %}
-        drawPieChart({{ data }});
+            drawPieChart({{ data }});
+            drawGooglePieChart({{ pie_data }});
+        {% endautoescape %}
+    });
+    //this allows for responsive design
+    $(window).resize(function(){
+       drawGraph();
+        {% autoescape off %}
+            drawPieChart({{ data }});
+            drawGooglePieChart({{ pie_data }});
         {% endautoescape %}
     });
     </script>
