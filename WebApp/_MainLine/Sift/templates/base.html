@@ -13,6 +13,17 @@
       // Load the Visualization API and the piechart package.
       google.load('visualization', '1.0', {'packages':['corechart']});
       google.load('visualization', '1', {'packages':['annotationchart']});
+        $(document).ready(function() {
+            $(".navbar-toggle").click(function(){
+               $(".sidebar").toggleClass("open");
+            });
+            $(window).resize(function(){
+               if($(window).width()>=768) {
+                   $(".sidebar").show();
+               }
+            });
+
+        });
     </script>
 </head>
 <body>
@@ -39,12 +50,16 @@
           </ul>
 
         </div>
+
+
+
     </nav>
 
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
+            <li id="settingsLink" ><a href="{% url 'general:settings' %}">Settings</a></li>
             <li class="sidebar-header"><p>TOPICS</p></li>
 
               {% for pinned in pinnedClusters %}

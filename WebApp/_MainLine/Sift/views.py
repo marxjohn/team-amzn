@@ -75,8 +75,6 @@ def details(request, cluster_id):
                         ['Amazon Product Ads', Post.objects.filter(forumid=4).count()],
                         ['Amazon Seller Community Archive', Post.objects.filter(forumid=15).count()]
                ])
-
-
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster, 'pieData': pieData, 'lineDataCount': dateCount, 'lineDataDateY': dateY,
                'lineDataDateM': dateM, 'lineDataDateD': dateD,}
