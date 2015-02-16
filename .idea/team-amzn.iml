@@ -11,7 +11,11 @@
     </facet>
   </component>
   <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/WebApp/_MainLine/Sift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/WebApp/_MainLine/Capstone" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/WebApp/_MainLine/ClusterTest" isTestSource="false" />
+    </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
