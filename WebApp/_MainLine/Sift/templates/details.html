@@ -2,17 +2,31 @@
 {% block body_block %}
     <h1>{{ cluster.name }}</h1>
     <p>insert cluster graphs and reports here.</p>
-    <div id="linechart_annotation" style="width: 100%; height: 500px;"></div>
-    <div id="piechart_3d" style="width: 100%; height: 500px;"></div>
+{#    <div id="linechart_annotation" style="width: 100%; height: 500px;"></div>#}
+{#    <div id="piechart_3d" style="width: 100%; height: 500px;"></div>#}
     <br><br>
+    <!--Div that will hold the dashboard-->
+{#    <div id="tut_dashboard_div">#}
+{#      <!--Divs that will hold each control and chart-->#}
+{#      <div id="tut_filter_div"></div>#}
+{#      <div id="tut_chart_div"></div>#}
+{#    </div>#}
 
+    <div id="dashboard_div">
+      <!--Divs that will hold each control and chart-->
+      <div id="category_filter"></div>
+      <div id="table_div" width="100%"></div>
+    </div>
 
     <script>
     //Call Graphing Functions
     $(document).ready(function() {
         {% autoescape off %}
-            drawTimeLineChart({{ lineDataCount}} , {{ lineDataDateY }}
-                            , {{ lineDataDateM }}, {{ lineDataDateD }})
+{#            drawTimeLineChart({{ lineDataCount}} , {{ lineDataDateY }}#}
+{#                            , {{ lineDataDateM }}, {{ lineDataDateD }})#}
+{#            drawTutorialDashboard()#}
+            drawDashboard({{ dashPost }}, {{ dashCategory }}
+                            , {{ dashY }}, {{ dashM }}, {{ dashD }})
         {% endautoescape %}
     });
     //this allows for responsive design

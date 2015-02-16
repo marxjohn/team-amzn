@@ -1,6 +1,7 @@
 # Create your models here.
 from django.db import models
 
+
 class Notification(models.Model):
     notificationid = models.IntegerField(db_column='notificationId', primary_key=True)  # Field name made lowercase.
     sentimentvalue = models.FloatField(db_column='sentimentValue')  # Field name made lowercase.
@@ -10,6 +11,8 @@ class Notification(models.Model):
     class Meta:
         managed = False
         db_table = 'Notification'
+        app_label = 'z'
+
 
 
 class Cluster(models.Model):
@@ -21,10 +24,10 @@ class Cluster(models.Model):
     class Meta:
         managed = False
         db_table = 'clusters'
+        app_label = 'x'
 
     def __str__(self):
-        return self.name
-
+        return '\nId: ' + self.clusterid.__str__() + '\nName: ' + self.name
 
 
 class Post(models.Model):
@@ -49,7 +52,8 @@ class Post(models.Model):
     class Meta:
         managed = False
         db_table = 'posts'
+        app_label = 'y'
 
     def __str__(self):
-        return '\nSubject: ' + self.subject + '\nBody: ' + self.body
+        return self.subject + self.body
 
