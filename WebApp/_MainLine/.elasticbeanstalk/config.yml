@@ -1,0 +1,10 @@
+branch-defaults:
+  default:
+    environment: sift-dev
+global:
+  application_name: sift
+  default_ec2_keyname: aws-eb
+  default_platform: 64bit Debian jessie v1.1.0 running Python 3.4 (Preconfigured -
+    Docker)
+  default_region: us-west-2
+  profile: eb-cli
