@@ -40,25 +40,24 @@
         chart.draw(data, options);
     }
 
-    function drawDashboard(mod, categoryid, year, month, day) {
+    function drawDashboard(post, categoryid, year, month, day) {
         var data = new google.visualization.DataTable();
 
-        data.addColumn('number', 'Moderator Post');
-        data.addColumn('number', 'Category');
-        //data.addColumn('string', 'Post');
+        data.addColumn('string', 'Category');
+        data.addColumn('string', 'Post');
         data.addColumn('date', 'Date');
 
-        for(i=0; i<mod.length; i++)
+        for(i=0; i<post.length; i++)
         {
             data.addRows([
-                [ mod[i], categoryid[i], new Date(year[i], month[i], day[i])]
+                [categoryid[i], post[i], new Date(year[i], month[i], day[i])]
             ])
         }
 
         var dashboard = new google.visualization.Dashboard(
             document.getElementById('dashboard_div'));
 
-        var modFilter = new google.visualization.ControlWrapper({
+        var catFilter = new google.visualization.ControlWrapper({
             'controlType': 'CategoryFilter',
             'containerId': 'category_filter',
             'options': {
@@ -66,18 +65,17 @@
             }
         });
 
-        var pieChart = new google.visualization.ChartWrapper({
-            'chartType': 'PieChart',
-            'containerId': 'chart_div',
+        var dataTable = new google.visualization.ChartWrapper({
+            'chartType': 'Table',
+            'containerId': 'table_div',
             'options': {
-                'width': 300,
-                'height': 300,
-                'title': 'Forum Post Categories'
+                'title': 'Data Table',
+                'page': 'enable',
+                'pagesize': '20'
             }
-            //'view': {'columns': [1, count(1)]}
         });
 
-        dashboard.bind(modFilter, pieChart);
+        dashboard.bind(catFilter, dataTable);
         dashboard.draw(data);
     }
 
