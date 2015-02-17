@@ -52,10 +52,30 @@ body {
 /* Hide for mobile, show later */
 .sidebar {
     display: none;
+    width:100%;
+    padding:0;
+    text-align:center;
 }
-
+.sidebar * {
+    width:100%;
+    padding:0;
+}
+.open {
+    display:block;
+}
+#settingsLink {
+}
 @media (min-width: 768px) {
+    #settingsLink {
+        display:none;
+    }
+    .sidebar * {
+        width:initial;
+        padding:initial;
+    }
     .sidebar {
+        text-align:left;
+        width:initial;
         position: fixed;
         top: 55px;
         bottom: 0;
@@ -68,14 +88,15 @@ body {
         background-color: #f5f5f5;
         border-right: 1px solid #eee;
     }
-}
-
-/* Sidebar navigation */
+    /* Sidebar navigation */
 .nav-sidebar {
     margin-right: -21px; /* 20px padding + 1px border */
     margin-bottom: 20px;
     margin-left: -20px;
 }
+}
+
+
 
 .nav-sidebar > li > a {
     padding: 10px 20px;
