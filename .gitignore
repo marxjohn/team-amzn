@@ -12,7 +12,9 @@ rerun.txt
 pickle-email-*.html
 
 WebApp/_MainLine/.idea/
-WebApp/_MainLine/__pycache__
+WebApp/_MainLine/pycache/
+WebApp/_MainLine/Capstone/__pycache__/
+WebApp/_MainLine/Sift/__pycache/
 
 # TODO Comment out these rules if you are OK with secrets being uploaded to the repo
 config/initializers/secret_token.rb
@@ -32,3 +34,6 @@ config/secrets.yml
 /vendor/assets/bower_components
 *.bowerrc
 bower.json
+
+# python cache files
+*.pyc

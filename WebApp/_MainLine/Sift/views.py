@@ -43,7 +43,6 @@ def details(request, cluster_id):
     #Dashboard Data
     dashCategory = list()
     dashPost = list()
-    dashMod = list()
     dashY = list()
     dashM = list()
     dashD = list()
@@ -51,9 +50,8 @@ def details(request, cluster_id):
     allposts = Post.objects.all()
 
     for s in allposts:
-        dashCategory.append(s.categoryid)
+        dashCategory.append(str(s.categoryid))
         dashPost.append(s.body)
-        dashMod.append(s.postedbymoderator)
         dashY.append(s.creationdate.year)
         dashM.append(s.creationdate.month)
         dashD.append(s.creationdate.day)
@@ -91,7 +89,7 @@ def details(request, cluster_id):
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster, 'lineDataCount': dateCount, 'lineDataDateY': dateY,
                'lineDataDateM': dateM, 'lineDataDateD': dateD, 'dashCategory': dashCategory, 'dashPost': dashPost,
-               'dashMod': dashMod, 'dashY': dashY, 'dashM': dashM, 'dashD': dashD}
+               'dashY': dashY, 'dashM': dashM, 'dashD': dashD}
     return render(request, 'details.html', context)
 
 
