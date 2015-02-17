@@ -1,6 +1,4 @@
-# 2-to-3 compatibility
-from __future__ import print_function
-
+# K-means clustering of seller forums posts
 __author__ = 'Luke Pritchett'
 
 # This looks like it's for 2-to-3 compatibility as well?
@@ -45,16 +43,22 @@ from pprint import pprint
 
 
 class ClusterData:
+'''Represents a group of posts as a numpy array of strings,
+as well as providing functionality to tokenize posts'''
+    # Seller-forums specific stopwords
     REMOVE_LIST = set([
         "br", "title", "quote", "just", "amazon",
         "seller", "shipping", "buyer", "sellers", "new",
         "item", "customer", "account", "re", "quotetitle"
     ])
+    # Add general english stopwords
     STOPWORDS = REMOVE_LIST.union(stopwords.words('english'))
     stemmer = WordNetLemmatizer()
     exp = re.compile(r'[^\w^\s]+', re.UNICODE | re.IGNORECASE)
 
     def tokenize_post(post):
+    '''Consumes a post from the seller forums and returns the 
+    tokenized, stemmed version'''
         post = ClusterData.exp.sub('', post).lower()
         keep = lambda word: not word in ClusterData.STOPWORDS
         tokenized = filter(keep, word_tokenize(post))
