@@ -40,11 +40,25 @@ def details(request, cluster_id):
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
 
-    # for s in Post:
-    #     dashCategory.append
+    #Dashboard Data
+    dashCategory = list()
+    dashPost = list()
+    dashMod = list()
+    dashY = list()
+    dashM = list()
+    dashD = list()
 
+    allposts = Post.objects.all()
 
+    for s in allposts:
+        dashCategory.append(s.categoryid)
+        dashPost.append(s.body)
+        dashMod.append(s.postedbymoderator)
+        dashY.append(s.creationdate.year)
+        dashM.append(s.creationdate.month)
+        dashD.append(s.creationdate.day)
 
+    #Line Graph Data
     count = Post.objects.values('creationdate').annotate(postCount = Count('threadid'))
     dateCount = list()
     dateY = list()
@@ -55,8 +69,7 @@ def details(request, cluster_id):
         dateM.append(s["creationdate"].month)
         dateD.append(s["creationdate"].day)
         dateCount.append(s["postCount"])
-
-
+    
     pieData = ([['Forum ID', 'Number of Posts'],
                         ['Selling on Amazon', Post.objects.filter(forumid=2).count()],
                         ['Fulfillment by Amazon', Post.objects.filter(forumid=3).count()],
@@ -76,8 +89,9 @@ def details(request, cluster_id):
                         ['Amazon Seller Community Archive', Post.objects.filter(forumid=15).count()]
                ])
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
-               'cluster': cluster, 'pieData': pieData, 'lineDataCount': dateCount, 'lineDataDateY': dateY,
-               'lineDataDateM': dateM, 'lineDataDateD': dateD,}
+               'cluster': cluster, 'lineDataCount': dateCount, 'lineDataDateY': dateY,
+               'lineDataDateM': dateM, 'lineDataDateD': dateD, 'dashCategory': dashCategory, 'dashPost': dashPost,
+               'dashMod': dashMod, 'dashY': dashY, 'dashM': dashM, 'dashD': dashD}
     return render(request, 'details.html', context)
 
 
