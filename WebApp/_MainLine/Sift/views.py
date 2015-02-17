@@ -47,7 +47,7 @@ def details(request, cluster_id):
     dashM = list()
     dashD = list()
 
-    allposts = Post.objects.all()
+    allposts = Post.objects.filter(categoryid=cluster_id)
 
     for s in allposts:
         dashCategory.append(str(s.categoryid))
