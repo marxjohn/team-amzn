@@ -1,5 +1,15 @@
 # K-means clustering of seller forums posts
-__author__ = 'Ben'
+REMOVE_LIST = {"br", "title", "quote", "just", "amazon", "seller", "shipping", "buyer", "sellers", "new", "item",
+               "customer", "account", "re", "quotetitle", "wrotequote", "2000", "2001", "2002", "2003", "2004", "2005",
+               "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "like", "sell",
+               "selling", "write", "wrote", "would"}
+MAX_FEATURES = 10000
+IS_MINI_USED = False
+IS_IDF_USED = False
+IS_HASING_VECTORIZER_USED = False
+NUM_CLUSTERS = 50
+
+__author__ = 'cse498'
 
 # This looks like it's for 2-to-3 compatibility as well?
 # Yupp, no mysql in python 3 so some trickery is needed
@@ -26,7 +36,7 @@ if not settings.configured:
         }
     )
 
-from models import Post
+from models import Post, Cluster
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.pipeline import make_pipeline
@@ -40,22 +50,17 @@ import logging
 from optparse import OptionParser
 from time import time
 import numpy as np
+import django
+django.setup()
 from pprint import pprint
 
 
-IS_MINI_USED = False
-IS_IDF_USED = True
-NUM_CLUSTERS = 50
+
 
 class ClusterData:
     '''Represents a group of posts as a numpy array of strings,
     as well as providing functionality to tokenize posts'''
     # Seller-forums specific stopwords
-    REMOVE_LIST = set([
-        "br", "title", "quote", "just", "amazon",
-        "seller", "shipping", "buyer", "sellers", "new",
-        "item", "customer", "account", "re", "quotetitle"
-    ])
     # Add general english stopwords
     STOPWORDS = REMOVE_LIST.union(stopwords.words('english'))
     stemmer = WordNetLemmatizer()
@@ -72,6 +77,11 @@ class ClusterData:
 
     def __init__(self, inp):
         self.data = np.array(list(map(str, inp)))
+        temp_id_list = []
+        for post in inp:
+            temp_id_list.append(post.postid)
+
+        self.id_list = temp_id_list
 
 
 def print_posts_in_cluster(data_count, dataset, km, num_posts, num_clusters):
@@ -87,8 +97,8 @@ def print_posts_in_cluster(data_count, dataset, km, num_posts, num_clusters):
 
     for x in range(0, num_clusters):
         size_of_cluster = len(posts_in_cluster[x])
-        print('\n' + '=' * 150 + "\n\tPosts in Cluster " + x.__str__() +
-              '\tSize: ' + size_of_cluster.__str__()+ '\n' + '=' * 150)
+        print('\n' + '=' * 150 + "\n\tSample Posts in Cluster " + x.__str__() +
+              '\tSize: ' + size_of_cluster.__str__() + '\n' + '=' * 150)
 
         if num_posts > size_of_cluster:
             num_printed_posts = size_of_cluster
@@ -107,13 +117,13 @@ def fit_clusters(X):
         # init_size:    Number of samples to randomly sample to speed up initialization
         # batch_size:   Size of the mini batches
         km = MiniBatchKMeans(n_clusters=NUM_CLUSTERS, init='k-means++', n_init=5,
-                             init_size=300, batch_size=100, verbose=False)
+                             init_size=3000, batch_size=1000, verbose=False)
     else:
         # n_cluster:    Number of clusters created
         # init:         method of initialization
         # max_iter:     Number of iterations of k-means in a single run
         # n_init        Number of times the k-means algorithm will be run, best result chosen (important)
-        km = KMeans(n_clusters=NUM_CLUSTERS, init='k-means++', max_iter=300, n_init=10,
+        km = KMeans(n_clusters=NUM_CLUSTERS, init='k-means++', max_iter=300, n_init=10, n_jobs=-2,
                     verbose=False)
     print("Clustering sparse data with %s" % km)
     t0 = time()
@@ -135,10 +145,21 @@ def print_cluster_centroids(km, vectorizer):
 
 
 def vectorize_data(dataset):
-    vectorizer = TfidfVectorizer(max_df=0.5, max_features=10000,
-                                 min_df=2, stop_words='english',
-                                 use_idf=IS_IDF_USED, tokenizer=ClusterData.tokenize_post)
+
+    stop_words = REMOVE_LIST.union(stopwords.words('english'))
+
+    if IS_HASING_VECTORIZER_USED:
+        vectorizer = HashingVectorizer(n_features=MAX_FEATURES,
+                               stop_word=stop_words,
+                               non_negative=False, norm='l2',
+                               binary=False)
+    else:
+        vectorizer = TfidfVectorizer(max_df=0.3, max_features=MAX_FEATURES,
+                                     min_df=2, stop_words=stop_words,
+                                     use_idf=IS_IDF_USED)
+
     vectorized_data = vectorizer.fit_transform(dataset.data)
+
     return vectorized_data, vectorizer
 
 
@@ -170,9 +191,29 @@ def main():
 
     km = fit_clusters(vectorized_data)
 
-    print_cluster_centroids(km, vectorizer)
+    if not IS_HASING_VECTORIZER_USED:
+        print_cluster_centroids(km, vectorizer)
 
     print_posts_in_cluster(data_count, dataset, km, 5, NUM_CLUSTERS)
+
+    # Create Clusters to upload to database
+    order_centroids = km.cluster_centers_.argsort()[:, ::-1]
+    terms = vectorizer.get_feature_names()
+    for x in range(NUM_CLUSTERS):
+
+        temp_name = ""
+        for ind in order_centroids[x, :3]:
+            temp_name = temp_name + ' ' + terms[ind]
+        c = Cluster(name=temp_name, clusterid=x, ispinned=False)
+        c.save()
+
+    # Associate Post with Cluster
+    for i in range(1, data_count):
+        x = km.labels_[i]
+        post_id = dataset.id_list[i]
+        p = Post.objects.get(postid=post_id)
+        p.cluster = Cluster.objects.get(clusterid=x)
+        p.save()
 
 
 # Only run the main function if this code is called directly
