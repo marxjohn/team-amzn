@@ -55,9 +55,8 @@ django.setup()
 from pprint import pprint
 
 
-
-
 class ClusterData:
+
     '''Represents a group of posts as a numpy array of strings,
     as well as providing functionality to tokenize posts'''
     # Seller-forums specific stopwords
@@ -70,18 +69,12 @@ class ClusterData:
         '''Consumes a post from the seller forums and returns the
         tokenized, stemmed version'''
         post = ClusterData.exp.sub('', post).lower()
-        keep = lambda word: not word in ClusterData.STOPWORDS
-        tokenized = filter(keep, word_tokenize(post))
         stemmed = set(map(ClusterData.stemmer.lemmatize, tokenized))
         return stemmed
 
     def __init__(self, inp):
         self.id_list = [p.postid for p in inp]
         self.data = np.fromiter(map(str, inp))
-        for post in inp:
-            temp_id_list.append(post.postid)
-
-        self.id_list = temp_id_list
 
 
 def print_posts_in_cluster(data_count, dataset, km, num_posts, num_clusters):
@@ -122,7 +115,8 @@ def fit_clusters(X):
         # n_cluster:    Number of clusters created
         # init:         method of initialization
         # max_iter:     Number of iterations of k-means in a single run
-        # n_init        Number of times the k-means algorithm will be run, best result chosen (important)
+        # n_init        Number of times the k-means algorithm will be run, best
+        # result chosen (important)
         km = KMeans(n_clusters=NUM_CLUSTERS, init='k-means++', max_iter=300, n_init=10, n_jobs=-2,
                     verbose=False)
     print("Clustering sparse data with %s" % km)
@@ -150,9 +144,9 @@ def vectorize_data(dataset):
 
     if IS_HASING_VECTORIZER_USED:
         vectorizer = HashingVectorizer(n_features=MAX_FEATURES,
-                               stop_word=stop_words,
-                               non_negative=False, norm='l2',
-                               binary=False)
+                                       stop_word=stop_words,
+                                       non_negative=False, norm='l2',
+                                       binary=False)
     else:
         vectorizer = TfidfVectorizer(max_df=0.3, max_features=MAX_FEATURES,
                                      min_df=2, stop_words=stop_words,
@@ -168,7 +162,6 @@ def main():
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
 
-
     print("Retrieving dataset from database")
     t0 = time()
 
@@ -177,7 +170,8 @@ def main():
 
     print("done in %fs" % (time() - t0))
 
-    print("Extracting features from the training dataset using a sparse vectorizer")
+    print(
+        "Extracting features from the training dataset using a sparse vectorizer")
     t0 = time()
 
     vectorized_data, vectorizer = vectorize_data(dataset)
