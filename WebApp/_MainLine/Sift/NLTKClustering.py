@@ -1,7 +1,8 @@
 # K-means clustering of seller forums posts
-__author__ = 'Luke Pritchett'
+__author__ = 'Ben'
 
 # This looks like it's for 2-to-3 compatibility as well?
+# Yupp, no mysql in python 3 so some trickery is needed
 try:
     import pymysql
     pymysql.install_as_MySQLdb()
@@ -42,9 +43,13 @@ import numpy as np
 from pprint import pprint
 
 
+IS_MINI_USED = False
+IS_IDF_USED = True
+NUM_CLUSTERS = 50
+
 class ClusterData:
-'''Represents a group of posts as a numpy array of strings,
-as well as providing functionality to tokenize posts'''
+    '''Represents a group of posts as a numpy array of strings,
+    as well as providing functionality to tokenize posts'''
     # Seller-forums specific stopwords
     REMOVE_LIST = set([
         "br", "title", "quote", "just", "amazon",
@@ -57,8 +62,8 @@ as well as providing functionality to tokenize posts'''
     exp = re.compile(r'[^\w^\s]+', re.UNICODE | re.IGNORECASE)
 
     def tokenize_post(post):
-    '''Consumes a post from the seller forums and returns the 
-    tokenized, stemmed version'''
+        '''Consumes a post from the seller forums and returns the
+        tokenized, stemmed version'''
         post = ClusterData.exp.sub('', post).lower()
         keep = lambda word: not word in ClusterData.STOPWORDS
         tokenized = filter(keep, word_tokenize(post))
@@ -69,116 +74,106 @@ as well as providing functionality to tokenize posts'''
         self.data = np.array(list(map(str, inp)))
 
 
-def main():
-    # Display progress logs on stdout
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(levelname)s %(message)s')
+def print_posts_in_cluster(data_count, dataset, km, num_posts, num_clusters):
+    # Associate posts with created clusters
+    posts_in_cluster = []
 
-    # parse commandline arguments
-    op = OptionParser()
-    op.add_option("--lsa",
-                  dest="n_components", type="int",
-                  help="Preprocess documents with latent semantic analysis.")
-    op.add_option("--no-minibatch",
-                  action="store_false", dest="minibatch", default=True,
-                  help="Use ordinary k-means algorithm (in batch mode).")
-    op.add_option("--no-idf",
-                  action="store_false", dest="use_idf", default=True,
-                  help="Disable Inverse Document Frequency feature weighting.")
-    op.add_option("--use-hashing",
-                  action="store_true", default=False,
-                  help="Use a hashing feature vectorizer")
-    op.add_option("--n-features", type=int, default=10000,
-                  help="Maximum number of features (dimensions)"
-                       " to extract from text.")
-    op.add_option("--verbose",
-                  action="store_true", dest="verbose", default=False,
-                  help="Print progress reports inside k-means algorithm.")
+    for x in range(0, num_clusters):
+        posts_in_cluster.append([])
 
-    (opts, args) = op.parse_args()
+    for i in range(0, data_count - 1):
+        x = km.labels_[i]
+        posts_in_cluster[x].append(dataset.data[i])
 
-    print("Retrieving dataset from database")
-    t0 = time()
-    dataset = ClusterData(Post.objects.all())
-    print("done in %fs" % (time() - t0))
+    for x in range(0, num_clusters):
+        size_of_cluster = len(posts_in_cluster[x])
+        print('\n' + '=' * 150 + "\n\tPosts in Cluster " + x.__str__() +
+              '\tSize: ' + size_of_cluster.__str__()+ '\n' + '=' * 150)
 
-    if opts.verbose:
-        pprint(dataset.data)
-
-    # Since we appear to be hard coding k anyway for now, let's not waste time
-    #labels = dataset.target
-    #true_k = np.unique(labels).shape[0]
-    true_k = 20
-
-    print(
-        "Extracting features from the training dataset using a sparse vectorizer")
-    t0 = time()
-    if opts.use_hashing:
-        if opts.use_idf:
-            # Perform an IDF normalization on the output of HashingVectorizer
-            hasher = HashingVectorizer(n_features=opts.n_features,
-                                       stop_words='english', non_negative=True,
-                                       norm=None, binary=False)
-            vectorizer = make_pipeline(hasher, TfidfTransformer())
+        if num_posts > size_of_cluster:
+            num_printed_posts = size_of_cluster
         else:
-            vectorizer = HashingVectorizer(n_features=opts.n_features,
-                                           stop_words='english',
-                                           non_negative=False, norm='l2',
-                                           binary=False)
+            num_printed_posts = num_posts
+
+        for z in range(0, num_printed_posts):
+            print('\n' + posts_in_cluster[x][z])
+
+
+def fit_clusters(X):
+    if IS_MINI_USED:
+        # n_clusters:   Number of clusters created
+        # init:         Method of cluster mean initialization
+        # n_init:       Number of random initializations that are tried
+        # init_size:    Number of samples to randomly sample to speed up initialization
+        # batch_size:   Size of the mini batches
+        km = MiniBatchKMeans(n_clusters=NUM_CLUSTERS, init='k-means++', n_init=5,
+                             init_size=300, batch_size=100, verbose=False)
     else:
-        vectorizer = TfidfVectorizer(max_df=0.5, max_features=opts.n_features,
-                                     min_df=2, stop_words='english',
-                                     use_idf=opts.use_idf, tokenizer=ClusterData.tokenize_post)
-    X = vectorizer.fit_transform(dataset.data)
-
-    print("done in %fs" % (time() - t0))
-    print("n_samples: %d, n_features: %d" % X.shape)
-    print()
-
-    if opts.n_components:
-        print("Performing dimensionality reduction using LSA")
-        t0 = time()
-        # Vectorizer results are normalized, which makes KMeans behave as
-        # spherical k-means for better results. Since LSA/SVD results are
-        # not normalized, we have to redo the normalization.
-        svd = TruncatedSVD(opts.n_components)
-        lsa = make_pipeline(svd, Normalizer(copy=False))
-
-        X = lsa.fit_transform(X)
-
-        print("done in %fs" % (time() - t0))
-
-        explained_variance = svd.explained_variance_ratio_.sum()
-        print("Explained variance of the SVD step: {}%".format(
-            int(explained_variance * 100)))
-
-        print()
-
-    ##########################################################################
-    # Do the actual clustering
-
-    if opts.minibatch:
-        km = MiniBatchKMeans(n_clusters=20, init='k-means++', n_init=1,
-                             init_size=5, batch_size=1000, verbose=opts.verbose)
-    else:
-        km = KMeans(n_clusters=20, init='k-means++', max_iter=100000, n_init=10,
-                    verbose=opts.verbose)
-
+        # n_cluster:    Number of clusters created
+        # init:         method of initialization
+        # max_iter:     Number of iterations of k-means in a single run
+        # n_init        Number of times the k-means algorithm will be run, best result chosen (important)
+        km = KMeans(n_clusters=NUM_CLUSTERS, init='k-means++', max_iter=300, n_init=10,
+                    verbose=False)
     print("Clustering sparse data with %s" % km)
     t0 = time()
     km.fit(X)
     print("done in %0.3fs" % (time() - t0))
     print()
+    return km
 
-    if not (opts.n_components or opts.use_hashing):
-        print("Top terms per cluster:")
-        order_centroids = km.cluster_centers_.argsort()[:, ::-1]
-        terms = vectorizer.get_feature_names()
-        for i in range(true_k):
-            print("Cluster %d:" % i, end='')
-            for ind in order_centroids[i, :10]:
-                print(' %s' % terms[ind], end='')
-            print()
+
+def print_cluster_centroids(km, vectorizer):
+    print("Top terms per cluster:")
+    order_centroids = km.cluster_centers_.argsort()[:, ::-1]
+    terms = vectorizer.get_feature_names()
+    for i in range(NUM_CLUSTERS):
+        print("Cluster %d:" % i, end='')
+        for ind in order_centroids[i, :10]:
+            print(' %s' % terms[ind], end='')
+        print()
+
+
+def vectorize_data(dataset):
+    vectorizer = TfidfVectorizer(max_df=0.5, max_features=10000,
+                                 min_df=2, stop_words='english',
+                                 use_idf=IS_IDF_USED, tokenizer=ClusterData.tokenize_post)
+    vectorized_data = vectorizer.fit_transform(dataset.data)
+    return vectorized_data, vectorizer
+
+
+def main():
+    # Display progress logs on stdout
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s %(levelname)s %(message)s')
+
+
+    print("Retrieving dataset from database")
+    t0 = time()
+
+    dataset = ClusterData(Post.objects.all())
+    data_count = len(dataset.data)
+
+    print("done in %fs" % (time() - t0))
+
+    print("Extracting features from the training dataset using a sparse vectorizer")
+    t0 = time()
+
+    vectorized_data, vectorizer = vectorize_data(dataset)
+
+    print("done in %fs" % (time() - t0))
+    print("n_samples: %d, n_features: %d" % vectorized_data.shape)
+    print()
+
+    ##########################################################################
+    # Do the actual clustering
+
+    km = fit_clusters(vectorized_data)
+
+    print_cluster_centroids(km, vectorizer)
+
+    print_posts_in_cluster(data_count, dataset, km, 5, NUM_CLUSTERS)
+
 
 # Only run the main function if this code is called directly
 # Not if it's imported as a module
