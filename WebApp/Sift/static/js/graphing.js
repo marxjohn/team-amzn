@@ -40,90 +40,43 @@
         chart.draw(data, options);
     }
 
-    function drawDashboard(post, categoryid, year, month, day) {
-        var data = new google.visualization.DataTable();
+    function drawDashboard(count) {
 
-        data.addColumn('string', 'Category');
-        data.addColumn('string', 'Post');
-        data.addColumn('date', 'Date');
+        var lineChartData = new google.visualization.DataTable();
 
-        for(i=0; i<post.length; i++)
+        lineChartData.addColumn('date', 'Date');
+        lineChartData.addColumn('number', 'Posts');
+        for(key in count)
         {
-            data.addRows([
-                [categoryid[i], post[i], new Date(year[i], month[i], day[i])]
+            //console.log(new Date(parseInt(key)));
+            lineChartData.addRows([
+                [new Date(parseInt(key)), count[key]['numPosts']]
             ])
         }
 
-        var dashboard = new google.visualization.Dashboard(
-            document.getElementById('dashboard_div'));
-
-        var catFilter = new google.visualization.ControlWrapper({
-            'controlType': 'CategoryFilter',
-            'containerId': 'category_filter',
-            'options': {
-              'filterColumnLabel': 'Category'
-            }
-        });
-
-        var dataTable = new google.visualization.ChartWrapper({
-            'chartType': 'Table',
-            'containerId': 'table_div',
-            'options': {
-                'title': 'Data Table',
-                'page': 'enable',
-                'pagesize': '20'
-            }
-        });
-
-        dashboard.bind(catFilter, dataTable);
-        dashboard.draw(data);
-    }
-
- function drawTutorialDashboard() {
-
-        // Create our data table.
-        var data = google.visualization.arrayToDataTable([
-          ['Name', 'Donuts eaten'],
-          ['Michael' , 5],
-          ['Elisa', 7],
-          ['Robert', 3],
-          ['John', 2],
-          ['Jessica', 6],
-          ['Aaron', 1],
-          ['Margareth', 8]
-        ]);
-
         // Create a dashboard.
-        var dashboard = new google.visualization.Dashboard(
-            document.getElementById('tut_dashboard_div'));
+          var dash_container = document.getElementById('dashboard_div'),
+            myDashboard = new google.visualization.Dashboard(dash_container);
 
-        // Create a range slider, passing some options
-        var donutRangeSlider = new google.visualization.ControlWrapper({
-          'controlType': 'NumberRangeFilter',
-          'containerId': 'tut_filter_div',
-          'options': {
-            'filterColumnLabel': 'Donuts eaten'
-          }
-        });
 
-        // Create a pie chart, passing some options
-        var pieChart = new google.visualization.ChartWrapper({
-          'chartType': 'PieChart',
-          'containerId': 'tut_chart_div',
-          'options': {
-            'width': 300,
-            'height': 300,
-            'pieSliceText': 'value',
-            'legend': 'right'
-          }
-        });
+                // Create a date range slider
+          var myDateSlider = new google.visualization.ControlWrapper({
+            'controlType': 'ChartRangeFilter',
+            'containerId': 'control_div',
+            'options': {
+              'filterColumnLabel': 'Date'
+            }
+          });
+                // Line chart visualization
+          var myLine = new google.visualization.ChartWrapper({
+            'chartType' : 'ColumnChart',
+            'containerId' : 'line_div',
+          });
 
-        // Establish dependencies, declaring that 'filter' drives 'pieChart',
-        // so that the pie chart will only display entries that are let through
-        // given the chosen slider range.
-        dashboard.bind(donutRangeSlider, pieChart);
+          // Bind myLine to the dashboard, and to the controls
+          // this will make sure our line chart is update when our date changes
+          myDashboard.bind(myDateSlider, myLine );
 
-        // Draw the dashboard.
-        dashboard.draw(data);
-      }
+          myDashboard.draw(lineChartData);
 
+    }

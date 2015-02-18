@@ -8,28 +8,31 @@
     <!--Div that will hold the dashboard-->
 {#    <div id="tut_dashboard_div">#}
 {#      <!--Divs that will hold each control and chart-->#}
-{#      <div id="tut_filter_div"></div>#}
+{#      <div id="filter_div"></div>#}
 {#      <div id="tut_chart_div"></div>#}
 {#    </div>#}
 
     <div id="dashboard_div">
       <!--Divs that will hold each control and chart-->
-      <div id="category_filter"></div>
-      <div id="table_div" width="100%"></div>
+      <div id="control_div"></div>
+        <div id="line_div" ></div>
+      <div id="table_div"></div>
     </div>
 
     <script>
-    //Call Graphing Functions
-    $(document).ready(function() {
+        //Call Graphing Functions
         {% autoescape off %}
-{#            drawTimeLineChart({{ lineDataCount}} , {{ lineDataDateY }}#}
-{#                            , {{ lineDataDateM }}, {{ lineDataDateD }})#}
-{#            drawTutorialDashboard()#}
-            drawDashboard({{ dashPost }}, {{ dashCategory }}
-                            , {{ dashY }}, {{ dashM }}, {{ dashD }})
+        google.load('visualization', '1', { packages : ['controls'] } );
+        google.setOnLoadCallback(drawDashboard({{ dateCntDic }}));
         {% endautoescape %}
-    });
-    //this allows for responsive design
     </script>
 
 {% endblock %}
+<style>
+
+{#    #line_div {#}
+{#        height:200px;#}
+{#        width:100%;#}
+{#    }#}
+
+</style>
