@@ -31,7 +31,8 @@ class Cluster(models.Model):
 
 
 class Post(models.Model):
-    threadid = models.IntegerField(db_column='threadId', primary_key=True)  # Field name made lowercase.
+    postid = models.IntegerField(db_column='postId', primary_key=True)  # Field name made lowercase.
+    threadid = models.IntegerField(db_column='threadId')  # Field name made lowercase.
     messageid = models.IntegerField(db_column='messageId')  # Field name made lowercase.
     forumid = models.IntegerField(db_column='forumId')  # Field name made lowercase.
     userid = models.IntegerField(db_column='userId')  # Field name made lowercase.

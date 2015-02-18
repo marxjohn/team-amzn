@@ -156,7 +156,7 @@ def vectorize_data(dataset):
     else:
         vectorizer = TfidfVectorizer(max_df=0.3, max_features=MAX_FEATURES,
                                      min_df=2, stop_words=stop_words,
-                                     use_idf=IS_IDF_USED)
+                                     use_idf=IS_IDF_USED, tokenizer=ClusterData.tokenize_post)
 
     vectorized_data = vectorizer.fit_transform(dataset.data)
 
