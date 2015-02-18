@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <script type="text/javascript" src="{% static 'js/draw_all_dashboards.js' %}"></script>
+{% endblock %}
+{% block body_block %}
+    <h1>{{ cluster.name }}</h1>
+    <div id="dashboard">
+        <div id="main_slider"></div>
+        <div id="hidden_slider"></div> <!--this is hidden from page-->
+        <div id="line_chart"></div>
+        <div id="table_chart"></div>
+    </div>
+    {% autoescape off %}
+        <script>
+            //Call Graphing Functions
+            google.load('visualization', '1', {packages: ['controls']});
+            google.setOnLoadCallback(draw_all_dashboards({{ cluster_posts }}));
+        </script>
+    {% endautoescape %}
+
+{% endblock %}

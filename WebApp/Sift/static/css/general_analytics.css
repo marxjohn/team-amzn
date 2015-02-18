@@ -157,3 +157,15 @@ body {
         font-size:1em;
     }
 }
+
+/*specific topic page*/
+.sliderClass {
+    width: 800px;
+    margin: 0 auto;
+}
+.sliderClass .google-visualization-controls-slider-horizontal {
+    width:600px;
+}
+#hidden_slider {
+    display:none;
+}
