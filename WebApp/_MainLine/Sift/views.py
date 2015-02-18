@@ -41,23 +41,23 @@ def details(request, cluster_id):
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
 
-    # line graph data pt 2
-    dateCntDict = {}
-    posts = Post.objects.values('creationdate', 'body').order_by('creationdate').filter(categoryid=cluster_id)
+    # data
+    cluster_posts = {}
+    posts = Post.objects.values('creationdate', 'body').filter(categoryid=cluster_id)
     for post in posts:
         # convert date object to unix timestamp int
         date = post["creationdate"].timetuple()
-        unixDate = int(time.mktime(date)) * 1000
-        if unixDate in dateCntDict:
-            dateCntDict[unixDate]['numPosts'] += 1
+        unix_date = int(time.mktime(date)) * 1000
+        if unix_date in cluster_posts:
+            cluster_posts[unix_date]['numPosts'] += 1
         else:
-            dateCntDict[unixDate] = {"numPosts": 1, "posts": []}
-        dateCntDict[unixDate]['posts'].append(post['body'])
+            cluster_posts[unix_date] = {"numPosts": 1, "posts": []}
+        cluster_posts[unix_date]['posts'].append(post['body'])
 
 
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
-               'cluster': cluster, 'dateCntDic': dateCntDict}
+               'cluster': cluster, 'cluster_posts': cluster_posts}
     return render(request, 'details.html', context)
 
 

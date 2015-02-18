@@ -1,38 +1,22 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <script type="text/javascript" src="{% static 'js/draw_all_dashboards.js' %}"></script>
+{% endblock %}
 {% block body_block %}
     <h1>{{ cluster.name }}</h1>
-    <p>insert cluster graphs and reports here.</p>
-{#    <div id="linechart_annotation" style="width: 100%; height: 500px;"></div>#}
-{#    <div id="piechart_3d" style="width: 100%; height: 500px;"></div>#}
-    <br><br>
-    <!--Div that will hold the dashboard-->
-{#    <div id="tut_dashboard_div">#}
-{#      <!--Divs that will hold each control and chart-->#}
-{#      <div id="filter_div"></div>#}
-{#      <div id="tut_chart_div"></div>#}
-{#    </div>#}
-
-    <div id="dashboard_div">
-      <!--Divs that will hold each control and chart-->
-      <div id="control_div"></div>
-        <div id="line_div" ></div>
-      <div id="table_div"></div>
+    <div id="dashboard">
+        <div id="main_slider"></div>
+        <div id="hidden_slider"></div> <!--this is hidden from page-->
+        <div id="line_chart"></div>
+        <div id="table_chart"></div>
     </div>
-
-    <script>
-        //Call Graphing Functions
-        {% autoescape off %}
-        google.load('visualization', '1', { packages : ['controls'] } );
-        google.setOnLoadCallback(drawDashboard({{ dateCntDic }}));
-        {% endautoescape %}
-    </script>
+    {% autoescape off %}
+        <script>
+            //Call Graphing Functions
+            google.load('visualization', '1', {packages: ['controls']});
+            google.setOnLoadCallback(draw_all_dashboards({{ cluster_posts }}));
+        </script>
+    {% endautoescape %}
 
 {% endblock %}
-<style>
-
-{#    #line_div {#}
-{#        height:200px;#}
-{#        width:100%;#}
-{#    }#}
-
-</style>

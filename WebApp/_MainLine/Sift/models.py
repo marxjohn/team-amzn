@@ -35,7 +35,7 @@ class Post(models.Model):
     messageid = models.IntegerField(db_column='messageId')  # Field name made lowercase.
     forumid = models.IntegerField(db_column='forumId')  # Field name made lowercase.
     userid = models.IntegerField(db_column='userId')  # Field name made lowercase.
-    categoryid = models.IntegerField(db_column='categoryId')  # Field name made lowercase.
+    categoryid = models.IntegerField(db_index=True, db_column='categoryId')  # Field name made lowercase.
     subject = models.CharField(max_length=512, blank=True)
     body = models.TextField(blank=True)
     postedbymoderator = models.IntegerField(db_column='postedByModerator')  # Field name made lowercase.
@@ -44,7 +44,7 @@ class Post(models.Model):
     correctanswer = models.IntegerField(db_column='correctAnswer')  # Field name made lowercase.
     username = models.CharField(db_column='userName', max_length=64)  # Field name made lowercase.
     userpoints = models.IntegerField(db_column='userPoints')  # Field name made lowercase.
-    creationdate = models.DateField(db_column='creationDate')  # Field name made lowercase.
+    creationdate = models.DateField(db_index=True, db_column='creationDate')  # Field name made lowercase.
     modificationdate = models.DateField(db_column='modificationDate')  # Field name made lowercase.
     locale = models.CharField(max_length=64, blank=True)
     cluster = models.ForeignKey(Cluster, db_column='cluster', blank=True, null=True)
