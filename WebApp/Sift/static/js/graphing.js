@@ -1,6 +1,23 @@
 /**
  * Created by MaxGoovaerts and CJ on 2/8/2015.
  */
+
+function drawGooglePieChart(array) {
+        var data = google.visualization.arrayToDataTable(array);
+
+        var options = {
+          title: 'Forum Post Categories',
+          is3D: true,
+            animation: {
+                duration: 10000,
+                easing: 'out',
+                startup: true
+              }
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+        chart.draw(data, options);
+    }
 function draw_dashboard1(count) {
 
     var lineChartData = new google.visualization.DataTable();
