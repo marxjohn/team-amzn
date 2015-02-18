@@ -76,8 +76,8 @@ class ClusterData:
         return stemmed
 
     def __init__(self, inp):
-        self.data = np.array(list(map(str, inp)))
-        temp_id_list = []
+        self.id_list = [p.postid for p in inp]
+        self.data = np.fromiter(map(str, inp))
         for post in inp:
             temp_id_list.append(post.postid)
 
