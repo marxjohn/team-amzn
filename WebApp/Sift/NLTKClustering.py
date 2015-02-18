@@ -69,12 +69,12 @@ class ClusterData:
         '''Consumes a post from the seller forums and returns the
         tokenized, stemmed version'''
         post = ClusterData.exp.sub('', post).lower()
-        stemmed = set(map(ClusterData.stemmer.lemmatize, tokenized))
+        stemmed = set(map(ClusterData.stemmer.lemmatize, post))
         return stemmed
 
     def __init__(self, inp):
         self.id_list = [p.postid for p in inp]
-        self.data = np.fromiter(map(str, inp))
+        self.data = np.fromiter(map(str, inp), dtype="U5000")
 
 
 def print_posts_in_cluster(data_count, dataset, km, num_posts, num_clusters):
