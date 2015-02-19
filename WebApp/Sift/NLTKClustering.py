@@ -74,7 +74,7 @@ class ClusterData:
 
     def __init__(self, inp):
         self.id_list = [p.postid for p in inp]
-        self.data = np.fromiter(map(str, inp), dtype="U5000")
+        self.data = np.fromiter(map(str, inp), dtype="U5000", count=len(inp))
 
 
 def print_posts_in_cluster(data_count, dataset, km, num_posts, num_clusters):
