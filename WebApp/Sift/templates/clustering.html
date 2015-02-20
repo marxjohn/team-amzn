@@ -4,22 +4,25 @@
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
 {% block body_block %}
-<h1>Clustering Settings</h1>
-<form>
-    <p>Date Range:</p>
+<h1>Settings</h1>
+<form action= '{% url run_clustering%}' method="POST">
+    <br><h4>Date Range:</h4>
     <input type="date" name="startDate" value="Start Date">
     <input type="date" name="endDate" value="End Date">
 {#    number of clusters#}
-    <br><p>Number of Clusters</p>
+    <br><h4>Number of Clusters:</h4>
     <input type="number" name="clusters" value="Number of Clusters">
 {#    //k means vs mini batch#}
-    <br><p>Clustering Type</p>
-    <input type="radio" name="type" value="kmeans" checked>K-Means
-    <input type="radio" name="type" value="minibatch">Mini-Batch
+    <br><h4>Clustering Type:</h4>
+    <input type="radio" name="type" value="minibatch" checked>Mini-Batch
+    <br><input type="radio" name="type" value="kmeans">K-Means
 {#    //max features#}
-    <br><p>Max Number of Features</p>
+    <br><h4>Max Number of Features:</h4>
     <input type="number" name="features" value="Max Number of Features">
     <br><br>
     <input type="submit" value="Run">
 </form>
+
+    <br><h1>Output</h1>
+
 {% endblock %}
