@@ -44,7 +44,7 @@ def details(request, cluster_id):
 
     # data
     cluster_posts = {}
-    posts = Post.objects.values('creationdate', 'body').filter(categoryid=cluster_id)
+    posts = Post.objects.values('creationdate', 'body').filter(cluster=cluster_id)
     for post in posts:
         # convert date object to unix timestamp int
         date = post["creationdate"].timetuple()
