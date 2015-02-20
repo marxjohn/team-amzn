@@ -31,7 +31,7 @@ def general(request):
     #             ['Amazon Seller Community Archive', Post.objects.filter(forumid=15).count()]
     #    ])
 
-    pieData = []
+    pieData = [['Forum ID', 'Number of Posts']]
     for cluster in trendingClusters:
         pieData.append([cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
 
