@@ -80,4 +80,4 @@ def clustering(request):
 def run_clustering(request):
     if request.method == 'POST':
         Sift.NLTKClustering.main()
-        return render(request, 'clustering.html')
+    return render(request, 'run_clustering.html')

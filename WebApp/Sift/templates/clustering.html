@@ -5,7 +5,7 @@
 {% endblock %}
 {% block body_block %}
 <h1>Settings</h1>
-<form action= '{% url run_clustering%}' method="POST">
+<form action= '{% url 'general:run_clustering' %}' method="POST">
     <br><h4>Date Range:</h4>
     <input type="date" name="startDate" value="Start Date">
     <input type="date" name="endDate" value="End Date">
