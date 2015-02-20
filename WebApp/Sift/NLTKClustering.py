@@ -42,7 +42,7 @@ if not settings.configured:
 
 import matplotlib.pyplot as plt
 
-from models import Post, Cluster
+from Sift.models import Post, Cluster
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.pipeline import make_pipeline

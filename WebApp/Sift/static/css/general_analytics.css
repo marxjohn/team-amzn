@@ -7,6 +7,10 @@ body {
     padding-top: 55px;
     font-family:Lato;
 }
+.navbar-inverse .navbar-nav > li > a {
+    font-size:1.2em;
+    color:white !important;
+}
 .navbar-brand {
     font-weight: bold;
     font-size: 1.5em;

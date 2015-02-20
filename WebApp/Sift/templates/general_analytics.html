@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block sidebar %}
+    {% include 'sidebar.html' %}
+{% endblock %}
+
 {% block body_block %}
 <div id="piechart_3d" style="width: 100%; height: 500px;"></div>
 

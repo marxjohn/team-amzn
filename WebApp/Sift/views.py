@@ -4,6 +4,7 @@ from django.db.models import Count
 import json
 import datetime
 import time
+import Sift.NLTKClustering
 
 
 def general(request):
@@ -68,3 +69,17 @@ def settings(request):
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline}
     return render(request, 'settings.html', context)
+
+
+def clustering(request):
+    headline = "Clustering"
+    context = {"headline": headline}
+    return render(request, 'clustering.html', context)
+
+
+def run_clustering(request):
+    headline = "Run clustering"
+    if request.method == 'POST':
+        Sift.NLTKClustering.main()
+    context = {"headline": headline}
+    return render(request, 'run_clustering.html', context)
