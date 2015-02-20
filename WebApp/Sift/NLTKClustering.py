@@ -7,7 +7,9 @@ MAX_FEATURES = 10000
 IS_MINI_USED = False
 IS_IDF_USED = False
 IS_HASHING_VECTORIZER_USED = False
-NUM_CLUSTERS = 50
+IS_UPLOAD_ENABLED = False
+NUM_CLUSTERS = 8
+IS_NLTK_USED = False
 
 __author__ = 'cse498'
 
@@ -36,6 +38,8 @@ if not settings.configured:
         }
     )
 
+
+
 from models import Post, Cluster
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
@@ -54,6 +58,16 @@ import django
 django.setup()
 from pprint import pprint
 
+import Stemmer
+english_stemmer = Stemmer.Stemmer('en')
+
+
+class StemmedTfidfVectorizer(TfidfVectorizer):
+
+    def build_analyzer(self):
+        analyzer = super(TfidfVectorizer, self).build_analyzer()
+        return lambda doc: english_stemmer.stemWords(analyzer(doc))
+
 
 class ClusterData:
 
@@ -69,7 +83,9 @@ class ClusterData:
         '''Consumes a post from the seller forums and returns the
         tokenized, stemmed version'''
         post = ClusterData.exp.sub('', post).lower()
-        stemmed = set(map(ClusterData.stemmer.lemmatize, post))
+        keep = lambda word: not word in ClusterData.STOPWORDS
+        tokenized = filter(keep, word_tokenize(post))
+        stemmed = set(map(ClusterData.stemmer.lemmatize, tokenized))
         return stemmed
 
     def __init__(self, inp):
@@ -147,10 +163,15 @@ def vectorize_data(dataset):
                                        stop_word=stop_words,
                                        non_negative=False, norm='l2',
                                        binary=False)
-    else:
+
+    elif IS_NLTK_USED:
         vectorizer = TfidfVectorizer(max_df=0.3, max_features=MAX_FEATURES,
-                                     min_df=2, stop_words=stop_words,
-                                     use_idf=IS_IDF_USED, tokenizer=ClusterData.tokenize_post)
+                                     min_df=1, stop_words=stop_words,
+                                     use_idf=IS_IDF_USED)
+    else:
+        vectorizer = StemmedTfidfVectorizer(max_df=0.3, max_features=MAX_FEATURES,
+                                     min_df=1, stop_words=stop_words,
+                                     use_idf=IS_IDF_USED, analyzer='word', ngram_range=(1, 1))
 
     vectorized_data = vectorizer.fit_transform(dataset.data)
 
@@ -165,7 +186,7 @@ def main():
     print("Retrieving dataset from database")
     t0 = time()
 
-    dataset = ClusterData(Post.objects.all())
+    dataset = ClusterData(Post.objects.filter(creationdate__range=("2013-01-01", "2014-01-01")))
     data_count = len(dataset.data)
 
     print("done in %fs" % (time() - t0))
@@ -193,21 +214,22 @@ def main():
     # Create Clusters to upload to database
     order_centroids = km.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
-    for x in range(NUM_CLUSTERS):
+    if IS_UPLOAD_ENABLED:
+        for x in range(NUM_CLUSTERS):
 
-        temp_name = ""
-        for ind in order_centroids[x, :3]:
-            temp_name = temp_name + ' ' + terms[ind]
-        c = Cluster(name=temp_name, clusterid=x, ispinned=False)
-        c.save()
+            temp_name = ""
+            for ind in order_centroids[x, :3]:
+                temp_name = temp_name + ' ' + terms[ind]
+            c = Cluster(name=temp_name, clusterid=x, ispinned=False)
+            c.save()
 
-    # Associate Post with Cluster
-    for i in range(1, data_count):
-        x = km.labels_[i]
-        post_id = dataset.id_list[i]
-        p = Post.objects.get(postid=post_id)
-        p.cluster = Cluster.objects.get(clusterid=x)
-        p.save()
+        # Associate Post with Cluster
+        for i in range(1, data_count):
+            x = km.labels_[i]
+            post_id = dataset.id_list[i]
+            p = Post.objects.get(postid=post_id)
+            p.cluster = Cluster.objects.get(clusterid=x)
+            p.save()
 
 
 # Only run the main function if this code is called directly
