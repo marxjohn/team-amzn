@@ -6,6 +6,7 @@
 {% block body_block %}
 <h1>Settings</h1>
 <form action= '{% url 'general:run_clustering' %}' method="POST">
+{% csrf_token %}
     <br><h4>Date Range:</h4>
     <input type="date" name="startDate" value="Start Date">
     <input type="date" name="endDate" value="End Date">
