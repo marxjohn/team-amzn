@@ -68,3 +68,9 @@ def settings(request):
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline}
     return render(request, 'settings.html', context)
+
+
+def clustering(request):
+    headline = "Clustering"
+    context = {"headline": headline}
+    return render(request, 'clustering.html', context)

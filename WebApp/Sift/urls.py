@@ -9,5 +9,7 @@ urlpatterns = patterns('',
                        url(r'^topics/(?P<cluster_id>\d+)/$', views.details, name='details'),
                        # ex: /settings/
                        url(r'^settings/$', views.settings, name='settings'),
+                       # ex: /clustering/
+                       url(r'^clustering/$', views.clustering, name='clustering'),
 
 )
