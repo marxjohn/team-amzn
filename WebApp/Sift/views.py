@@ -78,6 +78,8 @@ def clustering(request):
 
 
 def run_clustering(request):
+    headline = "Run clustering"
     if request.method == 'POST':
         Sift.NLTKClustering.main()
-    return render(request, 'run_clustering.html')
+    context = {"headline": headline}
+    return render(request, 'run_clustering.html', context)
