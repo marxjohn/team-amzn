@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block sidebar %}
+    {% include 'sidebar.html' %}
+{% endblock %}
 {% block head %}
     <script type="text/javascript" src="{% static 'js/draw_all_dashboards.js' %}"></script>
 {% endblock %}
