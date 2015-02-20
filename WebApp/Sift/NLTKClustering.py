@@ -6,7 +6,7 @@ REMOVE_LIST = {"br", "title", "quote", "just", "amazon", "seller", "shipping", "
 MAX_FEATURES = 10000
 IS_MINI_USED = False
 IS_IDF_USED = False
-IS_HASING_VECTORIZER_USED = False
+IS_HASHING_VECTORIZER_USED = False
 NUM_CLUSTERS = 50
 
 __author__ = 'cse498'
@@ -117,7 +117,7 @@ def fit_clusters(X):
         # max_iter:     Number of iterations of k-means in a single run
         # n_init        Number of times the k-means algorithm will be run, best
         # result chosen (important)
-        km = KMeans(n_clusters=NUM_CLUSTERS, init='k-means++', max_iter=300, n_init=10, n_jobs=-2,
+        km = KMeans(n_clusters=NUM_CLUSTERS, init='k-means++', max_iter=300, n_init=10, n_jobs=-1,
                     verbose=False)
     print("Clustering sparse data with %s" % km)
     t0 = time()
@@ -142,7 +142,7 @@ def vectorize_data(dataset):
 
     stop_words = REMOVE_LIST.union(stopwords.words('english'))
 
-    if IS_HASING_VECTORIZER_USED:
+    if IS_HASHING_VECTORIZER_USED:
         vectorizer = HashingVectorizer(n_features=MAX_FEATURES,
                                        stop_word=stop_words,
                                        non_negative=False, norm='l2',
@@ -185,7 +185,7 @@ def main():
 
     km = fit_clusters(vectorized_data)
 
-    if not IS_HASING_VECTORIZER_USED:
+    if not IS_HASHING_VECTORIZER_USED:
         print_cluster_centroids(km, vectorizer)
 
     print_posts_in_cluster(data_count, dataset, km, 5, NUM_CLUSTERS)
