@@ -6,7 +6,7 @@ import json
 import datetime
 import time
 import Sift.NLTKClustering
-import Sift.Forms
+import Sift.forms
 
 
 def general(request):
@@ -91,7 +91,7 @@ def clustering(request):
             return HttpResponseRedirect('/clustering_running/')
 
     else:
-        form = Sift.Forms.ClusterForm()
+        form = Sift.forms.ClusterForm()
 
     return render(request, 'clustering.html', {'form': form})
 

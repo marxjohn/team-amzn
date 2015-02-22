@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
+{% endblock %}
 {% block body_block %}
-    <p>insert settings stuff here.</p>
+<h1>Notification Settings</h1>
+
 {% endblock %}
