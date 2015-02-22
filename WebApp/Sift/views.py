@@ -7,6 +7,7 @@ import datetime
 import time
 import Sift.NLTKClustering
 import Sift.Forms
+import asyncio
 
 
 def general(request):
@@ -87,8 +88,9 @@ def clustering(request):
         if form.is_valid():
 
             Sift.NLTKClustering.cluster_posts_with_input(form.cleaned_data['start_date'], form.cleaned_data['end_date'],
-                                                         int(form.cleaned_data['num_clusters']), int(form.cleaned_data['max_features']))
-            return HttpResponseRedirect('/clustering_running/')
+                                                         int(form.cleaned_data['num_clusters']), int(form.cleaned_data['max_features']))\
+                                                        .delay("sample")
+            return HttpResponseRedirect('/cluster_running')
 
     else:
         form = Sift.Forms.ClusterForm()

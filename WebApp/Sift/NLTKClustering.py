@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 # K-means clustering of seller forums posts
 REMOVE_LIST = {"br", "title", "quote", "just", "amazon", "seller", "shipping", "buyer", "sellers", "new", "item",
                "customer", "account", "re", "quotetitle", "wrotequote", "2000", "2001", "2002", "2003", "2004", "2005",
@@ -13,8 +14,6 @@ IS_NLTK_USED = False
 
 __author__ = 'cse498'
 
-# This looks like it's for 2-to-3 compatibility as well?
-# Yupp, no mysql in python 3 so some trickery is needed
 try:
     import pymysql
     pymysql.install_as_MySQLdb()
@@ -44,24 +43,23 @@ import matplotlib.pyplot as plt
 
 from Sift.models import Post, Cluster
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import Normalizer
+
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import re
 import logging
-from optparse import OptionParser
+
 from time import time
 import numpy as np
 import django
-django.setup()
-from pprint import pprint
+from celery import shared_task
 
-from sklearn.metrics.pairwise import pairwise_distances_argmin
-from sklearn.datasets.samples_generator import make_blobs
+django.setup()
+
+
+
 
 
 import Stemmer
@@ -149,11 +147,11 @@ def fit_clusters(X, num_clusters):
     return km
 
 
-def print_cluster_centroids(km, vectorizer):
+def print_cluster_centroids(km, vectorizer, num_clusters):
     print("Top terms per cluster:")
     order_centroids = km.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
-    for i in range(NUM_CLUSTERS):
+    for i in range(num_clusters):
         print("Cluster %d:" % i, end='')
         for ind in order_centroids[i, :10]:
             print(' %s' % terms[ind], end='')
@@ -201,8 +199,8 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
     t_mini_batch = time() - t0
 
     if not IS_HASHING_VECTORIZER_USED:
-        print_cluster_centroids(km, vectorizer)
-    print_posts_in_cluster(data_count, dataset, km, 5, NUM_CLUSTERS)
+        print_cluster_centroids(km, vectorizer, num_clusters)
+    print_posts_in_cluster(data_count, dataset, km, 5, num_clusters)
     # Create Clusters to upload to database
     order_centroids = km.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
@@ -215,7 +213,7 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
 
         Cluster.objects.filter(ispinned=0).delete()
 
-        for x in range(1, NUM_CLUSTERS + 1):
+        for x in range(1, num_clusters + 1):
             temp_name = ""
             for ind in order_centroids[x - 1, :3]:
                 temp_name = temp_name + ' ' + terms[ind]
@@ -230,7 +228,7 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
             p.cluster = Cluster.objects.get(clusterid=x)
             p.save()
 
-
+@shared_task
 def cluster_posts_with_input(start_date, end_date, num_clusters, max_features):
 
     logging.basicConfig(level=logging.INFO,
