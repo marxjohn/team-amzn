@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from Sift.models import Cluster, Post
+from django.http import HttpResponseRedirect
 from django.db.models import Count
 import json
 import datetime
 import time
 import Sift.NLTKClustering
+import Sift.Forms
 
 
 def general(request):
@@ -14,24 +16,32 @@ def general(request):
 
     pieData = ([['Forum ID', 'Number of Posts'],
                 ['Selling on Amazon', Post.objects.filter(forumid=2).count()],
-                ['Fulfillment by Amazon', Post.objects.filter(forumid=3).count()],
+                ['Fulfillment by Amazon',
+                    Post.objects.filter(forumid=3).count()],
                 ['Amazon Payments', Post.objects.filter(forumid=7).count()],
                 ['MWS', Post.objects.filter(forumid=8).count()],
                 ['Amazon Webstore', Post.objects.filter(forumid=10).count()],
-                ['Amazon Sponsored Products', Post.objects.filter(forumid=22).count()],
+                ['Amazon Sponsored Products',
+                    Post.objects.filter(forumid=22).count()],
                 ['Login With Amazon', Post.objects.filter(forumid=23).count()],
-                ['Amazon Announcements', Post.objects.filter(forumid=21).count()],
+                ['Amazon Announcements',
+                    Post.objects.filter(forumid=21).count()],
                 ['Amazon Services', Post.objects.filter(forumid=17).count()],
-                ['Seller Discussions', Post.objects.filter(forumid=23).count()],
-                ['Checkout by Amazon forums', Post.objects.filter(forumid=16).count()],
-                ['Amazon Product Ads forum', Post.objects.filter(forumid=20).count()],
+                ['Seller Discussions', Post.objects.filter(
+                    forumid=23).count()],
+                ['Checkout by Amazon forums',
+                    Post.objects.filter(forumid=16).count()],
+                ['Amazon Product Ads forum',
+                    Post.objects.filter(forumid=20).count()],
                 ['Forums Feedback', Post.objects.filter(forumid=6).count()],
                 ['Your Groups', Post.objects.filter(forumid=26).count()],
                 ['Amazon Product Ads', Post.objects.filter(forumid=4).count()],
-                ['Amazon Seller Community Archive', Post.objects.filter(forumid=15).count()]
-       ])
+                ['Amazon Seller Community Archive',
+                    Post.objects.filter(forumid=15).count()]
+                ])
 
-    context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,'pieData': pieData}
+    context = {'pinnedClusters': pinnedClusters, 'trendingClusters':
+               trendingClusters, "headline": headline, 'pieData': pieData}
     return render(request, 'general_analytics.html', context)
 
 
@@ -44,7 +54,8 @@ def details(request, cluster_id):
 
     # data
     cluster_posts = {}
-    posts = Post.objects.values('creationdate', 'body').filter(cluster=cluster_id)
+    posts = Post.objects.values(
+        'creationdate', 'body').filter(cluster=cluster_id)
     for post in posts:
         # convert date object to unix timestamp int
         date = post["creationdate"].timetuple()
@@ -54,8 +65,6 @@ def details(request, cluster_id):
         else:
             cluster_posts[unix_date] = {"numPosts": 1, "posts": []}
         cluster_posts[unix_date]['posts'].append(post['body'])
-
-
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster, 'cluster_posts': cluster_posts}
@@ -67,19 +76,28 @@ def settings(request):
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
 
-    context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline}
+    context = {'pinnedClusters': pinnedClusters,
+               'trendingClusters': trendingClusters, "headline": headline}
     return render(request, 'settings.html', context)
 
 
 def clustering(request):
-    headline = "Clustering"
-    context = {"headline": headline}
-    return render(request, 'clustering.html', context)
-
-
-def run_clustering(request):
-    headline = "Run clustering"
     if request.method == 'POST':
-        Sift.NLTKClustering.main()
-    context = {"headline": headline}
-    return render(request, 'run_clustering.html', context)
+        form = Sift.Forms.ClusterForm(request.POST)
+
+        if form.is_valid():
+
+            Sift.NLTKClustering.cluster_posts_with_input(form.cleaned_data['start_date'], form.cleaned_data['end_date'],
+                                                         int(form.cleaned_data['num_clusters']), int(form.cleaned_data['max_features']))
+            return HttpResponseRedirect('/clustering_running/')
+
+    else:
+        form = Sift.Forms.ClusterForm()
+
+    return render(request, 'clustering.html', {'form': form})
+
+
+def cluster_running(request):
+    headline = "Cluster Running"
+    context = {'headline': headline}
+    return render(request, 'cluster_running.html', context)
