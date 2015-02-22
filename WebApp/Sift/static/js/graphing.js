@@ -90,14 +90,18 @@ function draw_dashboard2(count) {
         'controlType': 'DateRangeFilter',
         'containerId': 'hidden_slider',
         'options': {
-            'filterColumnLabel': 'Date',
+            'filterColumnLabel': 'Date'
         }
     });
 
     // Table visualization
     var myTable = new google.visualization.ChartWrapper({
         'chartType': 'Table',
-        'containerId': 'table_chart'
+        'containerId': 'table_chart',
+        'options': {
+            'page': 'enable',
+            'sortColumn': 0
+        }
     });
 
     // Bind myTable to the dashboard, and to the controls
