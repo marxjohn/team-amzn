@@ -243,7 +243,6 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features):
         Post.objects.filter(creationdate__range=(start_date, end_date)))
 
     cluster_posts(dataset, t0, num_clusters, max_features)
-zs
 
 def main():
         # Display progress logs on stdout
