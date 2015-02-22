@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 import time
 import Sift.NLTKClustering
 
-import Sift.Forms
+import Sift.forms
 
 
 
@@ -83,18 +83,19 @@ def settings(request):
 
 def clustering(request):
     if request.method == 'POST':
-        f = Sift.Forms.ClusterForm(request.POST)
+        f = Sift.forms.ClusterForm(request.POST)
 
         if f.is_valid():
-            if form.cleaned_data['cluster_type'] == 'k_means':
+            if f.cleaned_data['cluster_type'] == 1:
                 is_mini_batched = False
             else:
                 is_mini_batched = True
 
             Sift.NLTKClustering.cluster_posts_with_input(str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
-                                                         int(f.cleaned_data['num_clusters']), int(f.cleaned_data['max_features'],
-                                                         is_mini_batched))\
+                                                         int(f.cleaned_data['num_clusters']), int(f.cleaned_data['max_features']),
+                                                         is_mini_batched)\
                                                         .delay("sample")
+
             return HttpResponseRedirect('/cluster_running')
 
     else:
