@@ -70,8 +70,16 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
 
     def build_analyzer(self):
         analyzer = super(TfidfVectorizer, self).build_analyzer()
-        return lambda doc: english_stemmer.stemWords(analyzer(doc))
-
+        def analyze(doc):
+            if doc[1]:
+                return doc[0].split(' ')
+            else:
+                stemmed = english_stemmer.stemWords(analyzer(doc[0]))
+                post = Post.objects.get(postid=doc[2])
+                post.stemmedbody = ' '.join(stemmed)
+                post.save()
+                return stemmed
+        return analyze
 
 class ClusterData:
 
@@ -92,9 +100,18 @@ class ClusterData:
         stemmed = set(map(ClusterData.stemmer.lemmatize, tokenized))
         return stemmed
 
+    def stemmed_body(post):
+        if post.stemmedbody is not None:
+            return (post.stemmedbody, True, post.postid)
+        else:
+            return (post.body, False, post.postid)
+
     def __init__(self, inp):
         self.id_list = [p.postid for p in inp]
-        self.data = np.fromiter(map(str, inp), dtype="U5000", count=len(inp))
+        self.data = np.fromiter(
+            map(ClusterData.stemmed_body, inp),
+            dtype=[("body", "|U5000"), ("stemmed", "b"), ("id", "i")], 
+            count=len(inp))
 
 
 def print_posts_in_cluster(data_count, dataset, km, num_posts, num_clusters):
@@ -106,12 +123,12 @@ def print_posts_in_cluster(data_count, dataset, km, num_posts, num_clusters):
 
     for i in range(0, data_count - 1):
         x = km.labels_[i]
-        posts_in_cluster[x].append(dataset.data[i])
+        posts_in_cluster[x].append(dataset.data[i][0])
 
     for x in range(0, num_clusters):
         size_of_cluster = len(posts_in_cluster[x])
-        print('\n' + '=' * 150 + "\n\tSample Posts in Cluster " + x.__str__() +
-              '\tSize: ' + size_of_cluster.__str__() + '\n' + '=' * 150)
+        print('\n' + '=' * 150 + "\n\tSample Posts in Cluster " + str(x) +
+              '\tSize: ' + str(size_of_cluster) + '\n' + '=' * 150)
 
         if num_posts > size_of_cluster:
             num_printed_posts = size_of_cluster
@@ -199,14 +216,15 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
     t_mini_batch = time() - t0
 
     if not IS_HASHING_VECTORIZER_USED:
-        print_cluster_centroids(km, vectorizer, num_clusters)
+
+    print_cluster_centroids(km, vectorizer, num_clusters)
     print_posts_in_cluster(data_count, dataset, km, 5, num_clusters)
     # Create Clusters to upload to database
     order_centroids = km.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
     if IS_UPLOAD_ENABLED:
 
-        # # Disassociate Post with old Clusters and remove old clusters from database
+        # Disassociate Post with old Clusters and remove old clusters from database
         # for post in (Post.objects.get(postid=i) for i in dataset.id_list):
         #     post.cluster = None
         #     post.save()
@@ -242,6 +260,7 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features):
 
     cluster_posts(dataset, t0, num_clusters, max_features)
 
+
 def main():
         # Display progress logs on stdout
     logging.basicConfig(level=logging.INFO,
@@ -251,7 +270,7 @@ def main():
     t0 = time()
 
     dataset = ClusterData(
-        Post.objects.filter(creationdate__range=("2014-01-01", "2014-01-03")))
+            Post.objects.filter(creationdate__range=("2014-01-01", "2014-01-03")))
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
 
