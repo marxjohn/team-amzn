@@ -1,13 +1,13 @@
 from django.shortcuts import render, get_object_or_404
 from Sift.models import Cluster, Post
 from django.http import HttpResponseRedirect
-from django.db.models import Count
-import json
-import datetime
+
 import time
 import Sift.NLTKClustering
+
 import Sift.Forms
-import asyncio
+
+
 
 
 def general(request):
@@ -83,17 +83,22 @@ def settings(request):
 
 def clustering(request):
     if request.method == 'POST':
-        form = Sift.Forms.ClusterForm(request.POST)
+        f = Sift.Forms.ClusterForm(request.POST)
 
-        if form.is_valid():
+        if f.is_valid():
+            if form.cleaned_data['cluster_type'] == 'k_means':
+                is_mini_batched = False
+            else:
+                is_mini_batched = True
 
-            Sift.NLTKClustering.cluster_posts_with_input(form.cleaned_data['start_date'], form.cleaned_data['end_date'],
-                                                         int(form.cleaned_data['num_clusters']), int(form.cleaned_data['max_features']))\
+            Sift.NLTKClustering.cluster_posts_with_input(str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
+                                                         int(f.cleaned_data['num_clusters']), int(f.cleaned_data['max_features'],
+                                                         is_mini_batched))\
                                                         .delay("sample")
             return HttpResponseRedirect('/cluster_running')
 
     else:
-        form = Sift.Forms.ClusterForm()
+        form = Sift.forms.ClusterForm()
 
     return render(request, 'clustering.html', {'form': form})
 

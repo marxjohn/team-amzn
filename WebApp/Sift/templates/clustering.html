@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block head %}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
 {% block body_block %}
@@ -8,9 +11,27 @@
 
 <form action="/clustering/" method="POST">
     {% csrf_token %}
-    {{ form }}
+
+    <br><p>Date Range:</p>
+    {{ form.start_date }}
+    {{ form.end_date }}
+    <br><br><p>Number of Clusters:</p>
+    {{ form.num_clusters }}
+    <br><br><p>Clustering Type:</p>
+    {{ form.cluster_type }}
+    <br><br><p>Max Number of Features</p>
+    {{ form.max_features }}
+    <br><br>
+
+
+    <br>
     <input type="submit" value="Submit" />
 </form>
-    <br><h1>Output</h1>
+{#    <br><h1>Output</h1>#}
 
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker();
+});
+    </script>
 {% endblock %}

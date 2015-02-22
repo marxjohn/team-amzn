@@ -217,8 +217,8 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
 
     if not IS_HASHING_VECTORIZER_USED:
 
-    print_cluster_centroids(km, vectorizer, num_clusters)
-    print_posts_in_cluster(data_count, dataset, km, 5, num_clusters)
+        print_cluster_centroids(km, vectorizer, num_clusters)
+        print_posts_in_cluster(data_count, dataset, km, 5, num_clusters)
     # Create Clusters to upload to database
     order_centroids = km.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
@@ -247,7 +247,7 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
             p.save()
 
 @shared_task
-def cluster_posts_with_input(start_date, end_date, num_clusters, max_features):
+def cluster_posts_with_input(start_date, end_date, num_clusters, max_features, isMiniBatch):
 
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
