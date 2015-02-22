@@ -101,7 +101,9 @@ def clustering(request):
     else:
         form = Sift.forms.ClusterForm()
 
-    return render(request, 'clustering.html', {'form': form})
+    headline = "Clustering"
+    context = {'headline': headline, 'form': form}
+    return render(request, 'clustering.html', context)
 
 
 def cluster_running(request):
