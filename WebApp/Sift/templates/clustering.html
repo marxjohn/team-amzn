@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
 {% block body_block %}
-<h1>Settings</h1>
+<h1>Clustering Configuration</h1>
 
 <form action="/clustering/" method="POST">
     {% csrf_token %}
@@ -15,6 +15,8 @@
     <br><p>Date Range:</p>
     {{ form.start_date }}
     {{ form.end_date }}
+    <br /> All Posts
+    {{ form.all_posts }}
     <br><br><p>Number of Clusters:</p>
     {{ form.num_clusters }}
     <br><br><p>Clustering Type:</p>
@@ -22,7 +24,6 @@
     <br><br><p>Max Number of Features</p>
     {{ form.max_features }}
     <br><br>
-
 
     <br>
     <input type="submit" value="Run Clustering" />
@@ -33,6 +34,15 @@
 <script>
 $(document).ready(function() {
     $('.datepicker').datepicker();
+    $('#id_all_posts').change(function() {
+    if($(this).is(':checked')) { 
+        $('#id_start_date').prop('disabled', true);
+        $('#id_end_date').prop('disabled', true);
+    } else {
+        $('#id_start_date').prop('disabled', false);
+        $('#id_end_date').prop('disabled', false);
+    }
+})
 });
 function AllDates() {
     form.start_date = 2010-12-22;
