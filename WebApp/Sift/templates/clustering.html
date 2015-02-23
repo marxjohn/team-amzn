@@ -2,8 +2,8 @@
 {% load staticfiles %}
 {% block head %}
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
 {% block body_block %}
@@ -25,13 +25,18 @@
 
 
     <br>
-    <input type="submit" value="Submit" />
+    <input type="submit" value="Run Clustering" />
 </form>
+    <button onclick"AllDates()">All</button>
 {#    <br><h1>Output</h1>#}
 
 <script>
 $(document).ready(function() {
     $('.datepicker').datepicker();
 });
-    </script>
+function AllDates() {
+    form.start_date = 2010-12-22;
+    form.end_date = datetime.date.today();
+}
+</script>
 {% endblock %}
