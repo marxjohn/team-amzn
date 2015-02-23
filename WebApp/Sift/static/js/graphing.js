@@ -12,22 +12,30 @@ function drawGooglePieChart(array) {
                 duration: 10000,
                 easing: 'out',
                 startup: true
-              }
+              },
+            fontName: "Lato"
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
         chart.draw(data, options);
     }
-function draw_dashboard1(count) {
+/**
+ * draws the line chart
+ * y axis is number of posts
+ * x axis is date
+ * @param data the js data from python views.py
+ * @returns {google.visualization.ControlWrapper}
+ */
+function draw_dashboard1(data) {
 
     var lineChartData = new google.visualization.DataTable();
 
     lineChartData.addColumn('date', 'Date');
     lineChartData.addColumn('number', 'Posts');
-    for (key in count) {
+    for (key in data) {
         //console.log(new Date(parseInt(key)));
         lineChartData.addRows([
-            [new Date(parseInt(key)), count[key]['numPosts']]
+            [new Date(parseInt(key)), data[key]['numPosts']]
         ])
 
     }
@@ -54,6 +62,16 @@ function draw_dashboard1(count) {
         'containerId': 'line_chart',
         view: {
             columns: [0, 1]
+        },
+        'options': {
+            fontName: "Lato",
+            'colors': ['#F5881D'],
+            'tooltip': {isHtml:true}
+        },
+        vAxis: {
+            'gridlines': {
+                color: 'transparent'
+            }
         }
     });
 
@@ -66,16 +84,21 @@ function draw_dashboard1(count) {
 
     return myDateSlider;
 }
-function draw_dashboard2(count) {
+/**
+ * draws the table of posts and their dates
+ * @param data from python views.py
+ * @returns {google.visualization.ControlWrapper}
+ */
+function draw_dashboard2(data) {
 
     var lineChartData = new google.visualization.DataTable();
 
     lineChartData.addColumn('date', 'Date');
     lineChartData.addColumn('string', 'Post');
-    for (key in count) {
-        for (i = 0; i < count[key]['posts'].length; i++) {
+    for (key in data) {
+        for (i = 0; i < data[key]['posts'].length; i++) {
             lineChartData.addRows([
-                [new Date(parseInt(key)), count[key]['posts'][i]]
+                [new Date(parseInt(key)), data[key]['posts'][i]]
             ])
         }
     }
@@ -94,19 +117,34 @@ function draw_dashboard2(count) {
         }
     });
 
+    // Create a searchbar
+    var searchBar = new google.visualization.ControlWrapper({
+        'controlType': 'StringFilter',
+        'containerId': 'searchTable',
+        'options': {
+            'filterColumnLabel': 'Post',
+            'matchType': 'any'
+        },
+        'ui': {label: 'Search Posts', labelSeparator: ':'}
+    });
+
     // Table visualization
     var myTable = new google.visualization.ChartWrapper({
         'chartType': 'Table',
         'containerId': 'table_chart',
         'options': {
             'page': 'enable',
-            'sortColumn': 0
+            'pageSize': 50,
+            'sortColumn': 0,
+            'fontName': "Lato"
         }
     });
 
     // Bind myTable to the dashboard, and to the controls
     // this will make sure our table is update when our date changes
     myDashboard.bind(myDateSlider, myTable);
+    myDashboard.bind(searchBar, myTable);
+
 
     myDashboard.draw(lineChartData);
     return myDateSlider;

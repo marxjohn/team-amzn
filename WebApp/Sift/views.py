@@ -4,7 +4,7 @@ from django.db.models import Count
 import json
 import datetime
 import time
-import Sift.NLTKClustering
+# import Sift.NLTKClustering
 
 
 def general(request):

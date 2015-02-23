@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% block head %}
+    <script>
 
+    $(document).ready(function(){
+        $("#generalNav").hide();
+    });
+
+    </script>
+{% endblock %}
 {% block sidebar %}
     {% include 'sidebar.html' %}
 {% endblock %}
