@@ -123,9 +123,10 @@ function draw_dashboard2(data) {
         'containerId': 'searchTable',
         'options': {
             'filterColumnLabel': 'Post',
-            'matchType': 'any'
-        },
-        'ui': {label: 'Search Posts', labelSeparator: ':'}
+            'matchType': 'any',
+            'ui': {'label': 'Search Posts', 'labelSeparator': ':'}
+        }
+
     });
 
     // Table visualization
@@ -139,6 +140,7 @@ function draw_dashboard2(data) {
             'fontName': "Lato"
         }
     });
+
 
     // Bind myTable to the dashboard, and to the controls
     // this will make sure our table is update when our date changes
