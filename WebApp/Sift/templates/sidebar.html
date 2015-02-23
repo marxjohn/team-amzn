@@ -3,21 +3,28 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li id="settingsLink" ><a href="{% url 'general:settings' %}">Settings</a></li>
-            <li class="sidebar-header"><p>TOPICS</p></li>
+              <li class="sidebar-header"><p>CLUSTERS</p></li>
 
-              {% for pinned in pinnedClusters %}
-
-                  <li><a href="{% url 'general:details' pinned.clusterid %}">{{ pinned.name }}</a></li>
-
-              {% endfor %}
-          </ul>
-          <ul class="nav nav-sidebar">
-            <li class="sidebar-header"><p>TRENDING</p></li>
-
-            {% for trending in trendingClusters %}
+              {% for trending in trendingClusters %}
                   <li><a href="{% url 'general:details' trending.clusterid %}">{{ trending.name }}</a></li>
               {% endfor %}
           </ul>
+{#               Commented out splitting of Topics vs Trending until we determine a way to do that with scheduled clustering and tracking#}
+{#            <li class="sidebar-header"><p>TOPICS</p></li>#}
+{##}
+{#              {% for pinned in pinnedClusters %}#}
+{##}
+{#                  <li><a href="{% url 'general:details' pinned.clusterid %}">{{ pinned.name }}</a></li>#}
+{##}
+{#              {% endfor %}#}
+{#          </ul>#}
+{#          <ul class="nav nav-sidebar">#}
+{#            <li class="sidebar-header"><p>TRENDING</p></li>#}
+{##}
+{#            {% for trending in trendingClusters %}#}
+{#                  <li><a href="{% url 'general:details' trending.clusterid %}">{{ trending.name }}</a></li>#}
+{#              {% endfor %}#}
+{#          </ul>#}
 
         </div>
       <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">

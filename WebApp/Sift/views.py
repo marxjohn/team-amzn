@@ -1,16 +1,20 @@
 from django.shortcuts import render, get_object_or_404
 from Sift.models import Cluster, Post
-from django.db.models import Count
-import json
-import datetime
+from django.http import HttpResponseRedirect
+
 import time
 # import Sift.NLTKClustering
+
+import Sift.forms
+
+
 
 
 def general(request):
     headline = "General Analytics"
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
+
 
     # pieData = ([['Forum ID', 'Number of Posts'],
     #             ['Selling on Amazon', Post.objects.filter(forumid=2).count()],
@@ -35,7 +39,9 @@ def general(request):
     for cluster in trendingClusters:
         pieData.append([cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
 
-    context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,'pieData': pieData}
+
+    context = {'pinnedClusters': pinnedClusters, 'trendingClusters':
+               trendingClusters, "headline": headline, 'pieData': pieData}
     return render(request, 'general_analytics.html', context)
 
 
@@ -48,7 +54,8 @@ def details(request, cluster_id):
 
     # data
     cluster_posts = {}
-    posts = Post.objects.values('creationdate', 'body').filter(cluster=cluster_id)
+    posts = Post.objects.values(
+        'creationdate', 'body').filter(cluster=cluster_id)
     for post in posts:
         # convert date object to unix timestamp int
         date = post["creationdate"].timetuple()
@@ -58,8 +65,6 @@ def details(request, cluster_id):
         else:
             cluster_posts[unix_date] = {"numPosts": 1, "posts": []}
         cluster_posts[unix_date]['posts'].append(post['body'])
-
-
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster, 'cluster_posts': cluster_posts}
@@ -71,19 +76,37 @@ def settings(request):
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
 
-    context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline}
+    context = {'pinnedClusters': pinnedClusters,
+               'trendingClusters': trendingClusters, "headline": headline}
     return render(request, 'settings.html', context)
 
 
 def clustering(request):
+    if request.method == 'POST':
+        f = Sift.forms.ClusterForm(request.POST)
+
+        if f.is_valid():
+            if f.cleaned_data['cluster_type'] == 1:
+                is_mini_batched = False
+            else:
+                is_mini_batched = True
+
+            Sift.NLTKClustering.cluster_posts_with_input(str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
+                                                         int(f.cleaned_data['num_clusters']), int(f.cleaned_data['max_features']),
+                                                         is_mini_batched)\
+                                                        .delay("sample")
+
+            return HttpResponseRedirect('/cluster_running')
+
+    else:
+        form = Sift.forms.ClusterForm()
+
     headline = "Clustering"
-    context = {"headline": headline}
+    context = {'headline': headline, 'form': form}
     return render(request, 'clustering.html', context)
 
 
-def run_clustering(request):
-    headline = "Run clustering"
-    if request.method == 'POST':
-        Sift.NLTKClustering.main()
-    context = {"headline": headline}
-    return render(request, 'run_clustering.html', context)
+def cluster_running(request):
+    headline = "Cluster Running"
+    context = {'headline': headline}
+    return render(request, 'cluster_running.html', context)

@@ -1,29 +1,52 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block head %}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
 {% block body_block %}
-<h1>Settings</h1>
-<form action= '{% url 'general:run_clustering' %}' method="POST">
-{% csrf_token %}
-    <br><h4>Date Range:</h4>
-    <input type="date" name="startDate" value="Start Date">
-    <input type="date" name="endDate" value="End Date">
-{#    number of clusters#}
-    <br><h4>Number of Clusters:</h4>
-    <input type="number" name="clusters" value="Number of Clusters">
-{#    //k means vs mini batch#}
-    <br><h4>Clustering Type:</h4>
-    <input type="radio" name="type" value="minibatch" checked>Mini-Batch
-    <br><input type="radio" name="type" value="kmeans">K-Means
-{#    //max features#}
-    <br><h4>Max Number of Features:</h4>
-    <input type="number" name="features" value="Max Number of Features">
+<h1>Clustering Configuration</h1>
+
+<form action="/clustering/" method="POST">
+    {% csrf_token %}
+
+    <br><p>Date Range:</p>
+    {{ form.start_date }}
+    {{ form.end_date }}
+    <br /> All Posts
+    {{ form.all_posts }}
+    <br><br><p>Number of Clusters:</p>
+    {{ form.num_clusters }}
+    <br><br><p>Clustering Type:</p>
+    {{ form.cluster_type }}
+    <br><br><p>Max Number of Features</p>
+    {{ form.max_features }}
     <br><br>
-    <input type="submit" value="Run">
+
+    <br>
+    <input type="submit" value="Run Clustering" />
 </form>
+    <button onclick"AllDates()">All</button>
+{#    <br><h1>Output</h1>#}
 
-    <br><h1>Output</h1>
-
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker();
+    $('#id_all_posts').change(function() {
+    if($(this).is(':checked')) { 
+        $('#id_start_date').prop('disabled', true);
+        $('#id_end_date').prop('disabled', true);
+    } else {
+        $('#id_start_date').prop('disabled', false);
+        $('#id_end_date').prop('disabled', false);
+    }
+})
+});
+function AllDates() {
+    form.start_date = 2010-12-22;
+    form.end_date = datetime.date.today();
+}
+</script>
 {% endblock %}
