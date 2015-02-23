@@ -6,7 +6,6 @@ function drawGooglePieChart(array) {
         var data = google.visualization.arrayToDataTable(array);
 
         var options = {
-          title: 'Forum Post Categories',
           is3D: true,
             animation: {
                 duration: 10000,
