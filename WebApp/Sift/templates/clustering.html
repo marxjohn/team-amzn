@@ -26,13 +26,20 @@
     <br><br>
 
     <br>
-    <input type="submit" value="Run Clustering" />
+    <input type="submit" value="Run" />
 </form>
     </div>
 <div id="aboutClustering">
 
-    <h1>Hello World</h1>
-    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+    <h1>Info</h1>
+    <p>This site uses <a href='http://en.wikipedia.org/wiki/Tf%E2%80%93idf'>term frequency-inverse document frequency (tf-idf)</a> vectorization of posts on the Amazon Seller Forums to perform fast <a href='http://en.wikipedia.org/wiki/K-means_clustering'>K-means clustering</a> using the <a href='http://www.eecs.tufts.edu/~dsculley/papers/fastkmeans.pdf'>mini-batch algorithm</a>. 
+    <ul>
+      <li><b>Date Range: </b>Generate clusters on posts made in a certain date range, or cluster all posts</li>
+      <li><b>Number of Clusters: </b>Adjust the number of clusters the algorithm attempts to fit posts to</li>
+      <li><b>Clustering Type: </b>Select whether standard K-means or mini-batch (faster) clustering is used</li>
+      <li><b>Max Number of Features: </b>The max features attributes indicates how many unique words should be considered when clustering; additional (lower-frequency) words will be ignored by the clustering algorithm.</li>
+    </ul>
+    </p>
 
 </div>
 <script>

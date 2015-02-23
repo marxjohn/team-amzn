@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from Sift.models import Cluster, Post
 from django.http import HttpResponseRedirect
+from cgi import escape
 
 import time
 # import Sift.NLTKClustering
@@ -54,8 +55,8 @@ def details(request, cluster_id):
 
     # data
     cluster_posts = {}
-    posts = Post.objects.values(
-        'creationdate', 'body').filter(cluster=cluster_id)
+    posts = map(escape, Post.objects.values(
+        'creationdate', 'body').filter(cluster=cluster_id))
     for post in posts:
         # convert date object to unix timestamp int
         date = post["creationdate"].timetuple()
