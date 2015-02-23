@@ -17,6 +17,19 @@
     </div>
     {% autoescape off %}
         <script>
+        $(document).ready(function() {
+             var title = "Date";
+             var width = "150px !important";
+             $('.google-visualization-table-th:contains(' + title + ')').css('width', width);
+        });
+        var url = window.location;
+// Will only work if string in href matches with location
+$('ul.nav a[href="'+ url +'"]').parent().addClass('active');
+
+// Will also work for relative and absolute hrefs
+$('ul.nav a').filter(function() {
+    return this.href == url;
+}).parent().addClass('active');
             //Call Graphing Functions
             google.load('visualization', '1', {packages: ['controls']});
             google.setOnLoadCallback(draw_all_dashboards({{ cluster_posts }}));

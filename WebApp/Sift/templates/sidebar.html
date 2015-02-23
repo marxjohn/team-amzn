@@ -6,7 +6,7 @@
               <li class="sidebar-header"><p>CLUSTERS</p></li>
 
               {% for trending in trendingClusters %}
-                  <li><a href="{% url 'general:details' trending.clusterid %}">{{ trending.name }}</a></li>
+                  <li id="cluster"><a href="{% url 'general:details' trending.clusterid %}">{{ trending.name }}</a></li>
               {% endfor %}
           </ul>
 {#               Commented out splitting of Topics vs Trending until we determine a way to do that with scheduled clustering and tracking#}
