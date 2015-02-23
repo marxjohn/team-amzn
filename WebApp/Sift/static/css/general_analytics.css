@@ -255,4 +255,17 @@ border: 1px solid #CF7F30 !important;
 
 #bodyTitle {
     margin-top:0;
+    margin-bottom: 25px;
+}
+#formClustering {
+    display: inline-block;
+    float: left;
+    margin-right: 18%;
+}
+#aboutClustering {
+    display: inline-block;
+    width: 50%;
+    height: 400px;
+    background: rgb(245, 245, 245);
+    padding:30px;
 }

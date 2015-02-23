@@ -8,7 +8,7 @@
 {% endblock %}
 {% block body_block %}
 <h1>Clustering Configuration</h1>
-
+<div id="formClustering">
 <form action="/clustering/" method="POST">
     {% csrf_token %}
 
@@ -28,9 +28,13 @@
     <br>
     <input type="submit" value="Run Clustering" />
 </form>
-    <button onclick"AllDates()">All</button>
-{#    <br><h1>Output</h1>#}
+    </div>
+<div id="aboutClustering">
 
+    <h1>Hello World</h1>
+    <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+
+</div>
 <script>
 $(document).ready(function() {
     $('.datepicker').datepicker();
@@ -44,9 +48,5 @@ $(document).ready(function() {
     }
 })
 });
-function AllDates() {
-    form.start_date = 2010-12-22;
-    form.end_date = datetime.date.today();
-}
 </script>
 {% endblock %}

@@ -71,7 +71,8 @@ function draw_dashboard1(data) {
         vAxis: {
             'gridlines': {
                 color: 'transparent'
-            }
+            },
+            baselineColor: 'transparent'
         }
     });
 
