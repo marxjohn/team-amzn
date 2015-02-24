@@ -108,10 +108,21 @@ TEMPLATE_DIRS = (
 
 # Caching
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-        'TIMEOUT': 3600
-    }
-}
+
+def get_cache():
+    try:
+        return {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+                'LOCATION': '127.0.0.1:11211',
+                'TIMEOUT': 3600
+            }
+        }
+    except ImportError:
+        return {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
+            }
+        }
+
+CACHES = get_cache()
