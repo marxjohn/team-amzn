@@ -3,6 +3,7 @@ from Sift.models import Cluster, Post
 from django.http import HttpResponseRedirect
 from postmarkup import render_bbcode
 from lxml import html
+from django.core.cache import cache
 
 import time
 # import Sift.NLTKClustering
@@ -49,6 +50,38 @@ def general(request):
 
 def details(request, cluster_id):
 
+    cache_key = cluster_id
+    context = cache.get(cache_key)
+    if not context:
+        headline = "Topic Analytics"
+        cluster = get_object_or_404(Cluster, pk=cluster_id)
+        trendingClusters = Cluster.objects.filter(ispinned=0)
+        pinnedClusters = Cluster.objects.filter(ispinned=1)
+
+        # data
+        cluster_posts = {}
+        posts = Post.objects.values(
+            'creationdate', 'body').filter(cluster=cluster_id)
+        for post in posts:
+            # convert date object to unix timestamp int
+            date = post["creationdate"].timetuple()
+            unix_date = int(time.mktime(date)) * 1000
+            if unix_date in cluster_posts:
+                cluster_posts[unix_date]['numPosts'] += 1
+            else:
+                body = html.document_fromstring(post['body'])
+                bbcode_body = body.text_content()
+                cluster_posts[unix_date] = {"numPosts": 1, "posts": []}
+            cluster_posts[unix_date]['posts'].append(render_bbcode(bbcode_body))
+
+        context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
+                   'cluster': cluster, 'cluster_posts': cluster_posts}
+        cache.set(cache_key, 1800)
+
+    return render(request, 'details.html', context)
+
+
+def detailsCache(cluster_id):
     headline = "Topic Analytics"
     cluster = get_object_or_404(Cluster, pk=cluster_id)
     trendingClusters = Cluster.objects.filter(ispinned=0)
@@ -72,7 +105,6 @@ def details(request, cluster_id):
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster, 'cluster_posts': cluster_posts}
-    return render(request, 'details.html', context)
 
 
 def settings(request):
