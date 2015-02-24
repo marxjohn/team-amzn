@@ -72,7 +72,7 @@ def details(request, cluster_id):
                 body = html.document_fromstring(post['body'])
                 bbcode_body = body.text_content()
                 cluster_posts[unix_date] = {"numPosts": 1, "posts": []}
-            cluster_posts[unix_date]['posts'].append(render_bbcode(bbcode_body))
+            cluster_posts[unix_date]['posts'].append(body)
 
         context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                    'cluster': cluster, 'cluster_posts': cluster_posts}
