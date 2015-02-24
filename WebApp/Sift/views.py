@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from Sift.models import Cluster, Post
 from django.http import HttpResponseRedirect
-from postmarkup import render_bbcode
-from lxml import html
+# from postmarkup import render_bbcode
+# from lxml import html
 from django.core.cache import cache
 
 import time
@@ -69,14 +69,15 @@ def details(request, cluster_id):
             if unix_date in cluster_posts:
                 cluster_posts[unix_date]['numPosts'] += 1
             else:
-                body = html.document_fromstring(post['body'])
-                bbcode_body = body.text_content()
+                # body = html.document_fromstring(post['body'])
+                # bbcode_body = body.text_content()
                 cluster_posts[unix_date] = {"numPosts": 1, "posts": []}
-            cluster_posts[unix_date]['posts'].append(render_bbcode(bbcode_body))
+                cluster_posts[unix_date]['posts'].append(post['body'])
+            # cluster_posts[unix_date]['posts'].append(render_bbcode(bbcode_body))
 
         context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                    'cluster': cluster, 'cluster_posts': cluster_posts}
-        cache.set(cache_key, 1800)
+        cache.set(cache_key, context, 1800)
 
     return render(request, 'details.html', context)
 
