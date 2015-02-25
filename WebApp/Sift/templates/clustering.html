@@ -49,9 +49,15 @@ $(document).ready(function() {
     if($(this).is(':checked')) { 
         $('#id_start_date').prop('disabled', true);
         $('#id_end_date').prop('disabled', true);
+        start = $('#id_start_date').val();
+        end = $('#id_end_date').val();
+        $('#id_start_date').val("");
+        $('#id_end_date').val("");
     } else {
         $('#id_start_date').prop('disabled', false);
         $('#id_end_date').prop('disabled', false);
+        $('#id_start_date').val(start);
+        $('#id_end_date').val(end);
     }
 })
 });

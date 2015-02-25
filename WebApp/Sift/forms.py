@@ -25,7 +25,7 @@ class ClusterForm(forms.Form):
     ), initial=monthdelta(datetime.date.today(), -2))
     end_date = forms.DateField(
         label="End Date", widget=DateInput(), initial=datetime.date.today())
-    all_posts = forms.BooleanField(required = False)
+    all_posts = forms.BooleanField(required=False)
     num_clusters = forms.IntegerField(label="Number of Clusters", initial=8)
     max_features = forms.IntegerField(
         label="Max Number of Features", initial=10000)
