@@ -12,7 +12,6 @@ import Sift.forms
 
 
 
-
 def general(request):
     headline = "General Analytics"
     trendingClusters = Cluster.objects.filter(ispinned=0)
@@ -42,46 +41,13 @@ def general(request):
     for cluster in trendingClusters:
         pieData.append([cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
 
-
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters':
                trendingClusters, "headline": headline, 'pieData': pieData}
+
     return render(request, 'general_analytics.html', context)
 
 
 def details(request, cluster_id):
-
-    cache_key = cluster_id
-    context = cache.get(cache_key)
-    if not context:
-        headline = "Topic Analytics"
-        cluster = get_object_or_404(Cluster, pk=cluster_id)
-        trendingClusters = Cluster.objects.filter(ispinned=0)
-        pinnedClusters = Cluster.objects.filter(ispinned=1)
-
-        # data
-        cluster_posts = {}
-        posts = Post.objects.values(
-            'creationdate', 'body').filter(cluster=cluster_id)
-        for post in posts:
-            # convert date object to unix timestamp int
-            date = post["creationdate"].timetuple()
-            unix_date = int(time.mktime(date)) * 1000
-            if unix_date in cluster_posts:
-                cluster_posts[unix_date]['numPosts'] += 1
-            else:
-                body = html.document_fromstring(post['body']).text_content()
-                # bbcode_body = body.text_content()
-                cluster_posts[unix_date] = {"numPosts": 1, "posts": []}
-            cluster_posts[unix_date]['posts'].append(body)
-
-        context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
-                   'cluster': cluster, 'cluster_posts': cluster_posts}
-        cache.set(cache_key, context, 1800)
-
-    return render(request, 'details.html', context)
-
-
-def detailsCache(cluster_id):
     headline = "Topic Analytics"
     cluster = get_object_or_404(Cluster, pk=cluster_id)
     trendingClusters = Cluster.objects.filter(ispinned=0)
@@ -106,6 +72,8 @@ def detailsCache(cluster_id):
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster, 'cluster_posts': cluster_posts}
 
+    return render(request, 'details.html', context)
+
 
 def settings(request):
     headline = "Settings"
@@ -118,6 +86,7 @@ def settings(request):
 
 
 def clustering(request):
+    cache.clear()
     if request.method == 'POST':
         f = Sift.forms.ClusterForm(request.POST)
 
