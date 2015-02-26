@@ -86,7 +86,7 @@ def settings(request):
 
 
 def clustering(request):
-    cache.clear()
+    # cache.clear()
     if request.method == 'POST':
         f = Sift.forms.ClusterForm(request.POST)
 

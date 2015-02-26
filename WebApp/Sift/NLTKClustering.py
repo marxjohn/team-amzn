@@ -56,6 +56,8 @@ import numpy as np
 import django
 from celery import shared_task
 
+from django.core.cache import cache
+
 django.setup()
 
 
@@ -231,12 +233,18 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
 
         Cluster.objects.filter(ispinned=0).delete()
 
+        clusterList = []
+
         for x in range(1, num_clusters + 1):
             temp_name = ""
             for ind in order_centroids[x - 1, :3]:
                 temp_name = temp_name + ' ' + terms[ind]
             c = Cluster(name=temp_name, clusterid=x, ispinned=False)
-            c.save()
+            clusterList.append(c)
+
+        Cluster.objects.bulk_create(clusterList)
+
+        postList = []
 
         # Associate Post with Cluster
         for i in range(1, data_count):
@@ -244,7 +252,9 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
             post_id = dataset.id_list[i]
             p = Post.objects.get(postid=post_id)
             p.cluster = Cluster.objects.get(clusterid=x)
-            p.save()
+            postList.append(p)
+
+        Post.objects.bulk_create.save(postList)
 
 @shared_task
 def cluster_posts_with_input(start_date, end_date, num_clusters, max_features, isMiniBatch):
@@ -260,6 +270,8 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features, i
 
     cluster_posts(dataset, t0, num_clusters, max_features)
 
+    cache.clear()
+
 
 def main():
         # Display progress logs on stdout
@@ -270,9 +282,11 @@ def main():
     t0 = time()
 
     dataset = ClusterData(
-            Post.objects.filter(creationdate__range=("2014-01-01", "2014-01-03")))
+            Post.objects.filter(creationdate__range=("2010-01-01", "2014-01-03")))
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
+
+    cache.clear()
 
 # Only run the main function if this code is called directly
 # Not if it's imported as a module
