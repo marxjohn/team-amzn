@@ -48,7 +48,7 @@ class Post(models.Model):
     creationdate = models.DateField(db_column='creationDate')  # Field name made lowercase.
     modificationdate = models.DateField(db_column='modificationDate')  # Field name made lowercase.
     locale = models.CharField(max_length=64, blank=True)
-    cluster = models.ForeignKey(Cluster, db_column='cluster', blank=True, null=True)
+    cluster = models.ForeignKey(Cluster, db_column='cluster', blank=True, null=True, on_delete=models.SET_NULL)
     stemmedbody = models.TextField(db_column='stemmedBody', blank=True)  # Field name made lowercase.
 
 
