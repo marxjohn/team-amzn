@@ -17,7 +17,6 @@ def general(request):
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
 
-
     pieData = [['Forum ID', 'Number of Posts']]
     for cluster in trendingClusters:
         pieData.append([cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
