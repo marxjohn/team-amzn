@@ -16,20 +16,23 @@
 {% block body_block %}
 <h1 id="bodyTitle">Forum Posts Distribution</h1>
 <div id="piechart_3d" style="width: 100%; height: 500px; margin-top:-60px; z-index:-1;"></div>
+<div id="linechart" style="width: 100%; height: 500px;"></div>
 
     <script>
     //Call Graphing Functions
     $(document).ready(function() {
         {% autoescape off %}
-            drawGooglePieChart({{ pieData }});
+            drawGeneralPieChart({{ pieData }});
+            drawGeneralLineChart({{ lineData }}, {{ lineDates }}, {{ lineClusterNames }});
         {% endautoescape %}
     });
     //this allows for responsive design
     $(window).resize(function(){
         {% autoescape off %}
-            drawGooglePieChart({{ pieData }});
+            drawGeneralPieChart({{ pieData }});
+            drawGeneralLineChart({{ lineData }}, {{ lineDates }}, {{ lineClusterNames }});
         {% endautoescape %}
     });
-        //console.log({{ pieData }});
+        console.log({{ lineData }});
     </script>
 {% endblock %}

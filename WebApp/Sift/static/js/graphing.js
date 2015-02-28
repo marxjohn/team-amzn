@@ -2,22 +2,60 @@
  * Created by MaxGoovaerts and CJ on 2/8/2015.
  */
 
-function drawGooglePieChart(array) {
-        var data = google.visualization.arrayToDataTable(array);
+function drawGeneralPieChart(array) {
+    var data = google.visualization.arrayToDataTable(array);
 
-        var options = {
-          is3D: true,
-            animation: {
-                duration: 10000,
-                easing: 'out',
-                startup: true
-              },
-            fontName: "Lato"
-        };
+    var options = {
+      is3D: true,
+        animation: {
+            duration: 10000,
+            easing: 'out',
+            startup: true
+          },
+        fontName: "Lato"
+    };
 
-        var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
-        chart.draw(data, options);
+    var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+    chart.draw(data, options);
+}
+
+function drawGeneralLineChart(array, lineDates, clusterNames) {
+    var data = new google.visualization.DataTable();
+
+    data.addColumn('date', 'Day');
+
+    for(i=0; i<clusterNames.length; i++) {
+        data.addColumn('number', clusterNames[i]);
     }
+
+    for(i=0; i< lineDates.length; i++) {
+        console.log(lineDates[i]);
+        console.log(new Date(parseInt(lineDates[i])));
+        console.log(array[lineDates[i]]);
+        row = [new Date(parseInt(lineDates[i]))];
+
+        for(j=0; j<clusterNames.length; j++) {
+            row.push(array[lineDates[i]][j]);
+        }
+        data.addRows([row]);
+
+    }
+
+    var options = {
+        animation: {
+            duration: 1000,
+            easing: 'out',
+            startup: true
+          },
+        fontName: "Lato",
+        legend: {
+            position: 'bottom'
+        }
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('linechart'));
+    chart.draw(data, options);
+}
 /**
  * draws the line chart
  * y axis is number of posts

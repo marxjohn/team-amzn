@@ -11,38 +11,42 @@ import Sift.NLTKClustering
 import Sift.forms
 
 
-
 def general(request):
     headline = "General Analytics"
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
 
 
-    # pieData = ([['Forum ID', 'Number of Posts'],
-    #             ['Selling on Amazon', Post.objects.filter(forumid=2).count()],
-    #             ['Fulfillment by Amazon', Post.objects.filter(forumid=3).count()],
-    #             ['Amazon Payments', Post.objects.filter(forumid=7).count()],
-    #             ['MWS', Post.objects.filter(forumid=8).count()],
-    #             ['Amazon Webstore', Post.objects.filter(forumid=10).count()],
-    #             ['Amazon Sponsored Products', Post.objects.filter(forumid=22).count()],
-    #             ['Login With Amazon', Post.objects.filter(forumid=23).count()],
-    #             ['Amazon Announcements', Post.objects.filter(forumid=21).count()],
-    #             ['Amazon Services', Post.objects.filter(forumid=17).count()],
-    #             ['Seller Discussions', Post.objects.filter(forumid=23).count()],
-    #             ['Checkout by Amazon forums', Post.objects.filter(forumid=16).count()],
-    #             ['Amazon Product Ads forum', Post.objects.filter(forumid=20).count()],
-    #             ['Forums Feedback', Post.objects.filter(forumid=6).count()],
-    #             ['Your Groups', Post.objects.filter(forumid=26).count()],
-    #             ['Amazon Product Ads', Post.objects.filter(forumid=4).count()],
-    #             ['Amazon Seller Community Archive', Post.objects.filter(forumid=15).count()]
-    #    ])
-
     pieData = [['Forum ID', 'Number of Posts']]
     for cluster in trendingClusters:
         pieData.append([cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
 
+    lineClusterNames = []
+
+    for cluster in trendingClusters:
+        lineClusterNames.append(cluster.name)
+
+    lineDates = []
+    lineData = {}
+    posts = Post.objects.values('creationdate', 'cluster').order_by('creationdate')
+    for post in posts:
+        id = post["cluster"]
+        if (id != None):
+            date = post["creationdate"].timetuple()
+            unix_date = int(time.mktime(date)) * 1000
+            try:
+                if unix_date in lineData:
+                    lineData[unix_date][id-1] += 1
+                else:
+                    lineData[unix_date] = [0] * len(lineClusterNames)
+                    lineData[unix_date][id-1] = 1
+                    lineDates.append(unix_date)
+            except:
+                pass
+
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters':
-               trendingClusters, "headline": headline, 'pieData': pieData}
+               trendingClusters, "headline": headline, 'pieData': pieData,
+               'lineData': lineData, 'lineDates': lineDates, 'lineClusterNames': lineClusterNames}
 
     return render(request, 'general_analytics.html', context)
 
