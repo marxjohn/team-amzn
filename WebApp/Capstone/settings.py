@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     # 'pylibmc',
 )
 
-
 # Caching
 def get_cache():
     try:
@@ -66,6 +65,8 @@ BROKER_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+CACHE_MIDDLEWARE_SECONDS = 5
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.cache.UpdateCacheMiddleware',

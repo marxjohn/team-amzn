@@ -3,6 +3,7 @@ from Sift.models import Cluster, Post
 from django.http import HttpResponseRedirect
 # from postmarkup import render_bbcode
 from lxml import html
+from bs4 import BeautifulSoup
 from django.core.cache import cache
 
 import time
@@ -68,9 +69,11 @@ def details(request, cluster_id):
         if unix_date in cluster_posts:
             cluster_posts[unix_date]['numPosts'] += 1
         else:
-            body = html.document_fromstring(post['body']).text_content()
             # bbcode_body = body.text_content()
             cluster_posts[unix_date] = {"numPosts": 1, "posts": []}
+
+        # body = html.document_fromstring(post['body']).drop_tag()
+        body = BeautifulSoup(post['body']).getText()
         cluster_posts[unix_date]['posts'].append(body)
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,

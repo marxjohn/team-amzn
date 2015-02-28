@@ -29,16 +29,12 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
     }
 
     for(i=0; i< lineDates.length; i++) {
-        console.log(lineDates[i]);
-        console.log(new Date(parseInt(lineDates[i])));
-        console.log(array[lineDates[i]]);
         row = [new Date(parseInt(lineDates[i]))];
 
         for(j=0; j<clusterNames.length; j++) {
             row.push(array[lineDates[i]][j]);
         }
         data.addRows([row]);
-
     }
 
     var options = {
@@ -73,7 +69,7 @@ function draw_dashboard1(data) {
         //console.log(new Date(parseInt(key)));
         lineChartData.addRows([
             [new Date(parseInt(key)), data[key]['numPosts']]
-        ])
+        ]);
 
     }
 
@@ -137,7 +133,7 @@ function draw_dashboard2(data) {
         for (i = 0; i < data[key]['posts'].length; i++) {
             lineChartData.addRows([
                 [new Date(parseInt(key)), data[key]['posts'][i]]
-            ])
+            ]);
         }
     }
     console.log(lineChartData);
