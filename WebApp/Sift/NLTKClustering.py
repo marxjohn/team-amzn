@@ -9,7 +9,7 @@ IS_MINI_USED = True
 IS_IDF_USED = False
 IS_HASHING_VECTORIZER_USED = False
 IS_UPLOAD_ENABLED = True
-NUM_CLUSTERS = 8
+NUM_CLUSTERS = 10
 IS_NLTK_USED = False
 
 __author__ = 'cse498'
@@ -41,7 +41,7 @@ if not settings.configured:
 
 import matplotlib.pyplot as plt
 
-from Sift.models import Post, Cluster
+from models import Post, Cluster
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
@@ -112,7 +112,7 @@ class ClusterData:
         self.id_list = [p.postid for p in inp]
         self.data = np.fromiter(
             map(ClusterData.stemmed_body, inp),
-            dtype=[("body", "|U5000"), ("stemmed", "b"), ("id", "i")], 
+            dtype=[("body", "|U5000"), ("stemmed", "b"), ("id", "i")],
             count=len(inp))
 
 
@@ -232,7 +232,7 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         #     post.save()
 
         Cluster.objects.filter(ispinned=0).delete()
-
+        Post.objects.raw('update posts set cluster=null where posts.cluster is not null')
         clusterList = []
 
         for x in range(1, num_clusters + 1):
@@ -244,17 +244,22 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
 
         Cluster.objects.bulk_create(clusterList)
 
-        postList = []
-
+        ratio = 0.0
         # Associate Post with Cluster
         for i in range(1, data_count):
             x = km.labels_[i] + 1
             post_id = dataset.id_list[i]
             p = Post.objects.get(postid=post_id)
-            p.cluster = Cluster.objects.get(clusterid=x)
-            postList.append(p)
+            p.cluster = clusterList[x-1]
 
-        Post.objects.bulk_create.save(postList)
+            p.save()
+
+            complete_ratio = i/data_count
+            if complete_ratio > ratio:
+                print(str(complete_ratio) + " percent complete uploading")
+                ratio = ratio + 0.1
+
+
 
 @shared_task
 def cluster_posts_with_input(start_date, end_date, num_clusters, max_features, isMiniBatch):
@@ -282,7 +287,7 @@ def main():
     t0 = time()
 
     dataset = ClusterData(
-            Post.objects.filter(creationdate__range=("2010-01-01", "2014-01-03")))
+            Post.objects.filter(creationdate__range=("2014-01-01", "2014-01-03")))
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
 
