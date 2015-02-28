@@ -52,6 +52,7 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
     var chart = new google.visualization.LineChart(document.getElementById('linechart'));
     chart.draw(data, options);
 }
+
 /**
  * draws the line chart
  * y axis is number of posts
