@@ -1,9 +1,8 @@
 from __future__ import absolute_import
 # K-means clustering of seller forums posts
-REMOVE_LIST = {"br", "title", "quote", "just", "amazon", "seller", "shipping", "buyer", "sellers", "new", "item",
-               "customer", "account", "re", "quotetitle", "wrotequote", "2000", "2001", "2002", "2003", "2004", "2005",
-               "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "like", "sell",
-               "selling", "write", "wrote", "would"}
+with open('stopwords.cfg') as f:
+    REMOVE_LIST = set(f.read().split())
+
 MAX_FEATURES = 10000
 IS_MINI_USED = True
 IS_IDF_USED = False
@@ -41,7 +40,7 @@ if not settings.configured:
 
 import matplotlib.pyplot as plt
 
-# from models import Post, Cluster
+from models import Post, Cluster
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
@@ -61,9 +60,6 @@ from django.core.cache import cache
 django.setup()
 
 
-
-
-
 import Stemmer
 english_stemmer = Stemmer.Stemmer('en')
 
@@ -72,6 +68,7 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
 
     def build_analyzer(self):
         analyzer = super(TfidfVectorizer, self).build_analyzer()
+
         def analyze(doc):
             if doc[1]:
                 return doc[0].split(' ')
@@ -82,6 +79,7 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
                 post.save()
                 return stemmed
         return analyze
+
 
 class ClusterData:
 
@@ -192,9 +190,10 @@ def vectorize_data(dataset, max_features):
                                      min_df=1, stop_words=stop_words,
                                      use_idf=IS_IDF_USED)
     else:
-        vectorizer = StemmedTfidfVectorizer(max_df=0.3, max_features=max_features,
-                                            min_df=1, stop_words=stop_words,
-                                            use_idf=IS_IDF_USED, analyzer='word', ngram_range=(1, 1))
+        vectorizer = StemmedTfidfVectorizer(max_df=0.25, max_features=max_features,
+                                            min_df=.01, stop_words=stop_words,
+                                            use_idf=IS_IDF_USED, analyzer='word',
+                                            ngram_range=(1, 1))
 
     vectorized_data = vectorizer.fit_transform(dataset.data)
 
@@ -232,7 +231,8 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         #     post.save()
 
         Cluster.objects.filter(ispinned=0).delete()
-        Post.objects.raw('update posts set cluster=null where posts.cluster is not null')
+        Post.objects.raw(
+            'update posts set cluster=null where posts.cluster is not null')
         clusterList = []
 
         for x in range(1, num_clusters + 1):
@@ -250,15 +250,14 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
             x = km.labels_[i] + 1
             post_id = dataset.id_list[i]
             p = Post.objects.get(postid=post_id)
-            p.cluster = clusterList[x-1]
+            p.cluster = clusterList[x - 1]
 
             p.save()
 
-            complete_ratio = i/data_count
+            complete_ratio = i / data_count
             if complete_ratio > ratio:
                 print(str(complete_ratio) + " percent complete uploading")
                 ratio = ratio + 0.1
-
 
 
 @shared_task
@@ -287,7 +286,7 @@ def main():
     t0 = time()
 
     dataset = ClusterData(
-            Post.objects.filter(creationdate__range=("2014-01-01", "2014-01-03")))
+        Post.objects.filter(creationdate__range=("2014-01-01", "2014-01-03")))
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
 
