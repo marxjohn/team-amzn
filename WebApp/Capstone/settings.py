@@ -95,7 +95,7 @@ except ImportError:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'sellerforums.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
+        'HOST': 'restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
         'PORT': '3306',
         'USER': 'teamamzn',
         'PASSWORD': 'TeamAmazon2015!',

@@ -1,17 +1,17 @@
 from __future__ import absolute_import
 # K-means clustering of seller forums posts
-REMOVE_LIST = {"br", "title", "quote", "just", "amazon", "seller", "shipping", "buyer", "sellers", "new", "item",
-               "customer", "account", "re", "quotetitle", "wrotequote", "2000", "2001", "2002", "2003", "2004", "2005",
-               "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "like", "sell",
-               "selling", "write", "wrote", "would"}
-MAX_FEATURES = 500
+
+with open('stopwords.cfg') as f:
+    REMOVE_LIST = set(f.read().split())
+
+MAX_FEATURES = 1000
 IS_MINI_USED = True
-IS_IDF_USED = False
+IS_IDF_USED = True
 IS_HASHING_VECTORIZER_USED = False
-IS_UPLOAD_ENABLED = False
-NUM_CLUSTERS = 10
+IS_UPLOAD_ENABLED = True
+NUM_CLUSTERS = 4
 IS_NLTK_USED = False
-IS_VISUALIZATION_ENABLED = True
+IS_VISUALIZATION_ENABLED = False
 
 __author__ = 'cse498'
 
@@ -50,6 +50,7 @@ from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import re
+import random
 import logging
 
 from sklearn.cluster import KMeans
@@ -63,11 +64,8 @@ import django
 from celery import shared_task
 
 from django.core.cache import cache
-
+STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 django.setup()
-
-
-
 
 
 import Stemmer
@@ -78,9 +76,11 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
 
     def build_analyzer(self):
         analyzer = super(TfidfVectorizer, self).build_analyzer()
+
         def analyze(doc):
             if doc[1]:
-                return doc[0].split(' ')
+                temp = ' '.join([i for i in doc[0].split(' ') if i not in STOP_WORDS])
+                return temp.split(' ')
             else:
                 stemmed = english_stemmer.stemWords(analyzer(doc[0]))
                 post = Post.objects.get(postid=doc[2])
@@ -88,6 +88,7 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
                 post.save()
                 return stemmed
         return analyze
+
 
 class ClusterData:
 
@@ -184,23 +185,10 @@ def print_cluster_centroids(km, vectorizer, num_clusters):
 
 
 def vectorize_data(dataset, max_features):
+    vectorizer = StemmedTfidfVectorizer(max_df=.7, max_features=max_features,
+                                        min_df=1,
+                                        use_idf=IS_IDF_USED, analyzer='word', ngram_range=(1, 1))
 
-    stop_words = REMOVE_LIST.union(stopwords.words('english'))
-
-    if IS_HASHING_VECTORIZER_USED:
-        vectorizer = HashingVectorizer(n_features=max_features,
-                                       stop_word=stop_words,
-                                       non_negative=False, norm='l2',
-                                       binary=False)
-
-    elif IS_NLTK_USED:
-        vectorizer = TfidfVectorizer(max_df=0.05, max_features=max_features,
-                                     min_df=1, stop_words=stop_words,
-                                     use_idf=IS_IDF_USED)
-    else:
-        vectorizer = StemmedTfidfVectorizer(max_df=0.25, max_features=max_features,
-                                            min_df=1, stop_words=stop_words,
-                                            use_idf=IS_IDF_USED, analyzer='word', ngram_range=(1, 1))
 
     vectorized_data = vectorizer.fit_transform(dataset.data)
 
@@ -238,7 +226,8 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         #     post.save()
 
         Cluster.objects.filter(ispinned=0).delete()
-        Post.objects.raw('update posts set cluster=null where posts.cluster is not null')
+        Post.objects.raw(
+            'update posts set cluster=null where posts.cluster is not null')
         clusterList = []
 
         for x in range(1, num_clusters + 1):
@@ -256,18 +245,19 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
             x = km.labels_[i] + 1
             post_id = dataset.id_list[i]
             p = Post.objects.get(postid=post_id)
-            p.cluster = clusterList[x-1]
+            p.cluster = clusterList[x - 1]
 
             p.save()
 
-            complete_ratio = i/data_count
+            complete_ratio = i / data_count
             if complete_ratio > ratio:
                 print(str(complete_ratio) + " percent complete uploading")
                 ratio = ratio + 0.1
 
     if IS_VISUALIZATION_ENABLED:
         reduced_data = PCA(n_components=2).fit_transform(vectorized_data.toarray())
-        kmeans = KMeans(init='k-means++', n_clusters=5, n_init=10)
+        kmeans = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=5,
+                             init_size=3000, batch_size=1000, verbose=False)
         kmeans.fit(reduced_data)
 
         # Step size of the mesh. Decrease to increase the quality of the VQ.
@@ -290,12 +280,15 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
                    cmap=plt.cm.Paired,
                    aspect='auto', origin='lower')
 
-        plt.plot(reduced_data[:, 0], reduced_data[:, 1], 'k.', markersize=2)
+        rand_smpl0 = [reduced_data[i][0] for i in random.sample(range(len(reduced_data)), 20000)]
+        rand_smpl1 = [reduced_data[i][1] for i in random.sample(range(len(reduced_data)), 20000)]
+
+        plt.plot(rand_smpl0[:], rand_smpl1[:], 'k.', markersize=2)
         # Plot the centroids as a white X
         centroids = kmeans.cluster_centers_
         plt.scatter(centroids[:, 0], centroids[:, 1],
                     marker='x', s=169, linewidths=3,
-                    color='g', zorder=10)
+                    color='w', zorder=10)
         plt.title('K-means clustering on the digits dataset (PCA-reduced data)\n'
                   'Centroids are marked with white cross')
         plt.xlim(x_min, x_max)
@@ -303,8 +296,7 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         plt.xticks(())
         plt.yticks(())
         plt.show()
-        print_cluster_centroids(kmeans, vectorizer, 4)
-
+        print_cluster_centroids(kmeans, vectorizer, num_clusters)
 
 
 @shared_task
@@ -333,7 +325,9 @@ def main():
     t0 = time()
 
     dataset = ClusterData(
-            Post.objects.filter(creationdate__range=("2000-01-01", "2017-01-03")))
+
+    Post.objects.filter(creationdate__range=("2000-01-01", "2016-01-01")))
+
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
 
