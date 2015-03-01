@@ -1,15 +1,19 @@
 from __future__ import absolute_import
 # K-means clustering of seller forums posts
 
-with open('stopwords.cfg') as f:
+import os
+with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Sift/stopwords.cfg')) as f:
     REMOVE_LIST = set(f.read().split())
+
+# K-means clustering of seller forums posts
+
 
 MAX_FEATURES = 1000
 IS_MINI_USED = True
 IS_IDF_USED = True
 IS_HASHING_VECTORIZER_USED = False
-IS_UPLOAD_ENABLED = True
-NUM_CLUSTERS = 4
+IS_UPLOAD_ENABLED = False
+NUM_CLUSTERS = 10
 IS_NLTK_USED = False
 IS_VISUALIZATION_ENABLED = False
 
@@ -39,10 +43,9 @@ if not settings.configured:
         }
     )
 
-
 import matplotlib.pyplot as plt
 
-from models import Post, Cluster
+from Sift.models import Post, Cluster
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
@@ -61,7 +64,6 @@ from sklearn.decomposition import PCA
 from time import time
 import numpy as np
 import django
-from celery import shared_task
 
 from django.core.cache import cache
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
@@ -299,21 +301,6 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         print_cluster_centroids(kmeans, vectorizer, num_clusters)
 
 
-@shared_task
-def cluster_posts_with_input(start_date, end_date, num_clusters, max_features, isMiniBatch):
-
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(levelname)s %(message)s')
-
-    print("Retrieving dataset from database")
-    t0 = time()
-
-    dataset = ClusterData(
-        Post.objects.filter(creationdate__range=(start_date, end_date)))
-
-    cluster_posts(dataset, t0, num_clusters, max_features)
-
-    cache.clear()
 
 
 def main():
