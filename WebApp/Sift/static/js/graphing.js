@@ -12,7 +12,10 @@ function drawGeneralPieChart(array) {
             easing: 'out',
             startup: true
           },
-        fontName: "Lato"
+        fontName: "Lato",
+        legend: {
+            position: 'hidden'
+        }
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
@@ -45,7 +48,12 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
           },
         fontName: "Lato",
         legend: {
-            position: 'bottom'
+            position: 'hidden'
+        },
+        width: data.getNumberOfRows()*5,
+        chartArea: {
+            left: 0,
+            width: '100%'
         }
     };
 
@@ -137,7 +145,7 @@ function draw_dashboard2(data) {
             ]);
         }
     }
-    console.log(lineChartData);
+    //console.log(lineChartData);
     // Create a dashboard.
     var dash_container = document.getElementById('dashboard'),
         myDashboard = new google.visualization.Dashboard(dash_container);
