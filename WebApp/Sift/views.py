@@ -10,7 +10,7 @@ import time
 import Sift.NLTKClustering
 
 import Sift.forms
-
+import Sift.progressBar as bar
 
 def general(request):
     headline = "General Analytics"
@@ -102,15 +102,23 @@ def clustering(request):
             else:
                 is_mini_batched = True
 
-            Sift.NLTKClustering.cluster_posts_with_input(str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
+            # Sift.NLTKClustering.cluster_posts_with_input(str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
+            #                                              int(f.cleaned_data['num_clusters']), int(f.cleaned_data['max_features']),
+            #                                              is_mini_batched)\
+            #                                             .delay("sample")
+
+            Sift.NLTKClustering.cluster_posts_with_input.apply_async((str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
                                                          int(f.cleaned_data['num_clusters']), int(f.cleaned_data['max_features']),
-                                                         is_mini_batched)\
-                                                        .delay("sample")
+                                                         is_mini_batched), retry=True, retry_policy={
+                'max_retries': 10,
+                'interval_start': 0,
+                'interval_step': 0.2,
+                'interval_max': 1,
+            })
 
-            return HttpResponseRedirect('/cluster_running')
+            # return HttpResponseRedirect('/init_work')
 
-    else:
-        form = Sift.forms.ClusterForm()
+    form = Sift.forms.ClusterForm()
 
     headline = "Clustering"
     context = {'headline': headline, 'form': form}
