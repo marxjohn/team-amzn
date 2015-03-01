@@ -1,13 +1,16 @@
-from __future__ import absolute_import
-# K-means clustering of seller forums posts
-with open('stopwords.cfg') as f:
+
+import os
+with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Sift/stopwords.cfg')) as f:
     REMOVE_LIST = set(f.read().split())
+
+# K-means clustering of seller forums posts
+
 
 MAX_FEATURES = 10000
 IS_MINI_USED = True
 IS_IDF_USED = False
 IS_HASHING_VECTORIZER_USED = False
-IS_UPLOAD_ENABLED = True
+IS_UPLOAD_ENABLED = False
 NUM_CLUSTERS = 10
 IS_NLTK_USED = False
 
@@ -37,10 +40,9 @@ if not settings.configured:
         }
     )
 
-
 import matplotlib.pyplot as plt
 
-from models import Post, Cluster
+from Sift.models import Post, Cluster
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
@@ -53,7 +55,6 @@ import logging
 from time import time
 import numpy as np
 import django
-from celery import shared_task
 
 from django.core.cache import cache
 
@@ -260,21 +261,6 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
                 ratio = ratio + 0.1
 
 
-@shared_task
-def cluster_posts_with_input(start_date, end_date, num_clusters, max_features, isMiniBatch):
-
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(levelname)s %(message)s')
-
-    print("Retrieving dataset from database")
-    t0 = time()
-
-    dataset = ClusterData(
-        Post.objects.filter(creationdate__range=(start_date, end_date)))
-
-    cluster_posts(dataset, t0, num_clusters, max_features)
-
-    cache.clear()
 
 
 def main():

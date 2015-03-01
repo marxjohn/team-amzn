@@ -1,16 +1,14 @@
 from django.shortcuts import render, get_object_or_404
+
 from Sift.models import Cluster, Post
-from django.http import HttpResponseRedirect
+
 # from postmarkup import render_bbcode
-from lxml import html
 from bs4 import BeautifulSoup
-from django.core.cache import cache
 
 import time
-import Sift.NLTKClustering
-
+import Sift,tasks as tasks
 import Sift.forms
-import Sift.progressBar as bar
+
 
 def general(request):
     headline = "General Analytics"
@@ -107,7 +105,7 @@ def clustering(request):
             #                                              is_mini_batched)\
             #                                             .delay("sample")
 
-            Sift.NLTKClustering.cluster_posts_with_input.apply_async((str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
+            tasks.cluster_posts_with_input.apply_async((str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
                                                          int(f.cleaned_data['num_clusters']), int(f.cleaned_data['max_features']),
                                                          is_mini_batched), retry=True, retry_policy={
                 'max_retries': 10,

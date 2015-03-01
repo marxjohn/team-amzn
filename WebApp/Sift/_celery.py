@@ -13,3 +13,4 @@ app = Celery('ClusterPosts')
 # pickle the object when using Windows.
 app.config_from_object('django.conf:settings')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+
