@@ -6,7 +6,7 @@ from Sift.models import Cluster, Post
 from bs4 import BeautifulSoup
 
 import time
-import Sift,tasks as tasks
+import Sift.tasks as tasks
 import Sift.forms
 
 
