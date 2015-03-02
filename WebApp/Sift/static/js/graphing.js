@@ -57,6 +57,24 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
     chart.draw(data, options);
 }
 
+function drawWordPieChart(array) {
+    var data = google.visualization.arrayToDataTable(array);
+
+    var options = {
+      is3D: true,
+        animation: {
+            duration: 10000,
+            easing: 'out',
+            startup: true
+          },
+        fontName: "Lato",
+        title: 'Word Count'
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+    chart.draw(data, options);
+}
+
 /**
  * draws the line chart
  * y axis is number of posts

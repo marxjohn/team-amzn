@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from Sift.models import Cluster, Post
+from Sift.models import Cluster, Post, ClusterWord
 from django.http import HttpResponseRedirect
 # from postmarkup import render_bbcode
 from lxml import html
@@ -76,8 +76,15 @@ def details(request, cluster_id):
         body = BeautifulSoup(post['body']).getText()
         cluster_posts[unix_date]['posts'].append(body)
 
+    #Cluster word count
+    wordPieData = [['Word', 'Instances']]
+
+    words = ClusterWord.objects.filter(clusterid=cluster_id)
+    for w in words:
+        wordPieData.append([w.word, w.count])
+
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
-               'cluster': cluster, 'cluster_posts': cluster_posts}
+               'cluster': cluster, 'cluster_posts': cluster_posts, 'wordPieData': wordPieData}
 
     return render(request, 'details.html', context)
 

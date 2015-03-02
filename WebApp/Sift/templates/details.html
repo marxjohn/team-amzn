@@ -8,6 +8,8 @@
 {% endblock %}
 {% block body_block %}
     <h1 id="bodyTitle">{{ cluster.name }}</h1>
+    <h4 id="bodyTitle">Word Count:</h4>
+    <div id="piechart_3d" style="width: 100%; height: 380px; margin-top:-60px; z-index:-1;"></div>
     <div id="dashboard">
         <div id="main_slider"></div>
         <div id="hidden_slider"></div> <!--this is hidden from page-->
@@ -21,6 +23,7 @@
              var title = "Date";
              var width = "150px !important";
              $('.google-visualization-table-th:contains(' + title + ')').css('width', width);
+            drawGeneralPieChart({{ wordPieData }});
         });
         var url = window.location;
 // Will only work if string in href matches with location
