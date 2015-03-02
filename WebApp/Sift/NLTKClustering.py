@@ -12,7 +12,7 @@ MAX_FEATURES = 1000
 IS_MINI_USED = True
 IS_IDF_USED = True
 IS_HASHING_VECTORIZER_USED = False
-IS_UPLOAD_ENABLED = False
+IS_UPLOAD_ENABLED = True
 NUM_CLUSTERS = 10
 IS_NLTK_USED = False
 IS_VISUALIZATION_ENABLED = False
@@ -45,7 +45,7 @@ if not settings.configured:
 
 import matplotlib.pyplot as plt
 
-from Sift.models import Post, Cluster
+from models import Post, Cluster, ClusterWord
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
@@ -231,15 +231,22 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         Post.objects.raw(
             'update posts set cluster=null where posts.cluster is not null')
         clusterList = []
-
+        cwList = []
         for x in range(1, num_clusters + 1):
             temp_name = ""
             for ind in order_centroids[x - 1, :3]:
                 temp_name = temp_name + ' ' + terms[ind]
+
             c = Cluster(name=temp_name, clusterid=x, ispinned=False)
+            for ind in order_centroids[x - 1, :10]:
+                count = len(Post.objects.filter(cluster=c, stemmedbody__contains=terms[ind]))
+
+                cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
+                cwList.append(cw)
             clusterList.append(c)
 
         Cluster.objects.bulk_create(clusterList)
+        ClusterWord.objects.bulk_create(cwList)
 
         ratio = 0.0
         # Associate Post with Cluster
@@ -313,7 +320,7 @@ def main():
 
     dataset = ClusterData(
 
-    Post.objects.filter(creationdate__range=("2000-01-01", "2016-01-01")))
+    Post.objects.filter(creationdate__range=("2014-01-01", "2014-01-03")))
 
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)

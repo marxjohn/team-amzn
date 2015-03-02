@@ -15,6 +15,7 @@ class Notification(models.Model):
 
 
 
+
 class Cluster(models.Model):
     clusterid = models.IntegerField(db_column='clusterId', primary_key=True)  # Field name made lowercase.
     name = models.CharField(unique=True, max_length=32)
@@ -28,6 +29,18 @@ class Cluster(models.Model):
 
     def __str__(self):
         return '\nId: ' + self.clusterid.__str__() + '\nName: ' + self.name
+
+
+class ClusterWord(models.Model):
+    id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
+    word = models.CharField(max_length=45)
+    clusterid = models.ForeignKey(Cluster, db_column='clusterId', blank=True, null=True)  # Field name made lowercase.
+    count = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'ClusterWords'
+        app_label = 'cw'
 
 
 class Post(models.Model):
