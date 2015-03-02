@@ -37,6 +37,9 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
         data.addRows([row]);
     }
 
+    //Calculate width of scrolling X-Axis based on number of date posts
+    var width = data.getNumberOfRows()*15;
+
     var options = {
         animation: {
             duration: 1000,
@@ -47,6 +50,7 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
         legend: {
             position: 'hidden'
         },
+        width: width,
         chartArea: {
             left: 0,
             width: '100%'
