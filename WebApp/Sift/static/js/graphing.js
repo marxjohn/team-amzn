@@ -45,7 +45,11 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
           },
         fontName: "Lato",
         legend: {
-            position: 'bottom'
+            position: 'hidden'
+        },
+        chartArea: {
+            left: 0,
+            width: '100%'
         }
     };
 

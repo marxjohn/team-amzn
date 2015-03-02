@@ -301,8 +301,6 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         print_cluster_centroids(kmeans, vectorizer, num_clusters)
 
 
-
-
 def main():
         # Display progress logs on stdout
     logging.basicConfig(level=logging.INFO,
@@ -317,8 +315,6 @@ def main():
 
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
-
-    cache.clear()
 
 # Only run the main function if this code is called directly
 # Not if it's imported as a module

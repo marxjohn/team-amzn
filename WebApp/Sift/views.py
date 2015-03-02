@@ -8,7 +8,7 @@ from django.core.cache import cache
 
 import time
 import Sift.NLTKClustering
-
+import Sift.tasks as tasks
 import Sift.forms
 
 
@@ -103,15 +103,11 @@ def clustering(request):
             else:
                 is_mini_batched = True
 
-            Sift.NLTKClustering.cluster_posts_with_input(str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
+            tasks.cluster_posts_with_input.delay(str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
                                                          int(f.cleaned_data['num_clusters']), int(f.cleaned_data['max_features']),
-                                                         is_mini_batched)\
-                                                        .delay("sample")
+                                                         is_mini_batched)
 
-            return HttpResponseRedirect('/cluster_running')
-
-    else:
-        form = Sift.forms.ClusterForm()
+    form = Sift.forms.ClusterForm()
 
     headline = "Clustering"
     context = {'headline': headline, 'form': form}
