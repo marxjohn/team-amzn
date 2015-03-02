@@ -12,10 +12,10 @@ MAX_FEATURES = 1000
 IS_MINI_USED = True
 IS_IDF_USED = True
 IS_HASHING_VECTORIZER_USED = False
-IS_UPLOAD_ENABLED = True
-NUM_CLUSTERS = 10
+IS_UPLOAD_ENABLED = False
+NUM_CLUSTERS = 4
 IS_NLTK_USED = False
-IS_VISUALIZATION_ENABLED = False
+IS_VISUALIZATION_ENABLED = True
 
 __author__ = 'cse498'
 
@@ -45,7 +45,7 @@ if not settings.configured:
 
 import matplotlib.pyplot as plt
 
-from models import Post, Cluster, ClusterWord
+from Sift.models import Post, Cluster, ClusterWord
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
@@ -81,8 +81,9 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
 
         def analyze(doc):
             if doc[1]:
-                temp = ' '.join([i for i in doc[0].split(' ') if i not in STOP_WORDS])
-                return temp.split(' ')
+                temp = ' '.join([i for i in doc[0].split(' ') if i not in STOP_WORDS]).split(' ')
+                temp2 = list(filter(''.__ne__, temp))
+                return temp2
             else:
                 stemmed = english_stemmer.stemWords(analyzer(doc[0]))
                 post = Post.objects.get(postid=doc[2])
@@ -187,7 +188,7 @@ def print_cluster_centroids(km, vectorizer, num_clusters):
 
 
 def vectorize_data(dataset, max_features):
-    vectorizer = StemmedTfidfVectorizer(max_df=.7, max_features=max_features,
+    vectorizer = StemmedTfidfVectorizer(max_df=.8, max_features=max_features,
                                         min_df=1,
                                         use_idf=IS_IDF_USED, analyzer='word', ngram_range=(1, 1))
 
@@ -318,7 +319,7 @@ def main():
 
     dataset = ClusterData(
 
-    Post.objects.filter(creationdate__range=("2014-01-01", "2014-01-03")))
+    Post.objects.filter(creationdate__range=("2014-01-01", "2014-02-01")))
 
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
