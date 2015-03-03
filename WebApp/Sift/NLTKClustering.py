@@ -12,8 +12,8 @@ MAX_FEATURES = 1000
 IS_MINI_USED = True
 IS_IDF_USED = True
 IS_HASHING_VECTORIZER_USED = False
-IS_UPLOAD_ENABLED = False
-NUM_CLUSTERS = 4
+IS_UPLOAD_ENABLED = True
+NUM_CLUSTERS = 6
 IS_NLTK_USED = False
 IS_VISUALIZATION_ENABLED = True
 
@@ -45,7 +45,7 @@ if not settings.configured:
 
 import matplotlib.pyplot as plt
 
-from Sift.models import Post, Cluster, ClusterWord
+from models import Post, Cluster, ClusterWord
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
@@ -55,6 +55,7 @@ from nltk.corpus import stopwords
 import re
 import random
 import logging
+import bulk_update
 
 from sklearn.cluster import KMeans
 
@@ -221,48 +222,9 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
     # Create Clusters to upload to database
     order_centroids = km.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
+
     if IS_UPLOAD_ENABLED:
-
-        # Disassociate Post with old Clusters and remove old clusters from database
-        # for post in (Post.objects.get(postid=i) for i in dataset.id_list):
-        #     post.cluster = None
-        #     post.save()
-
-        Cluster.objects.filter(ispinned=0).delete()
-        Post.objects.raw(
-            'update posts set cluster=null where posts.cluster is not null')
-        clusterList = []
-        cwList = []
-        for x in range(1, num_clusters + 1):
-            temp_name = ""
-            for ind in order_centroids[x - 1, :3]:
-                temp_name = temp_name + ' ' + terms[ind]
-
-            c = Cluster(name=temp_name, clusterid=x, ispinned=False)
-            for ind in order_centroids[x - 1, :10]:
-                count = len(Post.objects.filter(cluster=c, stemmedbody__contains=terms[ind]))
-
-                cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
-                cwList.append(cw)
-            clusterList.append(c)
-
-        Cluster.objects.bulk_create(clusterList)
-        ClusterWord.objects.bulk_create(cwList)
-
-        ratio = 0.0
-        # Associate Post with Cluster
-        for i in range(1, data_count):
-            x = km.labels_[i] + 1
-            post_id = dataset.id_list[i]
-            p = Post.objects.get(postid=post_id)
-            p.cluster = clusterList[x - 1]
-
-            p.save()
-
-            complete_ratio = i / data_count
-            if complete_ratio > ratio:
-                print(str(complete_ratio) + " percent complete uploading")
-                ratio = ratio + 0.1
+        upload_clusters(dataset, data_count, km, order_centroids, terms, num_clusters)
 
     if IS_VISUALIZATION_ENABLED:
         reduced_data = PCA(n_components=2).fit_transform(vectorized_data.toarray())
@@ -307,6 +269,68 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         plt.yticks(())
         plt.show()
         print_cluster_centroids(kmeans, vectorizer, num_clusters)
+
+
+def upload_clusters(dataset, data_count, km, order_centroids, terms, num_clusters):
+        # Disassociate Post with old Clusters and remove old clusters from database
+        # for post in (Post.objects.get(postid=i) for i in dataset.id_list):
+        #     post.cluster = None
+        #     post.save()
+
+        print("In Upload Clusters")
+
+        # database connection to test using with because the objects.raw wasn't working
+        # conn = pymysql.connect(host='restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
+        # cur = conn.cursor()
+
+        clusterList = []
+        cwList = []
+        for x in range(1, num_clusters + 1):
+            temp_name = ""
+            for ind in order_centroids[x - 1, :3]:
+                temp_name = temp_name + ' ' + terms[ind]
+
+            c = Cluster(name=temp_name, clusterid=x, ispinned=False)
+            for ind in order_centroids[x - 1, :10]:
+                count = len(Post.objects.filter(cluster=c, stemmedbody__contains=terms[ind]))
+
+                cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
+                cwList.append(cw)
+            clusterList.append(c)
+
+        print("clearing data")
+
+        # # Clear data about to be updated
+        Cluster.objects.filter(ispinned=0).delete()
+        ClusterWord.objects.filter().delete()
+        Post.objects.raw('update posts set cluster=null where posts.cluster is not null')
+        # cur.execute("update posts set cluster=null where posts.cluster is not null")
+
+        # after clearing update the cluster list and cluster words
+        Cluster.objects.bulk_create(clusterList)
+        ClusterWord.objects.bulk_create(cwList)
+
+        ratio = 0.0
+        # Associate Post with Cluster
+        for j in range(0, num_clusters):
+            query = "UPDATE posts SET cluster = " + str(j+1) + " where"
+            for i in range(0, data_count):
+                x = km.labels_[i] + 1
+                post_id = dataset.id_list[i]
+                # p = Post.objects.get(postid=post_id)
+                # p.cluster = clusterList[x - 1]
+                #p.save()
+
+                if(i == 0):
+                    query += " postId = " + str(post_id)
+                else:
+                    query += " OR postId = " + str(post_id)
+
+            print("uploading cluster: " + str(j))
+            Post.objects.raw(query)
+            # cur.execute(query)
+
+        print("completed date upload!")
 
 
 def main():
