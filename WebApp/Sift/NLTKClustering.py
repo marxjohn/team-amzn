@@ -2,8 +2,14 @@ from __future__ import absolute_import
 # K-means clustering of seller forums posts
 
 import os
-with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Sift/stopwords.cfg')) as f:
-    REMOVE_LIST = set(f.read().split())
+try:
+    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Sift/stopwords.cfg')) as f:
+        REMOVE_LIST = set(f.read().split())
+except:
+    with open('/opt/sift-env/team-amzn/WebApp/Sift/stopwords.cfg') as f:
+        REMOVE_LIST = set(f.read().split())
+
+
 
 # K-means clustering of seller forums posts
 
@@ -15,7 +21,7 @@ IS_HASHING_VECTORIZER_USED = False
 IS_UPLOAD_ENABLED = True
 NUM_CLUSTERS = 6
 IS_NLTK_USED = False
-IS_VISUALIZATION_ENABLED = True
+IS_VISUALIZATION_ENABLED = False
 
 __author__ = 'cse498'
 
@@ -272,43 +278,25 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
 
 
 def upload_clusters(dataset, data_count, km, order_centroids, terms, num_clusters):
-        # Disassociate Post with old Clusters and remove old clusters from database
-        # for post in (Post.objects.get(postid=i) for i in dataset.id_list):
-        #     post.cluster = None
-        #     post.save()
-
-        print("In Upload Clusters")
+        t0 = time()
+        print("Uploading Clusters")
 
         clusterList = []
-        cwList = []
         for x in range(1, num_clusters + 1):
             temp_name = ""
             for ind in order_centroids[x - 1, :3]:
                 temp_name = temp_name + ' ' + terms[ind]
-
             c = Cluster(name=temp_name, clusterid=x, ispinned=False)
-            for ind in order_centroids[x - 1, :10]:
-                count = len(Post.objects.filter(cluster=c, stemmedbody__contains=terms[ind]))
-
-                cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
-                cwList.append(cw)
             clusterList.append(c)
 
-        print("clearing data")
-
-        # # Clear data about to be updated
+        print("Clearing Data")
+        # Clear data about to be updated
         Cluster.objects.filter(ispinned=0).delete()
         ClusterWord.objects.filter().delete()
 
-
-        # After clearing update the cluster list and cluster words
+        # After clearing bulk create the new cluster list
         Cluster.objects.bulk_create(clusterList)
-        ClusterWord.objects.bulk_create(cwList)
 
-        # Used to execute bulk updates
-        cursor = connection.cursor()
-
-        ratio = 0.0
         # Associate Post with Cluster
         for j in range(0, num_clusters):
             query = "UPDATE posts SET posts.cluster = " + str(j+1) + " where"
@@ -316,9 +304,6 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
             for i in range(0, data_count):
                 x = km.labels_[i] + 1
                 post_id = dataset.id_list[i]
-                # p = Post.objects.get(postid=post_id)
-                # p.cluster = clusterList[x - 1]
-                #p.save()
                 if x == j + 1:
                     if is_first:
                         query += " posts.postId = " + str(post_id)
@@ -326,13 +311,24 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
                     else:
                         query += " OR posts.postId = " + str(post_id)
 
-            print("uploading cluster: " + str(j))
-            # Post.objects.raw(query)
+            print("Uploading Cluster: " + str(j))
+            cursor = connection.cursor()
             cursor.execute(query)
+            cursor.close()
 
-        # Close
-        cursor.close()
-        print("completed date upload!")
+        print("Counting Cluster Words")
+        cwList = []
+        for x in range(1, num_clusters + 1):
+            c = Cluster.objects.get(clusterid=x)
+            for ind in order_centroids[x - 1, :10]:
+                count = len(Post.objects.filter(cluster=c, stemmedbody__contains=terms[ind]))
+
+                cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
+                cwList.append(cw)
+
+        ClusterWord.objects.bulk_create(cwList)
+
+        print("Completed date upload in " + str((time() - t0)) + " seconds.")
 
 
 def main():
@@ -345,7 +341,7 @@ def main():
 
     dataset = ClusterData(
 
-    Post.objects.filter(creationdate__range=("2014-01-01", "2014-02-01")))
+    Post.objects.filter(creationdate__range=("2013-01-01", "2014-01-01")))
 
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
