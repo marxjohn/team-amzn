@@ -37,7 +37,6 @@ if not settings.configured:
             'NAME': 'sellerforums',
             'OPTIONS': {
                 'autocommit': True,
-                "init_command": "SET foreign_key_checks = 0;"
             },
         }
         }
@@ -55,7 +54,8 @@ from nltk.corpus import stopwords
 import re
 import random
 import logging
-import bulk_update
+from django.db import connection
+
 
 from sklearn.cluster import KMeans
 
@@ -279,10 +279,6 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
 
         print("In Upload Clusters")
 
-        # database connection to test using with because the objects.raw wasn't working
-        # conn = pymysql.connect(host='restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
-        # cur = conn.cursor()
-
         clusterList = []
         cwList = []
         for x in range(1, num_clusters + 1):
@@ -303,33 +299,39 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
         # # Clear data about to be updated
         Cluster.objects.filter(ispinned=0).delete()
         ClusterWord.objects.filter().delete()
-        Post.objects.raw('update posts set cluster=null where posts.cluster is not null')
-        # cur.execute("update posts set cluster=null where posts.cluster is not null")
 
-        # after clearing update the cluster list and cluster words
+
+        # After clearing update the cluster list and cluster words
         Cluster.objects.bulk_create(clusterList)
         ClusterWord.objects.bulk_create(cwList)
+
+        # Used to execute bulk updates
+        cursor = connection.cursor()
 
         ratio = 0.0
         # Associate Post with Cluster
         for j in range(0, num_clusters):
-            query = "UPDATE posts SET cluster = " + str(j+1) + " where"
+            query = "UPDATE posts SET posts.cluster = " + str(j+1) + " where"
+            is_first = True
             for i in range(0, data_count):
                 x = km.labels_[i] + 1
                 post_id = dataset.id_list[i]
                 # p = Post.objects.get(postid=post_id)
                 # p.cluster = clusterList[x - 1]
                 #p.save()
-
-                if(i == 0):
-                    query += " postId = " + str(post_id)
-                else:
-                    query += " OR postId = " + str(post_id)
+                if x == j + 1:
+                    if is_first:
+                        query += " posts.postId = " + str(post_id)
+                        is_first = False
+                    else:
+                        query += " OR posts.postId = " + str(post_id)
 
             print("uploading cluster: " + str(j))
-            Post.objects.raw(query)
-            # cur.execute(query)
+            # Post.objects.raw(query)
+            cursor.execute(query)
 
+        # Close
+        cursor.close()
         print("completed date upload!")
 
 
