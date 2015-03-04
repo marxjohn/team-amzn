@@ -59,7 +59,8 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
             width: '100%'
         },
         fontSize: 14,
-        vAxis: {title: "Cluster Volume"}
+        vAxis: {title: "Cluster Volume"},
+        hAxis: {gridlines: {count: data.getNumberOfRows()/31}}
 
     };
 

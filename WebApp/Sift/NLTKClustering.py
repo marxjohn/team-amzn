@@ -363,7 +363,7 @@ def main():
 
     dataset = ClusterData(
 
-    Post.objects.filter(creationdate__range=("2000-01-01", "2016-01-01")))
+    Post.objects.filter(creationdate__range=("2013-01-01", "2016-01-01")))
 
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
