@@ -38,7 +38,7 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
     }
 
     //Calculate width of scrolling X-Axis based on number of date posts
-    var width = data.getNumberOfRows()*15;
+    var width = data.getNumberOfRows()*8;
 
     if(width < 700)
         width = "90%"
