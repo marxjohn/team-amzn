@@ -320,8 +320,8 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
                     else:
                         query += " OR posts.postId = " + str(post_id)
 
-                if count >= 5000:
-                    print("uploading part of cluster" + str(j))
+                if count >= 7500:
+                    print("uploading part of cluster " + str(j))
                     cursor = connection.cursor()
                     cursor.execute(query)
                     cursor.close()
@@ -335,7 +335,7 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
             cursor.close()
 
         print("Counting Cluster Words")
-        cwList = []
+        # cwList = []
         for x in range(1, num_clusters + 1):
             c = Cluster.objects.get(clusterid=x)
             cwL = []
@@ -344,9 +344,11 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
 
                 cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
                 cwL.append(cw)
-            cwList.append(sorted(cwL, key=attrgetter('count'), reverse=True))
 
-        ClusterWord.objects.bulk_create(cwList)
+            cwL = sorted(cwL, key=attrgetter('count'), reverse=True)
+            ClusterWord.objects.bulk_create(cwL)
+
+        # ClusterWord.objects.bulk_create(cwList)
 
         print("Completed date upload in " + str((time() - t0)) + " seconds.")
 

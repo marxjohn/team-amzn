@@ -81,8 +81,7 @@ function drawWordPieChart(array) {
             startup: true
           },
         fontName: "Lato",
-
-        title: 'Word Count'
+        title: 'Top Ten Word Distribution'
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
