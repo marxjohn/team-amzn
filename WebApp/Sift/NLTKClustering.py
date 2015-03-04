@@ -50,7 +50,11 @@ if not settings.configured:
 
 import matplotlib.pyplot as plt
 
-from models import Post, Cluster, ClusterWord
+try:
+    from models import Post, Cluster, ClusterWord
+except:
+    from Sift.models import Post, Cluster, ClusterWord
+
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
