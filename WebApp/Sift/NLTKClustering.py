@@ -64,6 +64,7 @@ from nltk.corpus import stopwords
 import re
 import random
 import logging
+from operator import attrgetter
 from django.db import connection
 
 
@@ -308,17 +309,18 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
             is_first = True
             count = 0
             for i in range(0, data_count):
-                count += 1
                 x = km.labels_[i] + 1
                 post_id = dataset.id_list[i]
                 if x == j + 1:
+                    # increment count if post is part of query
+                    count += 1
                     if is_first:
                         query += " posts.postId = " + str(post_id)
                         is_first = False
                     else:
                         query += " OR posts.postId = " + str(post_id)
 
-                if count >= 7500:
+                if count >= 5000:
                     print("uploading part of cluster" + str(j))
                     cursor = connection.cursor()
                     cursor.execute(query)
@@ -336,11 +338,13 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
         cwList = []
         for x in range(1, num_clusters + 1):
             c = Cluster.objects.get(clusterid=x)
+            cwL = []
             for ind in order_centroids[x - 1, :10]:
                 count = len(Post.objects.filter(cluster=c, stemmedbody__contains=terms[ind]))
 
                 cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
-                cwList.append(cw)
+                cwL.append(cw)
+            cwList.append(sorted(cwL, key=attrgetter('count'), reverse=True))
 
         ClusterWord.objects.bulk_create(cwList)
 
@@ -357,7 +361,7 @@ def main():
 
     dataset = ClusterData(
 
-    Post.objects.filter(creationdate__range=("2000-01-01", "2016-01-01")))
+    Post.objects.filter(creationdate__range=("2015-01-01", "2015-01-02")))
 
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
