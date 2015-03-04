@@ -302,10 +302,13 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
         Cluster.objects.bulk_create(clusterList)
 
         # Associate Post with Cluster
+        # do for every 5k
         for j in range(0, num_clusters):
             query = "UPDATE posts SET posts.cluster = " + str(j+1) + " where"
             is_first = True
+            count = 0
             for i in range(0, data_count):
+                count += 1
                 x = km.labels_[i] + 1
                 post_id = dataset.id_list[i]
                 if x == j + 1:
@@ -314,6 +317,15 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
                         is_first = False
                     else:
                         query += " OR posts.postId = " + str(post_id)
+
+                if count >= 7500:
+                    print("uploading part of cluster" + str(j))
+                    cursor = connection.cursor()
+                    cursor.execute(query)
+                    cursor.close()
+                    query = "UPDATE posts SET posts.cluster = " + str(j+1) + " where"
+                    is_first = True
+                    count = 0
 
             print("Uploading Cluster: " + str(j))
             cursor = connection.cursor()
@@ -345,7 +357,7 @@ def main():
 
     dataset = ClusterData(
 
-    Post.objects.filter(creationdate__range=("2013-01-01", "2014-01-01")))
+    Post.objects.filter(creationdate__range=("2000-01-01", "2016-01-01")))
 
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)

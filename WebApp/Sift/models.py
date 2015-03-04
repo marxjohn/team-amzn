@@ -20,7 +20,7 @@ class Cluster(models.Model):
     clusterid = models.IntegerField(db_column='clusterId', primary_key=True)  # Field name made lowercase.
     name = models.CharField(unique=True, max_length=32)
     ispinned = models.IntegerField(db_column='isPinned')  # Field name made lowercase.
-    notificationC = models.ForeignKey(Notification, db_column='notification', blank=True, null=True)
+    # notificationC = models.ForeignKey(Notification, db_column='notification', blank=True, null=True)
 
     class Meta:
         managed = False
