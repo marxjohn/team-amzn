@@ -56,7 +56,8 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
         width: width,
         chartArea: {
             left: 70,
-            width: '100%'
+            width: '100%',
+            height: '90%'
         },
         fontSize: 14,
         vAxis: {title: "Cluster Volume"},
@@ -82,7 +83,7 @@ function drawWordPieChart(array) {
             startup: true
           },
         fontName: "Lato",
-        title: 'Top Ten Word Distribution'
+        title: 'Top Ten Words'
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
