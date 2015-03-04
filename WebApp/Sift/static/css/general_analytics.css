@@ -106,7 +106,14 @@ body {
 }
 }
 
-
+@media (min-width: 992px) {
+    .col-md-offset-2 {
+    margin-left: 18.666667%;
+    }
+    .col-md-10 {
+    width: 81.333333%;
+    }
+}
 
 .nav-sidebar > li > a {
     padding: 3px 20px;
@@ -176,20 +183,27 @@ body {
     }
 }
 
-/*specific topic page*/
 .sliderClass {
-    width: 800px;
-    margin: 0 auto;
+    width: 600px;
+    position:relative;
 }
 .sliderClass .google-visualization-controls-slider-horizontal {
-    width:600px;
+    width:400px;
+}
+#main_slider > div > div > div > div.google-visualization-controls-slider-handle {
+    width:100%;
 }
 #hidden_slider {
     display:none;
 }
-
+#table_chart {
+    width:100%;
+}
 .google-visualization-table-td,.google-visualization-table-th {
     font-family: "Lato";
+}
+#table_chart > div > div.top-level {
+    width:100%;
 }
 .google-visualization-table-th {
     background: #222222 !important;
@@ -278,4 +292,20 @@ border: 1px solid #CF7F30 !important;
 }
 #searchTable {
     margin-bottom: 10px;
+}
+#piechart_3d {
+        width:40%;
+        height: 300px; margin-top:-60px; z-index:-1;
+    float:right;
+}
+#line_chart {
+    width:70%;
+    margin-left:-5%;
+
+}
+#general_line_chart {
+    width:93%;
+}
+.spikeGraph {
+    width:55%;
 }

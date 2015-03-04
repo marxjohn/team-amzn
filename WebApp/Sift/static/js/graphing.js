@@ -15,13 +15,13 @@ function drawGeneralPieChart(array) {
         fontName: "Lato"
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+    var chart = new google.visualization.PieChart(document.getElementById('general_piechart_3d'));
     chart.draw(data, options);
 }
 
 function drawGeneralLineChart(array, lineDates, clusterNames) {
     var data = new google.visualization.DataTable();
-
+    console.log(array);
     data.addColumn('date', 'Day');
 
     for(i=0; i<clusterNames.length; i++) {
@@ -40,6 +40,9 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
     //Calculate width of scrolling X-Axis based on number of date posts
     var width = data.getNumberOfRows()*15;
 
+    if(width < 700)
+        width = "90%"
+
     var options = {
         animation: {
             duration: 1000,
@@ -54,13 +57,18 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
         chartArea: {
             left: 0,
             width: '100%'
-        }
+        },
+        fontSize: 14,
+
     };
 
-    var chart = new google.visualization.LineChart(document.getElementById('linechart'));
+    var chart = new google.visualization.LineChart(document.getElementById('general_line_chart'));
     chart.draw(data, options);
 }
-
+/**
+ * draw a word count pie chart on details page
+ * @param array
+ */
 function drawWordPieChart(array) {
     var data = google.visualization.arrayToDataTable(array);
 
@@ -72,6 +80,7 @@ function drawWordPieChart(array) {
             startup: true
           },
         fontName: "Lato",
+
         title: 'Word Count'
     };
 
@@ -112,7 +121,8 @@ function draw_dashboard1(data) {
         'options': {
             'filterColumnLabel': 'Date',
             'ui': {
-                'cssClass': 'sliderClass'
+                'cssClass': 'sliderClass',
+                'label':''
             }
         }
     });
@@ -120,6 +130,9 @@ function draw_dashboard1(data) {
     var myLine = new google.visualization.ChartWrapper({
         'chartType': 'ColumnChart',
         'containerId': 'line_chart',
+        'ui': {
+            'cssClass':'spikeGraph'
+        },
         view: {
             columns: [0, 1]
         },
