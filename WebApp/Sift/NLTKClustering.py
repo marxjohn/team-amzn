@@ -59,6 +59,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.decomposition import TruncatedSVD
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import Normalizer
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -218,7 +220,8 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         "Extracting features from the training dataset using a sparse vectorizer")
     t0 = time()
     vectorized_data, vectorizer = vectorize_data(dataset, max_features)
-    lsa = TruncatedSVD(n_components = 100)
+    svd = TruncatedSVD(n_components = 100)
+    lsa = make_pipeline(svd, Normalizer(copy=False))
     vectorized_data = lsa.fit_transform(vectorized_data)
     print("done in %fs" % (time() - t0))
     print("n_samples: %d, n_features: %d" % vectorized_data.shape)
