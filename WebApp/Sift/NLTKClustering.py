@@ -18,10 +18,10 @@ MAX_FEATURES = 1000
 IS_MINI_USED = True
 IS_IDF_USED = True
 IS_HASHING_VECTORIZER_USED = False
-IS_UPLOAD_ENABLED = True
+IS_UPLOAD_ENABLED = False
 NUM_CLUSTERS = 6
 IS_NLTK_USED = False
-IS_VISUALIZATION_ENABLED = False
+IS_VISUALIZATION_ENABLED = True
 
 __author__ = 'cse498'
 
@@ -58,6 +58,7 @@ except:
 from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.decomposition import TruncatedSVD
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -217,6 +218,8 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         "Extracting features from the training dataset using a sparse vectorizer")
     t0 = time()
     vectorized_data, vectorizer = vectorize_data(dataset, max_features)
+    lsa = TruncatedSVD(n_components = 100)
+    vectorized_data = lsa.fit_transform(vectorized_data)
     print("done in %fs" % (time() - t0))
     print("n_samples: %d, n_features: %d" % vectorized_data.shape)
     print()
@@ -238,7 +241,7 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         upload_clusters(dataset, data_count, km, order_centroids, terms, num_clusters)
 
     if IS_VISUALIZATION_ENABLED:
-        reduced_data = PCA(n_components=2).fit_transform(vectorized_data.toarray())
+        reduced_data = PCA(n_components=2).fit_transform(vectorized_data)#.toarray())
         kmeans = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=5,
                              init_size=3000, batch_size=1000, verbose=False)
         kmeans.fit(reduced_data)
@@ -363,7 +366,7 @@ def main():
 
     dataset = ClusterData(
 
-    Post.objects.filter(creationdate__range=("2013-01-01", "2015-01-01")))
+    Post.objects.filter(creationdate__range=("2014-01-01", "2014-03-01")))
 
 
     cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
