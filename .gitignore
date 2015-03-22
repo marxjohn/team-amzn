@@ -39,3 +39,4 @@ bower.json
 
 # python cache files
 *.pyc
+.DS_Store
