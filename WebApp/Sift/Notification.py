@@ -33,7 +33,7 @@ if not settings.configured:
         }
     )
 
-from models import *
+from Sift.models import *
 
 connection = boto.ses.connect_to_region( 'us-west-2',
                                          aws_access_key_id = 'AKIAJPAOUUTITYRIGX2A',
@@ -166,7 +166,8 @@ class SESMessage( object ):
                   print ( 'Connection not Found.' )
 
 def main():
-    c = Notification(email="pritch93@gmail.com")
+    d = SESMessage()
+    d.verify_email("johnnyclarence@hotmail.com")
     c.save()
     temp = Notification.objects.all()
     print (temp)
