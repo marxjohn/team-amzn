@@ -96,7 +96,9 @@ def settings(request):
     pinnedClusters = Cluster.objects.filter(ispinned=1)
 
     if request.method == 'POST':
-        Sift.Notification.main()
+
+        c = request._get_post
+        Sift.Notification.main(request.POST['ADD_EMAIL'])
 
     context = {'pinnedClusters': pinnedClusters,
                'trendingClusters': trendingClusters, "headline": headline}

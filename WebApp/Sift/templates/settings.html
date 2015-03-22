@@ -6,7 +6,7 @@
 <form action= '{% url 'general:settings' %}' method="POST">
 {% csrf_token %}
     <br><h4>Add verified email address</h4></h4>
-    <input type="text" name="ADD_EMAIL" value="">
+    <input type="text" name="ADD_EMAIL">
     <br><br>
     <input type="submit" value="verify">
     <div style="font-size: 10pt;">

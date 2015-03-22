@@ -44,16 +44,26 @@ class SESMessage( object ):
       def __init__( __self, source, to_addresses, subject, **kw):
             __self.ses = connection
 
-            __self._source = source
-            __self._to_addresses = to_addresses
+            __self._source = ''
+            __self._to_addresses = ''
             __self._cc_addresses = []
             __self._bcc_addresses = []
 
-            __self.subject = subject
+            __self.subject = ''
             __self.text = None
             __self.html = None
             __self.attachments = []
             __self.email_list = []
+
+      def set_sourse ( __self, sourse ):
+          __self._source = sourse
+
+      def set_to_address( __self, to_address):
+          __self._to_address = to_address
+
+      def set_subject( __self, subject ):
+          __self.subject = subject
+
 
       def add_bcc_addresses( __self, bcc_address ):
             if bcc_address in __self._bcc_addresses:
@@ -165,12 +175,10 @@ class SESMessage( object ):
             except:
                   print ( 'Connection not Found.' )
 
-def main():
-    d = SESMessage()
-    d.verify_email("johnnyclarence@hotmail.com")
-    c.save()
-    temp = Notification.objects.all()
-    print (temp)
+def main(email_address):
+
+    d = SESMessage(email_address, email_address, "test")
+    d.verify_email(email_address)
 
 if __name__ == "__main__":
     main()

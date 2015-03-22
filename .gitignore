@@ -12,7 +12,7 @@ rerun.txt
 pickle-email-*.html
 
 .idea/
-
+.idea/workspace.xml
 WebApp/.idea/
 WebApp/pycache/
 WebApp/Capstone/__pycache__/
