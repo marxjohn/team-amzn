@@ -37,15 +37,46 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'Sift',
+    # 'pylibmc',
 )
 
+# Caching
+def get_cache():
+    try:
+        return {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+                # 'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
+                'LOCATION': '127.0.0.1:11211',
+                'TIMEOUT': 5
+            }
+        }
+    except ImportError:
+        return {
+            'default': {
+                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
+            }
+        }
+
+CACHES = get_cache()
+
+# CELERY SETTINGS
+BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CACHE_MIDDLEWARE_SECONDS = 5
+
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 )
 
 ROOT_URLCONF = 'Capstone.urls'
@@ -64,14 +95,13 @@ except ImportError:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': 'sellerforums.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
+        'HOST': 'restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
         'PORT': '3306',
         'USER': 'teamamzn',
         'PASSWORD': 'TeamAmazon2015!',
         'NAME': 'sellerforums',
         'OPTIONS': {
-            'autocommit' : True,
-            "init_command": "SET foreign_key_checks = 0;"
+            'autocommit': True,
         },
     }
 }
@@ -99,3 +129,4 @@ STATIC_URL = '/static/'
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'Sift/templates'),
 )
+

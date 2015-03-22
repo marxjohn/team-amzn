@@ -1,29 +1,72 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block head %}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+    <script>
+
+    $(document).ready(function(){
+        $("#clusteringNav").hide();
+    });
+
+    </script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
 {% block body_block %}
-<h1>Settings</h1>
-<form action= '{% url 'general:run_clustering' %}' method="POST">
-{% csrf_token %}
-    <br><h4>Date Range:</h4>
-    <input type="date" name="startDate" value="Start Date">
-    <input type="date" name="endDate" value="End Date">
-{#    number of clusters#}
-    <br><h4>Number of Clusters:</h4>
-    <input type="number" name="clusters" value="Number of Clusters">
-{#    //k means vs mini batch#}
-    <br><h4>Clustering Type:</h4>
-    <input type="radio" name="type" value="minibatch" checked>Mini-Batch
-    <br><input type="radio" name="type" value="kmeans">K-Means
-{#    //max features#}
-    <br><h4>Max Number of Features:</h4>
-    <input type="number" name="features" value="Max Number of Features">
+<h1>Clustering Configuration</h1>
+<div id="formClustering">
+<form action="/clustering/" method="POST">
+    {% csrf_token %}
+
+    <br><p>Date Range:</p>
+    {{ form.start_date }}
+    {{ form.end_date }}
+    <br /> All Posts
+    {{ form.all_posts }}
+    <br><br><p>Number of Clusters:</p>
+    {{ form.num_clusters }}
+    <br><br><p>Clustering Type:</p>
+    {{ form.cluster_type }}
+    <br><br><p>Max Number of Features</p>
+    {{ form.max_features }}
     <br><br>
-    <input type="submit" value="Run">
+
+    <br>
+    <input type="submit" value="Run" />
 </form>
+    </div>
+<div id="aboutClustering">
 
-    <br><h1>Output</h1>
+    <h1>Info</h1>
+    <p>This site uses <a href='http://en.wikipedia.org/wiki/Tf%E2%80%93idf'>term frequency-inverse document frequency (tf-idf)</a> vectorization of posts on the Amazon Seller Forums to perform fast <a href='http://en.wikipedia.org/wiki/K-means_clustering'>K-means clustering</a> using the <a href='http://www.eecs.tufts.edu/~dsculley/papers/fastkmeans.pdf'>mini-batch algorithm</a>. 
+    <ul>
+      <li><b>Date Range: </b>Generate clusters on posts made in a certain date range, or cluster all posts</li>
+      <li><b>Number of Clusters: </b>Adjust the number of clusters the algorithm attempts to fit posts to</li>
+      <li><b>Clustering Type: </b>Select whether standard K-means or mini-batch (faster) clustering is used</li>
+      <li><b>Max Number of Features: </b>The max features attributes indicates how many unique words should be considered when clustering; additional (lower-frequency) words will be ignored by the clustering algorithm.</li>
+    </ul>
+    </p>
 
+</div>
+<script>
+$(document).ready(function() {
+    $('.datepicker').datepicker();
+    $('#id_all_posts').change(function() {
+    if($(this).is(':checked')) { 
+        $('#id_start_date').prop('disabled', true);
+        $('#id_end_date').prop('disabled', true);
+        start = $('#id_start_date').val();
+        end = $('#id_end_date').val();
+        $('#id_start_date').val("");
+        $('#id_end_date').val("");
+    } else {
+        $('#id_start_date').prop('disabled', false);
+        $('#id_end_date').prop('disabled', false);
+        $('#id_start_date').val(start);
+        $('#id_end_date').val(end);
+    }
+})
+});
+</script>
 {% endblock %}

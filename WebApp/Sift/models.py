@@ -15,11 +15,12 @@ class Notification(models.Model):
 
 
 
+
 class Cluster(models.Model):
     clusterid = models.IntegerField(db_column='clusterId', primary_key=True)  # Field name made lowercase.
     name = models.CharField(unique=True, max_length=32)
     ispinned = models.IntegerField(db_column='isPinned')  # Field name made lowercase.
-    notificationC = models.ForeignKey(Notification, db_column='notification', blank=True, null=True)
+    # notificationC = models.ForeignKey(Notification, db_column='notification', blank=True, null=True)
 
     class Meta:
         managed = False
@@ -28,6 +29,18 @@ class Cluster(models.Model):
 
     def __str__(self):
         return '\nId: ' + self.clusterid.__str__() + '\nName: ' + self.name
+
+
+class ClusterWord(models.Model):
+    id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
+    word = models.CharField(max_length=45)
+    clusterid = models.ForeignKey(Cluster, db_column='clusterId', blank=True, null=True)  # Field name made lowercase.
+    count = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'ClusterWords'
+        app_label = 'cw'
 
 
 class Post(models.Model):
@@ -48,7 +61,7 @@ class Post(models.Model):
     creationdate = models.DateField(db_column='creationDate')  # Field name made lowercase.
     modificationdate = models.DateField(db_column='modificationDate')  # Field name made lowercase.
     locale = models.CharField(max_length=64, blank=True)
-    cluster = models.ForeignKey(Cluster, db_column='cluster', blank=True, null=True)
+    cluster = models.ForeignKey(Cluster, db_column='cluster', blank=True, null=True, on_delete=models.SET_NULL)
     stemmedbody = models.TextField(db_column='stemmedBody', blank=True)  # Field name made lowercase.
 
 

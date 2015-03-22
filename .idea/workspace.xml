@@ -2,9 +2,33 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2a0bc196-f60b-4623-9b0c-240d1c6196b1" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/WebApp/TEST" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/WebApp/Sift/static/img/favicon.ico" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/WebApp/Sift/_celery.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/WebApp/Sift/templates/cluster_running.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/WebApp/Sift/forms.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/WebApp/Sift/gctest.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/WebApp/Sift/stopwords.cfg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/WebApp/Sift/tasks.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/scopes/scope_settings.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/WebApp/Sift/ScikitClustering.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/NLTKClustering.py" afterPath="$PROJECT_DIR$/WebApp/Sift/NLTKClustering.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/Notification.py" afterPath="$PROJECT_DIR$/WebApp/Sift/Notification.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/__init__.py" afterPath="$PROJECT_DIR$/WebApp/Sift/__init__.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/templates/base.html" afterPath="$PROJECT_DIR$/WebApp/Sift/templates/base.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/static/css/bootstrap.css" afterPath="$PROJECT_DIR$/WebApp/Sift/static/css/bootstrap.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/static/css/cluster.css" afterPath="$PROJECT_DIR$/WebApp/Sift/static/css/cluster.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/templates/clustering.html" afterPath="$PROJECT_DIR$/WebApp/Sift/templates/clustering.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/templates/details.html" afterPath="$PROJECT_DIR$/WebApp/Sift/templates/details.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/static/css/general_analytics.css" afterPath="$PROJECT_DIR$/WebApp/Sift/static/css/general_analytics.css" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/templates/general_analytics.html" afterPath="$PROJECT_DIR$/WebApp/Sift/templates/general_analytics.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/static/js/graphing.js" afterPath="$PROJECT_DIR$/WebApp/Sift/static/js/graphing.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/models.py" afterPath="$PROJECT_DIR$/WebApp/Sift/models.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/templates/settings.html" afterPath="$PROJECT_DIR$/WebApp/Sift/templates/settings.html" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Capstone/settings.py" afterPath="$PROJECT_DIR$/WebApp/Capstone/settings.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/templates/sidebar.html" afterPath="$PROJECT_DIR$/WebApp/Sift/templates/sidebar.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/team-amzn.iml" afterPath="$PROJECT_DIR$/.idea/team-amzn.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/urls.py" afterPath="$PROJECT_DIR$/WebApp/Sift/urls.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/WebApp/Sift/views.py" afterPath="$PROJECT_DIR$/WebApp/Sift/views.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -45,8 +69,8 @@
       <file leaf-file-name="models.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebApp/Sift/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="1020">
-              <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="1215">
+              <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
               <folding />
             </state>
           </provider>
@@ -55,8 +79,8 @@
       <file leaf-file-name="urls.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebApp/Sift/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="285">
-              <caret line="15" column="1" selection-start-line="15" selection-start-column="1" selection-end-line="15" selection-end-column="1" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="300">
+              <caret line="16" column="1" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -65,8 +89,8 @@
       <file leaf-file-name="Notification.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/WebApp/Sift/Notification.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.39130434" vertical-offset="1800" max-vertical-offset="2865">
-              <caret line="135" column="29" selection-start-line="135" selection-start-column="29" selection-end-line="137" selection-end-column="67" />
+            <state vertical-scroll-proportion="0.1826087" vertical-offset="1035" max-vertical-offset="2865">
+              <caret line="76" column="29" selection-start-line="76" selection-start-column="29" selection-end-line="90" selection-end-column="29" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -77,8 +101,8 @@
       <file leaf-file-name="views.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebApp/Sift/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="910" max-vertical-offset="1485">
-              <caret line="75" column="31" selection-start-line="75" selection-start-column="31" selection-end-line="75" selection-end-column="31" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2055">
+              <caret line="96" column="0" selection-start-line="96" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
               <folding>
                 <element signature="e#0#54#0" expanded="true" />
               </folding>
@@ -89,9 +113,13 @@
       <file leaf-file-name="settings.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebApp/Sift/templates/settings.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.875" vertical-offset="0" max-vertical-offset="765">
-              <caret line="11" column="34" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
-              <folding />
+            <state vertical-scroll-proportion="-18.125" vertical-offset="0" max-vertical-offset="750">
+              <caret line="29" column="8" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="8" />
+              <folding>
+                <element signature="e#343#367#0#HTML" expanded="true" />
+                <element signature="e#509#561#0#HTML" expanded="true" />
+                <element signature="e#1208#1260#0#HTML" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -99,8 +127,8 @@
       <file leaf-file-name="general_analytics.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebApp/Sift/templates/general_analytics.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="480">
-              <caret line="10" column="8" selection-start-line="10" selection-start-column="8" selection-end-line="10" selection-end-column="8" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="660">
+              <caret line="20" column="8" selection-start-line="20" selection-start-column="8" selection-end-line="20" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -109,9 +137,17 @@
       <file leaf-file-name="general_analytics.css" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebApp/Sift/static/css/general_analytics.css">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="2171" max-vertical-offset="2700">
-              <caret line="164" column="23" selection-start-line="164" selection-start-column="23" selection-end-line="164" selection-end-column="23" />
-              <folding />
+            <state vertical-scroll-proportion="0.0" vertical-offset="2516" max-vertical-offset="4755">
+              <caret line="187" column="22" selection-start-line="187" selection-start-column="22" selection-end-line="187" selection-end-column="22" />
+              <folding>
+                <marker date="1427052295000" expanded="true" signature="181:215" placeholder="{...}" />
+                <marker date="1427052295000" expanded="true" signature="1233:1634" placeholder="{...}" />
+                <marker date="1427052295000" expanded="true" signature="2295:2358" placeholder="{...}" />
+                <marker date="1427052295000" expanded="true" signature="2483:2559" placeholder="{...}" />
+                <marker date="1427052295000" expanded="true" signature="2821:2851" placeholder="{...}" />
+                <marker date="1427052295000" expanded="true" signature="3024:5991" placeholder="{...}" />
+                <marker date="1427052295000" expanded="true" signature="6046:6061" placeholder="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -119,8 +155,8 @@
       <file leaf-file-name="base.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebApp/Sift/templates/base.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="710" max-vertical-offset="1215">
-              <caret line="22" column="14" selection-start-line="22" selection-start-column="14" selection-end-line="22" selection-end-column="14" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="725" max-vertical-offset="1245">
+              <caret line="23" column="14" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -129,8 +165,8 @@
       <file leaf-file-name="details.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/WebApp/Sift/templates/details.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="330" max-vertical-offset="450">
-              <caret line="22" column="23" selection-start-line="22" selection-start-column="23" selection-end-line="22" selection-end-column="23" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="780" max-vertical-offset="915">
+              <caret line="52" column="23" selection-start-line="52" selection-start-column="23" selection-end-line="52" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -176,8 +212,8 @@
         <option value="$PROJECT_DIR$/WebApp/_MainLine/Sift/models.py" />
         <option value="$PROJECT_DIR$/WebApp/_MainLine/Sift/views.py" />
         <option value="$PROJECT_DIR$/WebApp/Sift/Notification_ses.py" />
-        <option value="$PROJECT_DIR$/WebApp/Sift/templates/settings.html" />
         <option value="$PROJECT_DIR$/WebApp/Sift/views.py" />
+        <option value="$PROJECT_DIR$/WebApp/Sift/templates/settings.html" />
         <option value="$PROJECT_DIR$/WebApp/Sift/Notification.py" />
       </list>
     </option>
@@ -237,7 +273,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -356,6 +391,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1037,13 +1073,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/WebApp/Sift/ScikitClustering.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-2.6079545" vertical-offset="1902" max-vertical-offset="2430">
-          <caret line="35" column="51" selection-start-line="35" selection-start-column="51" selection-end-line="35" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/WebApp/Capstone/urls.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.19886364" vertical-offset="0" max-vertical-offset="528">
@@ -1123,24 +1152,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/WebApp/Sift/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1020">
-          <caret line="4" column="18" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="75" max-vertical-offset="1215">
+          <caret line="5" column="18" selection-start-line="5" selection-start-column="18" selection-end-line="5" selection-end-column="18" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/WebApp/Sift/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="285">
-          <caret line="15" column="1" selection-start-line="15" selection-start-column="1" selection-end-line="15" selection-end-column="1" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="210" max-vertical-offset="300">
+          <caret line="16" column="1" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/WebApp/Sift/templates/general_analytics.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="480">
-          <caret line="10" column="8" selection-start-line="10" selection-start-column="8" selection-end-line="10" selection-end-column="8" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="300" max-vertical-offset="660">
+          <caret line="20" column="8" selection-start-line="20" selection-start-column="8" selection-end-line="20" selection-end-column="8" />
           <folding />
         </state>
       </provider>
@@ -1161,50 +1190,62 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/WebApp/Sift/static/css/general_analytics.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2171" max-vertical-offset="2700">
-          <caret line="164" column="23" selection-start-line="164" selection-start-column="23" selection-end-line="164" selection-end-column="23" />
-          <folding />
+        <state vertical-scroll-proportion="0.0" vertical-offset="2516" max-vertical-offset="4755">
+          <caret line="187" column="22" selection-start-line="187" selection-start-column="22" selection-end-line="187" selection-end-column="22" />
+          <folding>
+            <marker date="1427052295000" expanded="true" signature="181:215" placeholder="{...}" />
+            <marker date="1427052295000" expanded="true" signature="1233:1634" placeholder="{...}" />
+            <marker date="1427052295000" expanded="true" signature="2295:2358" placeholder="{...}" />
+            <marker date="1427052295000" expanded="true" signature="2483:2559" placeholder="{...}" />
+            <marker date="1427052295000" expanded="true" signature="2821:2851" placeholder="{...}" />
+            <marker date="1427052295000" expanded="true" signature="3024:5991" placeholder="{...}" />
+            <marker date="1427052295000" expanded="true" signature="6046:6061" placeholder="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/WebApp/Sift/templates/base.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="710" max-vertical-offset="1215">
-          <caret line="22" column="14" selection-start-line="22" selection-start-column="14" selection-end-line="22" selection-end-column="14" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="725" max-vertical-offset="1245">
+          <caret line="23" column="14" selection-start-line="23" selection-start-column="14" selection-end-line="23" selection-end-column="14" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/WebApp/Sift/templates/details.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="330" max-vertical-offset="450">
-          <caret line="22" column="23" selection-start-line="22" selection-start-column="23" selection-end-line="22" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/WebApp/Sift/templates/settings.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.875" vertical-offset="0" max-vertical-offset="765">
-          <caret line="11" column="34" selection-start-line="11" selection-start-column="34" selection-end-line="11" selection-end-column="34" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="780" max-vertical-offset="915">
+          <caret line="52" column="23" selection-start-line="52" selection-start-column="23" selection-end-line="52" selection-end-column="23" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/WebApp/Sift/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="910" max-vertical-offset="1485">
-          <caret line="75" column="31" selection-start-line="75" selection-start-column="31" selection-end-line="75" selection-end-column="31" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2055">
+          <caret line="96" column="0" selection-start-line="96" selection-start-column="0" selection-end-line="96" selection-end-column="0" />
           <folding>
             <element signature="e#0#54#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/WebApp/Sift/templates/settings.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-18.125" vertical-offset="0" max-vertical-offset="750">
+          <caret line="29" column="8" selection-start-line="29" selection-start-column="8" selection-end-line="29" selection-end-column="8" />
+          <folding>
+            <element signature="e#343#367#0#HTML" expanded="true" />
+            <element signature="e#509#561#0#HTML" expanded="true" />
+            <element signature="e#1208#1260#0#HTML" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/WebApp/Sift/Notification.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.39130434" vertical-offset="1800" max-vertical-offset="2865">
-          <caret line="135" column="29" selection-start-line="135" selection-start-column="29" selection-end-line="137" selection-end-column="67" />
+        <state vertical-scroll-proportion="0.1826087" vertical-offset="1035" max-vertical-offset="2865">
+          <caret line="76" column="29" selection-start-line="76" selection-start-column="29" selection-end-line="90" selection-end-column="29" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
