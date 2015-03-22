@@ -12,8 +12,6 @@ except:
 
 
 # K-means clustering of seller forums posts
-
-
 MAX_FEATURES = 1000
 IS_MINI_USED = True
 IS_IDF_USED = True
@@ -23,7 +21,6 @@ NUM_CLUSTERS = 6
 IS_NLTK_USED = False
 IS_VISUALIZATION_ENABLED = True
 
-__author__ = 'cse498'
 
 try:
     import pymysql
@@ -55,7 +52,7 @@ try:
 except:
     from Sift.models import Post, Cluster, ClusterWord
 
-from sklearn.feature_extraction.text import TfidfVectorizer, HashingVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.decomposition import TruncatedSVD
@@ -80,7 +77,6 @@ from time import time
 import numpy as np
 import django
 
-from django.core.cache import cache
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 django.setup()
 
