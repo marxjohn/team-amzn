@@ -8,6 +8,7 @@ from django.core.cache import cache
 
 import time
 import Sift.NLTKClustering
+import Sift.Notification
 import Sift.tasks as tasks
 import Sift.forms
 
@@ -93,6 +94,11 @@ def settings(request):
     headline = "Settings"
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
+
+    if request.method == 'POST':
+
+        c = request._get_post
+        Sift.Notification.main(request.POST['ADD_EMAIL'])
 
     context = {'pinnedClusters': pinnedClusters,
                'trendingClusters': trendingClusters, "headline": headline}
