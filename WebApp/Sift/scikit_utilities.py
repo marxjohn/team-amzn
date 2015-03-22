@@ -110,7 +110,7 @@ def get_cluster_data(start_date, end_date):
     return data_set
 
 
-def associate_post_with_cluster(data_set, num_clusters):
+def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
     for j in range(0, num_clusters):
         query = "UPDATE posts SET posts.cluster = " + str(j+1) + " where"
         is_first = True
@@ -140,4 +140,19 @@ def associate_post_with_cluster(data_set, num_clusters):
         cursor = connection.cursor()
         cursor.execute(query)
         cursor.close()
+
+
+    print("Counting Cluster Words")
+    # cwList = []
+    for x in range(1, num_clusters + 1):
+        c = Cluster.objects.get(clusterid=x)
+
+        for cw in ClusterWord.objects.all():
+            count = len(Post.objects.filter(cluster=c, stemmedbody__contains=cw.word,
+                                            creationdate__range=(start_date, end_date)))
+
+            cw.count = count
+            cw.save()
+
+
 
