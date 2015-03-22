@@ -6,6 +6,8 @@ from lxml import html
 from bs4 import BeautifulSoup
 from django.core.cache import cache
 
+import os
+
 import time
 import Sift.NLTKClustering
 import Sift.Notification
@@ -121,9 +123,15 @@ def clustering(request):
                                                          is_mini_batched)
 
     form = Sift.forms.ClusterForm()
-
     headline = "Clustering"
-    context = {'headline': headline, 'form': form}
+    try:
+        with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Sift/stopwords.cfg')) as f:
+            stopwords = set(f.read().split())
+    except:
+        with open('/opt/sift-env/team-amzn/WebApp/Sift/stopwords.cfg') as f:
+            stopwords = set(f.read().split())
+
+    context = {'headline': headline, 'form': form, 'stopwords': stopwords}
     return render(request, 'clustering.html', context)
 
 

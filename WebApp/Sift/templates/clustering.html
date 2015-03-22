@@ -11,6 +11,7 @@
     });
 
     </script>
+    <script type="text/javascript" src="{% static 'js/clustering.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
 {% block body_block %}
@@ -30,11 +31,16 @@
     {{ form.cluster_type }}
     <br><br><p>Max Number of Features</p>
     {{ form.max_features }}
+
+{#    {{ stopwordsform }}#}
     <br><br>
 
     <br>
     <input type="submit" value="Run" />
 </form>
+<br><br><p>Stop Words</p>
+    <div id="stop_words"></div>
+    <button onclick="deleteWords()">Delete</button>
     </div>
 <div id="aboutClustering">
 
@@ -50,6 +56,12 @@
 
 </div>
 <script>
+
+String.prototype.replaceWith = function(f, t) {
+    var regExp = new RegExp(f, "g");
+    return this.replace(regExp, t);
+};
+
 $(document).ready(function() {
     $('.datepicker').datepicker();
     $('#id_all_posts').change(function() {
@@ -66,7 +78,13 @@ $(document).ready(function() {
         $('#id_start_date').val(start);
         $('#id_end_date').val(end);
     }
-})
+    });
+    //Stop Words List
+    {% autoescape off %}
+    var html = getStopWords("{{ stopwords }}");
+    {% endautoescape %}
+
 });
+
 </script>
 {% endblock %}
