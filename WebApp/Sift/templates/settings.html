@@ -1,4 +1,45 @@
 {% extends 'base.html' %}
+{% load staticfiles %}
+{% block head %}
+{% endblock %}
 {% block body_block %}
-    <p>insert settings stuff here.</p>
+<form action= '{% url 'general:settings' %}' method="POST">
+{% csrf_token %}
+    <br><h4>Add verified email address</h4></h4>
+    <input type="text" name="ADD_EMAIL" value="">
+    <br><br>
+    <input type="submit" value="verify">
+    <div style="font-size: 10pt;">
+        <hr />
+    </div>
+    <form name="frm">
+    <table>
+        <tr>
+            <td>
+                <select name="SrcSelect" size="6" style="font-size: 11pt; width: 160px; height: 160px"
+                    multiple="multiple" ondblclick="moveLeftOrRight(document.frm.SrcSelect,document.frm.ObjSelect) ">
+                    <option value="1">Email1</option>
+                </select>
+            </td>
+            <td width="30px">
+                <input align="left" type="button" value="> " onclick="moveLeftOrRight(document.frm.SrcSelect,document.frm.ObjSelect) ">
+                <br>
+                <br>
+                <input align="left" type="button" value=" < " onclick="moveLeftOrRight(document.frm.ObjSelect,document.frm.SrcSelect) ">
+            </td>
+            <td>
+                <select name="ObjSelect" size="6" style="font-size: 11pt; width: 160px; height: 160px"
+                    multiple="multiple" ondblclick="moveLeftOrRight(document.frm.ObjSelect,document.frm.SrcSelect) ">
+                    <option value="2">Email2</option>
+                    <option value="3">Email3</option>
+                </select>
+            </td>
+        </tr>
+    </table>
+    <select onchange="isSelected(this.value);" id="action">
+    <option value="1">Verify Email</option>
+    <option value="2" >Add Email</option>
+    <option value="2" >Delete Email</option>
+    </select>
+    </form>
 {% endblock %}

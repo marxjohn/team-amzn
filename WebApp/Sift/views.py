@@ -5,6 +5,7 @@ import json
 import datetime
 import time
 import Sift.NLTKClustering
+import Sift.Notification
 
 
 def general(request):
@@ -70,6 +71,9 @@ def settings(request):
     headline = "Settings"
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
+
+    if request.method == 'POST':
+        Sift.Notification.main()
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline}
     return render(request, 'settings.html', context)

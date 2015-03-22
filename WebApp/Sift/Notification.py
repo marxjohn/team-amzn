@@ -128,14 +128,14 @@ class SESMessage( object ):
 
       def delete_verified_email( __self, email_address ):
             if __self.check_email( email_address ):
-                  __self.ses.delete_verified_email_address( email_address )
-                  return True
-            else:
-                  print ( 'The email address is not in the verified Email list.' )
+                  __self.ses.delete_verified_email_address( e Email list.' )
                   return False
 
       def send( __self ):
-            try:
+            try:mail_address )
+                  return True
+            else:
+                  print ( 'The email address is not in the verified
 
                   __self.ses
                   if not __self.attachments:
