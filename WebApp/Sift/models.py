@@ -73,3 +73,12 @@ class Post(models.Model):
     def __str__(self):
         return self.subject + self.body
 
+
+class Stopwords(models.Model):
+    id = models.IntegerField(db_column='Id')  # Field name made lowercase.
+    word = models.CharField(max_length=45)
+
+    class Meta:
+        managed = False
+        db_table = 'StopWords'
+        app_label = 'sw'

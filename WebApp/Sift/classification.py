@@ -154,8 +154,8 @@ def main():
     print()
 
     data_train = get_cluster_data("2014-01-01", "2014-02-01")
-    new_start_date = "2013-02-01"
-    new_end_date = "2013-03-03"
+    new_start_date = "2013-05-01"
+    new_end_date = "2013-06-01"
     data_test = get_cluster_data(new_start_date, new_end_date)
     print('data loaded')
     categories = data_train.cluster_list
