@@ -32,19 +32,22 @@
     <br><br><p>Max Number of Features</p>
     {{ form.max_features }}
 
-{#    {{ stopwordsform }}#}
     <br><br>
 
     <br>
-    <input type="submit" value="Run" />
+    <input type="submit" name="Clustering" value="Run" />
 </form>
 <br><br><p>Stop Words</p>
-    <div id="stop_words"></div>
-    <button onclick="deleteWords()">Delete</button>
+<form method="POST">
+{% csrf_token %}
+<div id="stop_words">
+    {{ sf.as_p }}
+    <input type="submit" name="Delete" value="Delete">
     </div>
+</form>
 <div id="aboutClustering">
 
-    <h1>Info</h1>
+    <h1>Info {{ word }}</h1>
     <p>This site uses <a href='http://en.wikipedia.org/wiki/Tf%E2%80%93idf'>term frequency-inverse document frequency (tf-idf)</a> vectorization of posts on the Amazon Seller Forums to perform fast <a href='http://en.wikipedia.org/wiki/K-means_clustering'>K-means clustering</a> using the <a href='http://www.eecs.tufts.edu/~dsculley/papers/fastkmeans.pdf'>mini-batch algorithm</a>. 
     <ul>
       <li><b>Date Range: </b>Generate clusters on posts made in a certain date range, or cluster all posts</li>
@@ -81,7 +84,6 @@ $(document).ready(function() {
     });
     //Stop Words List
     {% autoescape off %}
-    var html = getStopWords("{{ stopwords }}");
     {% endautoescape %}
 
 });

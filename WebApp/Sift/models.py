@@ -82,3 +82,6 @@ class Stopword(models.Model):
         managed = False
         db_table = 'StopWord'
         app_label = 'sw'
+
+    def __str__(self):
+        return self.word

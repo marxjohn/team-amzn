@@ -65,26 +65,46 @@ body {
     padding:0;
     text-align:center;
 }
+/*
+ * Main content
+ */
+
+.main {
+    padding: 20px;
+    position:absolute;
+    top:0;
+    margin-left:0;
+    width: 100%;
+}
 .sidebar * {
     width:100%;
     padding:0;
 }
 .open {
     display:block;
+      z-index: 100;
+  background: #f5f5f5;
 }
 #settingsLink {
 }
 @media (min-width: 768px) {
     #settingsLink {
-        display:none;
+        display: none;
     }
+
     .sidebar * {
-        width:initial;
-        padding:initial;
+        width: initial;
+        padding: initial;
     }
+
+    .main {
+        margin-left: 210px;
+        width: calc(100% - 250px);
+    }
+
     .sidebar {
-        text-align:left;
-        width:215px;
+        text-align: left;
+        width: 215px;
         position: fixed;
         top: 55px;
         bottom: 0;
@@ -97,24 +117,15 @@ body {
         background-color: #f5f5f5;
         border-right: 1px solid #eee;
     }
+
     /* Sidebar navigation */
-.nav-sidebar {
-    margin-right: -21px; /* 20px padding + 1px border */
-    margin-bottom: 20px;
-    margin-left: -20px;
-    font-size: 1.15em;
-}
-}
-
-@media (min-width: 992px) {
-    .col-md-offset-2 {
-    margin-left: 18.666667%;
-    }
-    .col-md-10 {
-    width: 81.333333%;
+    .nav-sidebar {
+        margin-right: -21px; /* 20px padding + 1px border */
+        margin-bottom: 20px;
+        margin-left: -20px;
+        font-size: 1.15em;
     }
 }
-
 .nav-sidebar > li > a {
     padding: 3px 20px;
     padding: 3px 20px;
@@ -135,15 +146,7 @@ body {
 .navbar-nav > li > a:hover {
     background: rgb(44, 44, 44) !important;
 }
-/*
- * Main content
- */
 
-.main {
-    padding: 20px;
-    position:absolute;
-    top:0;
-}
 
 @media (min-width: 768px) {
     /*.main {*/
@@ -190,9 +193,16 @@ body {
 .sliderClass .google-visualization-controls-slider-horizontal {
     width:400px;
 }
-#main_slider > div > div > div > div.google-visualization-controls-slider-handle {
-    width:100%;
+/*#main_slider > div > div > div > div.google-visualization-controls-slider-handle {*/
+    /*width:80% !important;*/
+/*}*/
+#main_slider {
+    width: 80%;
 }
+.sliderClass {
+    width:80%;
+}
+
 #hidden_slider {
     display:none;
 }
