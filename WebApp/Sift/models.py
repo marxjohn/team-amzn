@@ -75,7 +75,7 @@ class Post(models.Model):
 
 
 class Stopword(models.Model):
-    id = models.IntegerField(db_column='Id')  # Field name made lowercase.
+    id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
     word = models.CharField(max_length=45)
 
     class Meta:
