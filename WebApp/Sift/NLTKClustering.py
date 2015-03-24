@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 import os
+
+
 try:
     with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Sift/stopwords.cfg')) as f:
         REMOVE_LIST = set(f.read().split())
@@ -55,18 +57,23 @@ from sklearn.decomposition import PCA
 from time import time
 import numpy as np
 import django
+from datetime import datetime
 import Stemmer
 
 # K-means clustering of seller forums posts
-MAX_FEATURES = 1000
+MAX_FEATURES = 500
 IS_MINI_USED = True
 IS_IDF_USED = True
 IS_HASHING_VECTORIZER_USED = False
 IS_UPLOAD_ENABLED = False
-NUM_CLUSTERS = 6
+NUM_CLUSTERS = 10
 IS_NLTK_USED = False
 IS_VISUALIZATION_ENABLED = False
 IS_ADDED_TO_CLUSTER_RUN = True
+MAX_DF = .85
+BATCH_SIZE = 1000
+INIT_SIZE = 100
+N_INIT = 15
 
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 django.setup()
@@ -156,8 +163,8 @@ def fit_clusters(X, num_clusters):
         # n_init:       Number of random initializations that are tried
         # init_size:    Number of samples to randomly sample to speed up initialization
         # batch_size:   Size of the mini batches
-        km = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=5,
-                             init_size=3000, batch_size=1000, verbose=False)
+        km = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=N_INIT,
+                             init_size=INIT_SIZE, batch_size=BATCH_SIZE, verbose=False)
     else:
         # n_cluster:    Number of clusters created
         # init:         method of initialization
@@ -184,9 +191,14 @@ def print_cluster_centroids(km, vectorizer, num_clusters):
             print(' %s' % terms[ind], end='')
         print()
 
+    print("Total Inertia")
+    print(km.inertia_)
+    print("Normalized Inertia")
+    print(km.inertia_/len(km.labels_))
+
 
 def vectorize_data(dataset, max_features):
-    vectorizer = StemmedTfidfVectorizer(max_df=.8, max_features=max_features,
+    vectorizer = StemmedTfidfVectorizer(max_df=MAX_DF, max_features=max_features,
                                         min_df=1,
                                         use_idf=IS_IDF_USED, analyzer='word', ngram_range=(1, 1))
 
@@ -199,7 +211,7 @@ def vectorize_data(dataset, max_features):
 def visualize_clusters(num_clusters, vectorized_data, vectorizer):
     reduced_data = PCA(n_components=2).fit_transform(vectorized_data)  # .toarray())
     kmeans = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=5,
-                             init_size=3000, batch_size=1000, verbose=False)
+                             init_size=3000, batch_size=1000, verbose=True)
     kmeans.fit(reduced_data)
     # Step size of the mesh. Decrease to increase the quality of the VQ.
     h = .001  # point in the mesh [x_min, m_max]x[y_min, y_max].
@@ -242,9 +254,9 @@ def cluster_posts(dataset, t0, num_clusters, max_features, start_date, end_date)
         "Extracting features from the training dataset using a sparse vectorizer")
     t0 = time()
     vectorized_data, vectorizer = vectorize_data(dataset, max_features)
-    svd = TruncatedSVD(n_components = 100)
-    lsa = make_pipeline(svd, Normalizer(copy=False))
-    vectorized_data = lsa.fit_transform(vectorized_data)
+    # svd = TruncatedSVD(n_components = 100)
+    # lsa = make_pipeline(svd, Normalizer(copy=False))
+    # vectorized_data = lsa.fit_transform(vectorized_data)
     print("done in %fs" % (time() - t0))
     print("n_samples: %d, n_features: %d" % vectorized_data.shape)
     print()
@@ -342,8 +354,15 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
 
 
 def create_cluster_run(km, start_date, end_date):
+    format = '%Y-%m-%d'
     inertia = km.inertia_ / len(km.labels_)
-    cr = ClusterRun(start_date=start_date, end_date=end_date, normalized_inertia=inertia)
+    start_datetime = datetime.strptime(start_date, format)
+    end_datetime = datetime.strptime(end_date, format)
+
+    cr = ClusterRun(start_date=start_datetime, end_date=end_datetime, normalized_inertia=inertia,
+                    run_date=datetime.today(), n_init=N_INIT, num_features=MAX_FEATURES,
+                    num_clusters=NUM_CLUSTERS, batch_size=BATCH_SIZE, sample_size=INIT_SIZE, max_df=MAX_DF,
+                    num_posts=len(km.labels_), total_inertia=km.inertia_)
     cr.save()
 
 
@@ -356,7 +375,7 @@ def main():
     t0 = time()
 
     start_date = "2014-01-01"
-    end_date = "2014-03-01"
+    end_date = "2014-3-01"
 
     data_set = ClusterData(Post.objects.filter(creationdate__range=(start_date, end_date)))
 

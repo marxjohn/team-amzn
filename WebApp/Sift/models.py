@@ -87,13 +87,20 @@ class StopWord(models.Model):
         return self.word
 
 
-
 class ClusterRun(models.Model):
     id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
     run_date = models.DateTimeField(db_column='RunDate')  # Field name made lowercase.
     normalized_inertia = models.DecimalField(db_column='NormalizedInertia', max_digits=16, decimal_places=8)  # Field name made lowercase.
     start_date = models.DateTimeField(db_column='StartDate')  # Field name made lowercase.
     end_date = models.DateTimeField(db_column='EndDate')  # Field name made lowercase.
+    num_clusters = models.IntegerField(db_column='NumClusters')  # Field name made lowercase.
+    num_features = models.IntegerField(db_column='NumFeatures', blank=True, null=True)  # Field name made lowercase.
+    n_init = models.IntegerField(db_column='NInit')  # Field name made lowercase.
+    batch_size = models.IntegerField(db_column='BatchSize')  # Field name made lowercase.
+    sample_size = models.IntegerField(db_column='SampleSize')  # Field name made lowercase.
+    max_df = models.DecimalField(db_column='MaxDf', max_digits=2, decimal_places=2)  # Field name made lowercase.
+    total_inertia = models.IntegerField(db_column='TotalInertia')  # Field name made lowercase.
+    num_posts = models.IntegerField(db_column='NumPosts')  # Field name made lowercase.
 
     class Meta:
         managed = False
