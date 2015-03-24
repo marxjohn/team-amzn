@@ -38,8 +38,8 @@ class ClusterForm(forms.Form):
 class StopwordForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(StopwordForm, self).__init__(*args, **kwargs)
-
-    word = forms.ModelMultipleChoiceField(queryset=Stopword.objects.all())
+        self.fields['word'].help_text = None
+    word = forms.ModelMultipleChoiceField(queryset=Stopword.objects.all(), label="")
 
     def __unicode__(self):
         return self.word

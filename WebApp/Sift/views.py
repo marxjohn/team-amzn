@@ -130,7 +130,7 @@ def clustering(request):
             for element in deleteThese:
 
                 Stopword.objects.filter(word=element).delete()
-    
+
     form = Sift.forms.ClusterForm()
     headline = "Clustering"
 
