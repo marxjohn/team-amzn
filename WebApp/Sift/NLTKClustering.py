@@ -61,7 +61,7 @@ from datetime import datetime
 import Stemmer
 
 # K-means clustering of seller forums posts
-MAX_FEATURES = 500
+MAX_FEATURES = 100
 IS_MINI_USED = True
 IS_IDF_USED = True
 IS_HASHING_VECTORIZER_USED = False
@@ -71,9 +71,9 @@ IS_NLTK_USED = False
 IS_VISUALIZATION_ENABLED = False
 IS_ADDED_TO_CLUSTER_RUN = True
 MAX_DF = .85
-BATCH_SIZE = 1000
-INIT_SIZE = 100
-N_INIT = 15
+BATCH_SIZE_RATIO = 50
+INIT_SIZE_RATIO = 20
+N_INIT = 150
 
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 django.setup()
@@ -164,7 +164,9 @@ def fit_clusters(X, num_clusters):
         # init_size:    Number of samples to randomly sample to speed up initialization
         # batch_size:   Size of the mini batches
         km = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=N_INIT,
-                             init_size=INIT_SIZE, batch_size=BATCH_SIZE, verbose=False)
+                             init_size=int(len(X.data)/INIT_SIZE_RATIO),
+                             batch_size=int(len(X.data)/BATCH_SIZE_RATIO),
+                             verbose=False)
     else:
         # n_cluster:    Number of clusters created
         # init:         method of initialization
@@ -209,9 +211,9 @@ def vectorize_data(dataset, max_features):
 
 
 def visualize_clusters(num_clusters, vectorized_data, vectorizer):
-    reduced_data = PCA(n_components=2).fit_transform(vectorized_data)  # .toarray())
-    kmeans = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=5,
-                             init_size=3000, batch_size=1000, verbose=True)
+    reduced_data = PCA(n_components=2).fit_transform(vectorized_data.toarray())  # .toarray())
+    kmeans = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=N_INIT,
+                             init_size=INIT_SIZE_RATIO, batch_size=BATCH_SIZE_RATIO, verbose=True)
     kmeans.fit(reduced_data)
     # Step size of the mesh. Decrease to increase the quality of the VQ.
     h = .001  # point in the mesh [x_min, m_max]x[y_min, y_max].
@@ -361,8 +363,10 @@ def create_cluster_run(km, start_date, end_date):
 
     cr = ClusterRun(start_date=start_datetime, end_date=end_datetime, normalized_inertia=inertia,
                     run_date=datetime.today(), n_init=N_INIT, num_features=MAX_FEATURES,
-                    num_clusters=NUM_CLUSTERS, batch_size=BATCH_SIZE, sample_size=INIT_SIZE, max_df=MAX_DF,
-                    num_posts=len(km.labels_), total_inertia=km.inertia_)
+                    num_clusters=NUM_CLUSTERS, batch_size=int(len(km.labels_)/BATCH_SIZE_RATIO),
+                    sample_size=int(len(km.labels_)/INIT_SIZE_RATIO), max_df=MAX_DF,
+                    num_posts=len(km.labels_), total_inertia=km.inertia_,
+                    batch_size_ratio=1/BATCH_SIZE_RATIO, sample_size_ratio=1/INIT_SIZE_RATIO)
     cr.save()
 
 

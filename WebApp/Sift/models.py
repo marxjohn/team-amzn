@@ -101,6 +101,9 @@ class ClusterRun(models.Model):
     max_df = models.DecimalField(db_column='MaxDf', max_digits=2, decimal_places=2)  # Field name made lowercase.
     total_inertia = models.IntegerField(db_column='TotalInertia')  # Field name made lowercase.
     num_posts = models.IntegerField(db_column='NumPosts')  # Field name made lowercase.
+    batch_size_ratio = models.DecimalField(db_column='BatchSizeRatio', max_digits=3, decimal_places=3)  # Field name made lowercase.
+    sample_size_ratio = models.DecimalField(db_column='SampleSizeRatio', max_digits=3, decimal_places=3)  # Field name made lowercase.
+
 
     class Meta:
         managed = False
