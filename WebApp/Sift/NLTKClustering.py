@@ -1,5 +1,4 @@
 from __future__ import absolute_import
-# K-means clustering of seller forums posts
 
 import os
 try:
@@ -8,19 +7,6 @@ try:
 except:
     with open('/opt/sift-env/team-amzn/WebApp/Sift/stopwords.cfg') as f:
         REMOVE_LIST = set(f.read().split())
-
-
-
-# K-means clustering of seller forums posts
-MAX_FEATURES = 1000
-IS_MINI_USED = True
-IS_IDF_USED = True
-IS_HASHING_VECTORIZER_USED = False
-IS_UPLOAD_ENABLED = False
-NUM_CLUSTERS = 6
-IS_NLTK_USED = False
-IS_VISUALIZATION_ENABLED = True
-
 
 try:
     import pymysql
@@ -46,14 +32,12 @@ if not settings.configured:
     )
 
 import matplotlib.pyplot as plt
-
 try:
-    from models import Post, Cluster, ClusterWord
+    from models import Post, Cluster, ClusterWord, ClusterRun
 except:
-    from Sift.models import Post, Cluster, ClusterWord
+    from Sift.models import Post, Cluster, ClusterWord, ClusterRun
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.decomposition import TruncatedSVD
 from sklearn.pipeline import make_pipeline
@@ -66,24 +50,27 @@ import random
 import logging
 from operator import attrgetter
 from django.db import connection
-
-
 from sklearn.cluster import KMeans
-
 from sklearn.decomposition import PCA
-
-
 from time import time
 import numpy as np
 import django
+import Stemmer
+
+# K-means clustering of seller forums posts
+MAX_FEATURES = 1000
+IS_MINI_USED = True
+IS_IDF_USED = True
+IS_HASHING_VECTORIZER_USED = False
+IS_UPLOAD_ENABLED = False
+NUM_CLUSTERS = 6
+IS_NLTK_USED = False
+IS_VISUALIZATION_ENABLED = False
+IS_ADDED_TO_CLUSTER_RUN = True
 
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 django.setup()
-
-
-import Stemmer
 english_stemmer = Stemmer.Stemmer('en')
-
 
 class StemmedTfidfVectorizer(TfidfVectorizer):
 
@@ -209,7 +196,46 @@ def vectorize_data(dataset, max_features):
     return vectorized_data, vectorizer
 
 
-def cluster_posts(dataset, t0, num_clusters, max_features):
+def visualize_clusters(num_clusters, vectorized_data, vectorizer):
+    reduced_data = PCA(n_components=2).fit_transform(vectorized_data)  # .toarray())
+    kmeans = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=5,
+                             init_size=3000, batch_size=1000, verbose=False)
+    kmeans.fit(reduced_data)
+    # Step size of the mesh. Decrease to increase the quality of the VQ.
+    h = .001  # point in the mesh [x_min, m_max]x[y_min, y_max].
+    # Plot the decision boundary. For that, we will assign a color to each
+    x_min, x_max = reduced_data[:, 0].min() + 1, reduced_data[:, 0].max() - 1
+    y_min, y_max = reduced_data[:, 1].min() + 1, reduced_data[:, 1].max() - 1
+    xx, yy = np.meshgrid(np.arange(x_max, x_min, h), np.arange(y_max, y_min, h))
+    # Obtain labels for each point in mesh. Use last trained model.
+    Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
+    # Put the result into a color plot
+    Z = Z.reshape(xx.shape)
+    plt.figure(1)
+    plt.clf()
+    plt.imshow(Z, interpolation='nearest',
+               extent=(xx.min(), xx.max(), yy.min(), yy.max()),
+               cmap=plt.cm.Paired,
+               aspect='auto', origin='lower')
+    rand_smpl0 = [reduced_data[i][0] for i in random.sample(range(len(reduced_data)), 20000)]
+    rand_smpl1 = [reduced_data[i][1] for i in random.sample(range(len(reduced_data)), 20000)]
+    plt.plot(rand_smpl0[:], rand_smpl1[:], 'k.', markersize=2)
+    # Plot the centroids as a white X
+    centroids = kmeans.cluster_centers_
+    plt.scatter(centroids[:, 0], centroids[:, 1],
+                marker='x', s=169, linewidths=3,
+                color='w', zorder=10)
+    plt.title('K-means clustering on the digits dataset (PCA-reduced data)\n'
+              'Centroids are marked with white cross')
+    plt.xlim(x_min, x_max)
+    plt.ylim(y_min, y_max)
+    plt.xticks(())
+    plt.yticks(())
+    plt.show()
+    print_cluster_centroids(kmeans, vectorizer, num_clusters)
+
+
+def cluster_posts(dataset, t0, num_clusters, max_features, start_date, end_date):
     data_count = len(dataset.data)
     print("done in %fs" % (time() - t0))
     print(
@@ -224,9 +250,7 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
     print()
     ##########################################################################
     # Do the actual clustering
-    t0 = time()
     km = fit_clusters(vectorized_data, num_clusters)
-    t_mini_batch = time() - t0
 
     if not IS_HASHING_VECTORIZER_USED:
 
@@ -240,48 +264,10 @@ def cluster_posts(dataset, t0, num_clusters, max_features):
         upload_clusters(dataset, data_count, km, order_centroids, terms, num_clusters)
 
     if IS_VISUALIZATION_ENABLED:
-        reduced_data = PCA(n_components=2).fit_transform(vectorized_data)#.toarray())
-        kmeans = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=5,
-                             init_size=3000, batch_size=1000, verbose=False)
-        kmeans.fit(reduced_data)
+        visualize_clusters(num_clusters, vectorized_data, vectorizer)
 
-        # Step size of the mesh. Decrease to increase the quality of the VQ.
-        h = .001     # point in the mesh [x_min, m_max]x[y_min, y_max].
-
-        # Plot the decision boundary. For that, we will assign a color to each
-        x_min, x_max = reduced_data[:, 0].min() + 1, reduced_data[:, 0].max() - 1
-        y_min, y_max = reduced_data[:, 1].min() + 1, reduced_data[:, 1].max() - 1
-        xx, yy = np.meshgrid(np.arange(x_max, x_min, h), np.arange(y_max, y_min, h))
-
-        # Obtain labels for each point in mesh. Use last trained model.
-        Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
-
-        # Put the result into a color plot
-        Z = Z.reshape(xx.shape)
-        plt.figure(1)
-        plt.clf()
-        plt.imshow(Z, interpolation='nearest',
-                   extent=(xx.min(), xx.max(), yy.min(), yy.max()),
-                   cmap=plt.cm.Paired,
-                   aspect='auto', origin='lower')
-
-        rand_smpl0 = [reduced_data[i][0] for i in random.sample(range(len(reduced_data)), 20000)]
-        rand_smpl1 = [reduced_data[i][1] for i in random.sample(range(len(reduced_data)), 20000)]
-
-        plt.plot(rand_smpl0[:], rand_smpl1[:], 'k.', markersize=2)
-        # Plot the centroids as a white X
-        centroids = kmeans.cluster_centers_
-        plt.scatter(centroids[:, 0], centroids[:, 1],
-                    marker='x', s=169, linewidths=3,
-                    color='w', zorder=10)
-        plt.title('K-means clustering on the digits dataset (PCA-reduced data)\n'
-                  'Centroids are marked with white cross')
-        plt.xlim(x_min, x_max)
-        plt.ylim(y_min, y_max)
-        plt.xticks(())
-        plt.yticks(())
-        plt.show()
-        print_cluster_centroids(kmeans, vectorizer, num_clusters)
+    if IS_ADDED_TO_CLUSTER_RUN:
+        create_cluster_run(km, start_date, end_date)
 
 
 def upload_clusters(dataset, data_count, km, order_centroids, terms, num_clusters):
@@ -355,6 +341,12 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
         print("Completed date upload in " + str((time() - t0)) + " seconds.")
 
 
+def create_cluster_run(km, start_date, end_date):
+    inertia = km.inertia_ / len(km.labels_)
+    cr = ClusterRun(start_date=start_date, end_date=end_date, normalized_inertia=inertia)
+    cr.save()
+
+
 def main():
         # Display progress logs on stdout
     logging.basicConfig(level=logging.INFO,
@@ -363,12 +355,12 @@ def main():
     print("Retrieving dataset from database")
     t0 = time()
 
-    dataset = ClusterData(
+    start_date = "2014-01-01"
+    end_date = "2014-03-01"
 
-    Post.objects.filter(creationdate__range=("2014-01-01", "2014-03-01")))
+    data_set = ClusterData(Post.objects.filter(creationdate__range=(start_date, end_date)))
 
-
-    cluster_posts(dataset, t0, NUM_CLUSTERS, MAX_FEATURES)
+    cluster_posts(data_set, t0, NUM_CLUSTERS, MAX_FEATURES, start_date, end_date)
 
 # Only run the main function if this code is called directly
 # Not if it's imported as a module
