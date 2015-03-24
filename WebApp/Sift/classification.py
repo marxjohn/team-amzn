@@ -44,8 +44,7 @@ IS_REPORT_PRINTED = True
 IS_CONFUSION_MATRIX_PRINTED = True
 IS_CHI_SQUARED_USED = False
 IS_IDF_USED = True
-IS_UPLOAD_ENBABLED = True
-IS_PLOTTING_ON = False
+IS_UPLOAD_ENABLED = True
 IS_PLOTTING_ON = False
 
 
@@ -80,7 +79,7 @@ def classify_on_date_range(train_start_date, train_end_date, new_start_date, new
 
     classify(L1LinearSVC(), data_test, X_train, y_train, X_test, feature_names, categories)
 
-    if IS_UPLOAD_ENBABLED:
+    if IS_UPLOAD_ENABLED:
         associate_post_with_cluster(data_test, len(categories), new_start_date, new_end_data)
 
 
@@ -235,7 +234,7 @@ def main():
             plt.text(-.3, i, c)
 
         plt.show()
-    if IS_UPLOAD_ENBABLED:
+    if IS_UPLOAD_ENABLED:
         associate_post_with_cluster(data_test, len(categories), new_start_date, new_end_date)
 
 
