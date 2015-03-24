@@ -83,6 +83,11 @@ class StopWord(models.Model):
         db_table = 'StopWord'
         app_label = 'sw'
 
+    def __str__(self):
+        return self.word
+
+
+
 class ClusterRun(models.Model):
     id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
     run_date = models.DateTimeField(db_column='RunDate')  # Field name made lowercase.

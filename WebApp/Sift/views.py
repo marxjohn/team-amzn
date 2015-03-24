@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from Sift.models import Cluster, Post, ClusterWord
+from Sift.models import Cluster, Post, ClusterWord, Stopword
 from django.http import HttpResponseRedirect
 # from postmarkup import render_bbcode
 from lxml import html
@@ -13,6 +13,7 @@ import Sift.NLTKClustering
 import Sift.Notification
 import Sift.tasks as tasks
 import Sift.forms
+from Sift.forms import StopwordForm
 
 
 def general(request):
@@ -109,29 +110,34 @@ def settings(request):
 
 def clustering(request):
     # cache.clear()
+    deleteThese = ""
     if request.method == 'POST':
-        f = Sift.forms.ClusterForm(request.POST)
+        clusterForm = Sift.forms.ClusterForm(request.POST, prefix="Clustering")
 
-        if f.is_valid():
-            if f.cleaned_data['cluster_type'] == 1:
+        if clusterForm.is_valid():
+            if clusterForm.cleaned_data['cluster_type'] == 1:
                 is_mini_batched = False
             else:
                 is_mini_batched = True
 
-            tasks.cluster_posts_with_input.delay(str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
-                                                         int(f.cleaned_data['num_clusters']), int(f.cleaned_data['max_features']),
+            tasks.cluster_posts_with_input.delay(str(clusterForm.cleaned_data['start_date']), str(clusterForm.cleaned_data['end_date']),
+                                                         int(clusterForm.cleaned_data['num_clusters']), int(clusterForm.cleaned_data['max_features']),
                                                          is_mini_batched)
+    if request.method == "POST" and not clusterForm.is_valid():
+        stopwordForm = StopwordForm(request.POST)
+        if stopwordForm.is_valid():
+            deleteThese = stopwordForm.cleaned_data['word']
+            for element in deleteThese:
 
+                Stopword.objects.filter(word=element).delete()
+    
     form = Sift.forms.ClusterForm()
     headline = "Clustering"
-    try:
-        with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Sift/stopwords.cfg')) as f:
-            stopwords = set(f.read().split())
-    except:
-        with open('/opt/sift-env/team-amzn/WebApp/Sift/stopwords.cfg') as f:
-            stopwords = set(f.read().split())
 
-    context = {'headline': headline, 'form': form, 'stopwords': stopwords}
+
+    stopwords = Stopword.objects.all().values_list("word", flat=True)
+
+    context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'sf': StopwordForm()}
     return render(request, 'clustering.html', context)
 
 

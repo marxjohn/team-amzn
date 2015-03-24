@@ -1,3 +1,5 @@
+from Sift.models import Stopword
+
 __author__ = 'cse498'
 
 from django import forms
@@ -31,3 +33,13 @@ class ClusterForm(forms.Form):
     max_features = forms.IntegerField(
         label="Max Number of Features", initial=10000)
     cluster_type = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
+
+
+class StopwordForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(StopwordForm, self).__init__(*args, **kwargs)
+
+    word = forms.ModelMultipleChoiceField(queryset=Stopword.objects.all())
+
+    def __unicode__(self):
+        return self.word
