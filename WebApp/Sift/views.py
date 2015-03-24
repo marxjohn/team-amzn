@@ -13,7 +13,7 @@ import Sift.NLTKClustering
 import Sift.Notification
 import Sift.tasks as tasks
 import Sift.forms
-from Sift.forms import StopwordForm
+from Sift.forms import StopwordDelete, StopwordAdd
 
 
 def general(request):
@@ -124,12 +124,18 @@ def clustering(request):
                                                          int(clusterForm.cleaned_data['num_clusters']), int(clusterForm.cleaned_data['max_features']),
                                                          is_mini_batched)
     if request.method == "POST" and not clusterForm.is_valid():
-        stopwordForm = StopwordForm(request.POST)
-        if stopwordForm.is_valid():
-            deleteThese = stopwordForm.cleaned_data['word']
+        stopwordDelete = StopwordDelete(request.POST)
+        if stopwordDelete.is_valid():
+            deleteThese = stopwordDelete.cleaned_data['word']
             for element in deleteThese:
 
                 Stopword.objects.filter(word=element).delete()
+
+    if request.method == "POST" and not clusterForm.is_valid() and not stopwordDelete.is_valid():
+        stopwordAdd = StopwordAdd(request.POST)
+        if stopwordAdd.is_valid():
+            addThis = stopwordAdd.cleaned_data['add_word']
+            Stopword(word=addThis).save()
 
     form = Sift.forms.ClusterForm()
     headline = "Clustering"
@@ -137,7 +143,7 @@ def clustering(request):
 
     stopwords = Stopword.objects.all().values_list("word", flat=True)
 
-    context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'sf': StopwordForm()}
+    context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'deleteForm': StopwordDelete(), 'addForm': StopwordAdd()}
     return render(request, 'clustering.html', context)
 
 

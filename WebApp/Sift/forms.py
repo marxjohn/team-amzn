@@ -35,11 +35,21 @@ class ClusterForm(forms.Form):
     cluster_type = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
 
 
-class StopwordForm(forms.Form):
+class StopwordDelete(forms.Form):
     def __init__(self, *args, **kwargs):
-        super(StopwordForm, self).__init__(*args, **kwargs)
+        super(StopwordDelete, self).__init__(*args, **kwargs)
         self.fields['word'].help_text = None
     word = forms.ModelMultipleChoiceField(queryset=Stopword.objects.all(), label="")
+
+    def __unicode__(self):
+        return self.word
+
+
+class StopwordAdd(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(StopwordAdd, self).__init__(*args, **kwargs)
+        self.fields['add_word'].help_text = None
+    add_word = forms.CharField(label="")
 
     def __unicode__(self):
         return self.word

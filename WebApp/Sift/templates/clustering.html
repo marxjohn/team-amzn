@@ -37,14 +37,23 @@
     <br>
     <input type="submit" name="Clustering" value="Run" />
 </form>
-<br><br><p>Stop Words</p>
+<div id="stop_words">
+<br><p>Stop Words</p>
+<div id="delete">
 <form method="POST">
 {% csrf_token %}
-<div id="stop_words">
-    {{ sf.as_p }}
+    {{ deleteForm.as_p }}
     <input type="submit" name="Delete" value="Delete">
-    </div>
 </form>
+</div>
+<div id="add">
+<form method="POST">
+{% csrf_token %}
+    {{ addForm.as_p }}
+    <input type="submit" name="Add" value="Add">
+</form>
+</div>
+</div>
 </div>
 <div id="aboutClustering">
 

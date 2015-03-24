@@ -3,3 +3,6 @@
     width:90%;
     position:relative;
 }
+#add, #delete {
+    display:inline-block;
+}
