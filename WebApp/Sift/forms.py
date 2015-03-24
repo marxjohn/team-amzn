@@ -1,4 +1,4 @@
-from Sift.models import Stopword
+from Sift.models import StopWord
 
 __author__ = 'cse498'
 
@@ -39,7 +39,7 @@ class StopwordDelete(forms.Form):
     def __init__(self, *args, **kwargs):
         super(StopwordDelete, self).__init__(*args, **kwargs)
         self.fields['word'].help_text = None
-    word = forms.ModelMultipleChoiceField(queryset=Stopword.objects.all(), label="")
+    word = forms.ModelMultipleChoiceField(queryset=StopWord.objects.all(), label="")
 
     def __unicode__(self):
         return self.word

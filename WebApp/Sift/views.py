@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from Sift.models import Cluster, Post, ClusterWord, Stopword
+from Sift.models import Cluster, Post, ClusterWord, StopWord
 from django.http import HttpResponseRedirect
 # from postmarkup import render_bbcode
 from lxml import html
@@ -129,19 +129,19 @@ def clustering(request):
             deleteThese = stopwordDelete.cleaned_data['word']
             for element in deleteThese:
 
-                Stopword.objects.filter(word=element).delete()
+                StopWord.objects.filter(word=element).delete()
 
     if request.method == "POST" and not clusterForm.is_valid() and not stopwordDelete.is_valid():
         stopwordAdd = StopwordAdd(request.POST)
         if stopwordAdd.is_valid():
             addThis = stopwordAdd.cleaned_data['add_word']
-            Stopword(word=addThis).save()
+            StopWord(word=addThis).save()
 
     form = Sift.forms.ClusterForm()
     headline = "Clustering"
 
 
-    stopwords = Stopword.objects.all().values_list("word", flat=True)
+    stopwords = StopWord.objects.all().values_list("word", flat=True)
 
     context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'deleteForm': StopwordDelete(), 'addForm': StopwordAdd()}
     return render(request, 'clustering.html', context)
