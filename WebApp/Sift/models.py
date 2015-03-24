@@ -24,7 +24,7 @@ class Cluster(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'clusters'
+        db_table = 'Cluster'
         app_label = 'x'
 
     def __str__(self):
@@ -39,7 +39,7 @@ class ClusterWord(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'ClusterWords'
+        db_table = 'ClusterWord'
         app_label = 'cw'
 
 
@@ -67,14 +67,14 @@ class Post(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'posts'
+        db_table = 'Post'
         app_label = 'y'
 
     def __str__(self):
         return self.subject + self.body
 
 
-class Stopword(models.Model):
+class StopWord(models.Model):
     id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
     word = models.CharField(max_length=45)
 
@@ -82,3 +82,15 @@ class Stopword(models.Model):
         managed = False
         db_table = 'StopWord'
         app_label = 'sw'
+
+class ClusterRun(models.Model):
+    id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
+    run_date = models.DateTimeField(db_column='RunDate')  # Field name made lowercase.
+    normalized_inertia = models.DecimalField(db_column='NormalizedInertia', max_digits=16, decimal_places=8)  # Field name made lowercase.
+    start_date = models.DateTimeField(db_column='StartDate')  # Field name made lowercase.
+    end_date = models.DateTimeField(db_column='EndDate')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'ClusterRun'
+        app_label = 'cr'
