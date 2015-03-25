@@ -2,14 +2,6 @@ from __future__ import absolute_import
 
 import os
 
-
-try:
-    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Sift/stopwords.cfg')) as f:
-        REMOVE_LIST = set(f.read().split())
-except:
-    with open('/opt/sift-env/team-amzn/WebApp/Sift/stopwords.cfg') as f:
-        REMOVE_LIST = set(f.read().split())
-
 try:
     import pymysql
     pymysql.install_as_MySQLdb()
@@ -35,9 +27,9 @@ if not settings.configured:
 
 import matplotlib.pyplot as plt
 try:
-    from models import Post, Cluster, ClusterWord, ClusterRun
+    from models import Post, Cluster, ClusterWord, ClusterRun, StopWord
 except:
-    from Sift.models import Post, Cluster, ClusterWord, ClusterRun
+    from Sift.models import Post, Cluster, ClusterWord, ClusterRun, StopWord
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans, MiniBatchKMeans
@@ -75,6 +67,7 @@ BATCH_SIZE_RATIO = 50
 INIT_SIZE_RATIO = 20
 N_INIT = 150
 
+REMOVE_LIST = StopWord.objects.all().values_list("word", flat=True)
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 django.setup()
 english_stemmer = Stemmer.Stemmer('en')
