@@ -1,15 +1,6 @@
 from __future__ import absolute_import
 # K-means clustering of seller forums posts
 
-import os
-try:
-    with open(os.path.join(os.path.dirname(os.path.dirname(__file__)), 'Sift/stopwords.cfg')) as f:
-        REMOVE_LIST = set(f.read().split())
-except:
-    with open('/opt/sift-env/team-amzn/WebApp/Sift/stopwords.cfg') as f:
-        REMOVE_LIST = set(f.read().split())
-
-
 try:
     import pymysql
     pymysql.install_as_MySQLdb()
@@ -35,7 +26,7 @@ if not settings.configured:
 
 
 
-from models import Post, Cluster, ClusterWord
+from models import Post, Cluster, ClusterWord, StopWord
 
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -44,10 +35,14 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import re
 import numpy as np
+import django
 from django.db import connection
 
 import Stemmer
 english_stemmer = Stemmer.Stemmer('en')
+
+django.setup()
+REMOVE_LIST = set(StopWord.objects.all().values_list("word", flat=True))
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 
 class StemmedTfidfVectorizer(TfidfVectorizer):
