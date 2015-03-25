@@ -10,7 +10,6 @@ import logging
 
 @shared_task
 def cluster_posts_with_input(start_date, end_date, num_clusters, max_features, isMiniBatch):
-
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
 

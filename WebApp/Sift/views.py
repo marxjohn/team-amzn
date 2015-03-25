@@ -107,7 +107,6 @@ def settings(request):
 
 
 def clustering(request):
-    # cache.clear()
     deleteThese = ""
     if request.method == 'POST':
         clusterForm = Sift.forms.ClusterForm(request.POST)
@@ -117,7 +116,6 @@ def clustering(request):
                 is_mini_batched = False
             else:
                 is_mini_batched = True
-
             tasks.cluster_posts_with_input.delay(str(clusterForm.cleaned_data['start_date']), str(clusterForm.cleaned_data['end_date']),
                                                          int(clusterForm.cleaned_data['num_clusters']), int(clusterForm.cleaned_data['max_features']),
                                                          is_mini_batched)
