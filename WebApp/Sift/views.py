@@ -95,16 +95,14 @@ def details(request, cluster_id):
 
 def settings(request):
     headline = "Settings"
-    trendingClusters = Cluster.objects.filter(ispinned=0)
-    pinnedClusters = Cluster.objects.filter(ispinned=1)
 
     if request.method == 'POST':
-
-        c = request._get_post
         Sift.Notification.main(request.POST['ADD_EMAIL'])
 
-    context = {'pinnedClusters': pinnedClusters,
-               'trendingClusters': trendingClusters, "headline": headline}
+    email_list = Sift.Notification.verify(request._get_post())
+    context = {'email_list': email_list }
+
+
     return render(request, 'settings.html', context)
 
 

@@ -52,4 +52,4 @@ class StopwordAdd(forms.Form):
     add_word = forms.CharField(label="")
 
     def __unicode__(self):
-        return self.word
+        return self.add_word

@@ -12,6 +12,29 @@
     <div style="font-size: 10pt;">
         <hr />
     </div>
+    <form name = "email_list">
+    <table width="200">
+        <tr>
+            <td>
+            <select name = "email_list" size = "10" style = "font-size: 11pt; width: 400px; height: 200px"
+                multiple = 'multiple' onclick = '' >
+                {% for email in email_list %}
+                    <option value = 'email'> {{ email }} </option>
+                {% endfor %}
+            </select>
+            </td>
+    </table>
+    </form>
+    <form action = '.' method = "GET" >
+        <select name = 'q'>
+            {%  for email in email_list %}
+                <option type="text" value = "{{ email }}">{{ email }}
+            {% endfor %}
+        </select>
+        </option>
+</select>
+</form>
+
     <form name="frm">
     <table>
         <tr>
@@ -39,7 +62,7 @@
     <select onchange="isSelected(this.value);" id="action">
     <option value="1">Verify Email</option>
     <option value="2" >Add Email</option>
-    <option value="2" >Delete Email</option>
+    <option value="3" >Delete Email</option>
     </select>
     </form>
 {% endblock %}
