@@ -35,12 +35,14 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 import re
 import numpy as np
+import django
 from django.db import connection
 
 import Stemmer
 english_stemmer = Stemmer.Stemmer('en')
 
-REMOVE_LIST = StopWord.objects.all().values_list("word", flat=True)
+django.setup()
+REMOVE_LIST = set(StopWord.objects.all().values_list("word", flat=True))
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 
 class StemmedTfidfVectorizer(TfidfVectorizer):

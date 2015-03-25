@@ -67,9 +67,10 @@ BATCH_SIZE_RATIO = 50
 INIT_SIZE_RATIO = 20
 N_INIT = 150
 
-REMOVE_LIST = StopWord.objects.all().values_list("word", flat=True)
-STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 django.setup()
+REMOVE_LIST = set(StopWord.objects.all().values_list("word", flat=True))
+STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
+
 english_stemmer = Stemmer.Stemmer('en')
 
 class StemmedTfidfVectorizer(TfidfVectorizer):
