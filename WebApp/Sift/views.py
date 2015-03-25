@@ -110,7 +110,7 @@ def clustering(request):
     # cache.clear()
     deleteThese = ""
     if request.method == 'POST':
-        clusterForm = Sift.forms.ClusterForm(request.POST, prefix="Clustering")
+        clusterForm = Sift.forms.ClusterForm(request.POST)
 
         if clusterForm.is_valid():
             if clusterForm.cleaned_data['cluster_type'] == 1:
