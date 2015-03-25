@@ -1,8 +1,11 @@
+from Sift.models import StopWord
+
 __author__ = 'cse498'
 
 from django import forms
 from functools import partial
 import datetime
+import os
 
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
@@ -30,3 +33,23 @@ class ClusterForm(forms.Form):
     max_features = forms.IntegerField(
         label="Max Number of Features", initial=10000)
     cluster_type = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
+
+
+class StopwordDelete(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(StopwordDelete, self).__init__(*args, **kwargs)
+        self.fields['word'].help_text = None
+    word = forms.ModelMultipleChoiceField(queryset=StopWord.objects.all(), label="")
+
+    def __unicode__(self):
+        return self.word
+
+
+class StopwordAdd(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(StopwordAdd, self).__init__(*args, **kwargs)
+        self.fields['add_word'].help_text = None
+    add_word = forms.CharField(label="")
+
+    def __unicode__(self):
+        return self.word

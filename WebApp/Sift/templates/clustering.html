@@ -5,12 +5,11 @@
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
     <script>
-
     $(document).ready(function(){
         $("#clusteringNav").hide();
     });
-
     </script>
+    <script type="text/javascript" src="{% static 'js/clustering.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
 {% block body_block %}
@@ -30,15 +29,33 @@
     {{ form.cluster_type }}
     <br><br><p>Max Number of Features</p>
     {{ form.max_features }}
+
     <br><br>
 
     <br>
-    <input type="submit" value="Run" />
+    <input type="submit" name="Clustering" value="Run" />
 </form>
-    </div>
+<div id="stop_words">
+<br><p>Stop Words</p>
+<div id="delete">
+<form method="POST">
+{% csrf_token %}
+    {{ deleteForm.as_p }}
+    <input type="submit" name="Delete" value="Delete">
+</form>
+</div>
+<div id="add">
+<form method="POST">
+{% csrf_token %}
+    {{ addForm.as_p }}
+    <input type="submit" name="Add" value="Add">
+</form>
+</div>
+</div>
+</div>
 <div id="aboutClustering">
 
-    <h1>Info</h1>
+    <h1>Info {{ word }}</h1>
     <p>This site uses <a href='http://en.wikipedia.org/wiki/Tf%E2%80%93idf'>term frequency-inverse document frequency (tf-idf)</a> vectorization of posts on the Amazon Seller Forums to perform fast <a href='http://en.wikipedia.org/wiki/K-means_clustering'>K-means clustering</a> using the <a href='http://www.eecs.tufts.edu/~dsculley/papers/fastkmeans.pdf'>mini-batch algorithm</a>. 
     <ul>
       <li><b>Date Range: </b>Generate clusters on posts made in a certain date range, or cluster all posts</li>
@@ -50,6 +67,10 @@
 
 </div>
 <script>
+String.prototype.replaceWith = function(f, t) {
+    var regExp = new RegExp(f, "g");
+    return this.replace(regExp, t);
+};
 $(document).ready(function() {
     $('.datepicker').datepicker();
     $('#id_all_posts').change(function() {
@@ -66,7 +87,10 @@ $(document).ready(function() {
         $('#id_start_date').val(start);
         $('#id_end_date').val(end);
     }
-})
+    });
+    //Stop Words List
+    {% autoescape off %}
+    {% endautoescape %}
 });
 </script>
 {% endblock %}

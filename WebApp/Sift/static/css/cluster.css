@@ -1,3 +1,8 @@
 .main {
-    margin-left: 5%;
+    margin: 0 auto;
+    width:90%;
+    position:relative;
+}
+#add, #delete {
+    display:inline-block;
 }

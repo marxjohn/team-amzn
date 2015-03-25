@@ -1,16 +1,19 @@
 from django.shortcuts import render, get_object_or_404
-from Sift.models import Cluster, Post, ClusterWord
+from Sift.models import Cluster, Post, ClusterWord, StopWord
 from django.http import HttpResponseRedirect
 # from postmarkup import render_bbcode
 from lxml import html
 from bs4 import BeautifulSoup
 from django.core.cache import cache
 
+import os
+
 import time
 import Sift.NLTKClustering
 import Sift.Notification
 import Sift.tasks as tasks
 import Sift.forms
+from Sift.forms import StopwordDelete, StopwordAdd
 
 
 def general(request):
@@ -92,38 +95,53 @@ def details(request, cluster_id):
 
 def settings(request):
     headline = "Settings"
-    trendingClusters = Cluster.objects.filter(ispinned=0)
-    pinnedClusters = Cluster.objects.filter(ispinned=1)
 
     if request.method == 'POST':
-
-        c = request._get_post
         Sift.Notification.main(request.POST['ADD_EMAIL'])
 
-    context = {'pinnedClusters': pinnedClusters,
-               'trendingClusters': trendingClusters, "headline": headline}
+    email_list = Sift.Notification.verify(request._get_post())
+    context = {'email_list': email_list }
+
+
     return render(request, 'settings.html', context)
 
 
 def clustering(request):
     # cache.clear()
+    deleteThese = ""
     if request.method == 'POST':
-        f = Sift.forms.ClusterForm(request.POST)
+        clusterForm = Sift.forms.ClusterForm(request.POST, prefix="Clustering")
 
-        if f.is_valid():
-            if f.cleaned_data['cluster_type'] == 1:
+        if clusterForm.is_valid():
+            if clusterForm.cleaned_data['cluster_type'] == 1:
                 is_mini_batched = False
             else:
                 is_mini_batched = True
 
-            tasks.cluster_posts_with_input.delay(str(f.cleaned_data['start_date']), str(f.cleaned_data['end_date']),
-                                                         int(f.cleaned_data['num_clusters']), int(f.cleaned_data['max_features']),
+            tasks.cluster_posts_with_input.delay(str(clusterForm.cleaned_data['start_date']), str(clusterForm.cleaned_data['end_date']),
+                                                         int(clusterForm.cleaned_data['num_clusters']), int(clusterForm.cleaned_data['max_features']),
                                                          is_mini_batched)
+    if request.method == "POST" and not clusterForm.is_valid():
+        stopwordDelete = StopwordDelete(request.POST)
+        if stopwordDelete.is_valid():
+            deleteThese = stopwordDelete.cleaned_data['word']
+            for element in deleteThese:
+
+                StopWord.objects.filter(word=element).delete()
+
+    if request.method == "POST" and not clusterForm.is_valid() and not stopwordDelete.is_valid():
+        stopwordAdd = StopwordAdd(request.POST)
+        if stopwordAdd.is_valid():
+            addThis = stopwordAdd.cleaned_data['add_word']
+            StopWord(word=addThis).save()
 
     form = Sift.forms.ClusterForm()
-
     headline = "Clustering"
-    context = {'headline': headline, 'form': form}
+
+
+    stopwords = StopWord.objects.all().values_list("word", flat=True)
+
+    context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'deleteForm': StopwordDelete(), 'addForm': StopwordAdd()}
     return render(request, 'clustering.html', context)
 
 
