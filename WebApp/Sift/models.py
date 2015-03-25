@@ -103,7 +103,7 @@ class ClusterRun(models.Model):
     num_posts = models.IntegerField(db_column='NumPosts')  # Field name made lowercase.
     batch_size_ratio = models.DecimalField(db_column='BatchSizeRatio', max_digits=3, decimal_places=3)  # Field name made lowercase.
     sample_size_ratio = models.DecimalField(db_column='SampleSizeRatio', max_digits=3, decimal_places=3)  # Field name made lowercase.
-
+    silo_score = models.DecimalField(db_column='SiloScore', max_digits=8, decimal_places=4, blank=True, null=True)
 
     class Meta:
         managed = False

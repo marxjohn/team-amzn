@@ -43,10 +43,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.decomposition import TruncatedSVD
 from sklearn.pipeline import make_pipeline
+from sklearn.metrics.pairwise import pairwise_distances
 from sklearn.preprocessing import Normalizer
 from nltk import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+from sklearn.metrics import silhouette_score
 import re
 import random
 import logging
@@ -61,23 +63,24 @@ from datetime import datetime
 import Stemmer
 
 # K-means clustering of seller forums posts
-MAX_FEATURES = 100
+MAX_FEATURES = 1000
 IS_MINI_USED = True
 IS_IDF_USED = True
 IS_HASHING_VECTORIZER_USED = False
 IS_UPLOAD_ENABLED = False
-NUM_CLUSTERS = 10
+NUM_CLUSTERS = 5
 IS_NLTK_USED = False
 IS_VISUALIZATION_ENABLED = False
 IS_ADDED_TO_CLUSTER_RUN = True
 MAX_DF = .85
-BATCH_SIZE_RATIO = 50
+BATCH_SIZE_RATIO = 10
 INIT_SIZE_RATIO = 20
 N_INIT = 150
 
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 django.setup()
 english_stemmer = Stemmer.Stemmer('en')
+
 
 class StemmedTfidfVectorizer(TfidfVectorizer):
 
@@ -178,9 +181,13 @@ def fit_clusters(X, num_clusters):
     print("Clustering sparse data with %s" % km)
     t0 = time()
     km.fit(X)
-    print("done in %0.3fs" % (time() - t0))
+    labels = km.labels_
+    print('done with clustering')
+
+    s_score = silhouette_score(X, labels, metric='euclidean')
+    print(s_score)
     print()
-    return km
+    return km, s_score
 
 
 def print_cluster_centroids(km, vectorizer, num_clusters):
@@ -264,7 +271,7 @@ def cluster_posts(dataset, t0, num_clusters, max_features, start_date, end_date)
     print()
     ##########################################################################
     # Do the actual clustering
-    km = fit_clusters(vectorized_data, num_clusters)
+    km, s_score = fit_clusters(vectorized_data, num_clusters)
 
     if not IS_HASHING_VECTORIZER_USED:
 
@@ -281,7 +288,9 @@ def cluster_posts(dataset, t0, num_clusters, max_features, start_date, end_date)
         visualize_clusters(num_clusters, vectorized_data, vectorizer)
 
     if IS_ADDED_TO_CLUSTER_RUN:
-        create_cluster_run(km, start_date, end_date)
+        create_cluster_run(km, s_score, start_date, end_date)
+
+
 
 
 def upload_clusters(dataset, data_count, km, order_centroids, terms, num_clusters):
@@ -355,7 +364,7 @@ def upload_clusters(dataset, data_count, km, order_centroids, terms, num_cluster
         print("Completed date upload in " + str((time() - t0)) + " seconds.")
 
 
-def create_cluster_run(km, start_date, end_date):
+def create_cluster_run(km, s_score, start_date, end_date):
     format = '%Y-%m-%d'
     inertia = km.inertia_ / len(km.labels_)
     start_datetime = datetime.strptime(start_date, format)
@@ -366,7 +375,7 @@ def create_cluster_run(km, start_date, end_date):
                     num_clusters=NUM_CLUSTERS, batch_size=int(len(km.labels_)/BATCH_SIZE_RATIO),
                     sample_size=int(len(km.labels_)/INIT_SIZE_RATIO), max_df=MAX_DF,
                     num_posts=len(km.labels_), total_inertia=km.inertia_,
-                    batch_size_ratio=1/BATCH_SIZE_RATIO, sample_size_ratio=1/INIT_SIZE_RATIO)
+                    batch_size_ratio=1/BATCH_SIZE_RATIO, sample_size_ratio=1/INIT_SIZE_RATIO, silo_score=s_score)
     cr.save()
 
 
@@ -379,7 +388,7 @@ def main():
     t0 = time()
 
     start_date = "2014-01-01"
-    end_date = "2014-3-01"
+    end_date = "2014-02-01"
 
     data_set = ClusterData(Post.objects.filter(creationdate__range=(start_date, end_date)))
 
