@@ -84,7 +84,7 @@ def run_classification(data_train, data_test, num_features):
     X_test, X_train, vectorizer, y_train = vectorize(data_test, data_train, c_params)
 
     if c_params.is_chi_squared_used:
-        chi_squared_transformer(X_test, X_train, y_train)
+        chi_squared_transformer(X_test, X_train, y_train, c_params)
 
     # mapping from integer feature name to original token string
     feature_names = np.asarray(vectorizer.get_feature_names())
@@ -92,7 +92,7 @@ def run_classification(data_train, data_test, num_features):
     classify(L1LinearSVC(), data_test, X_train, y_train, X_test, feature_names, categories)
 
     if c_params.is_upload_enabled:
-        associate_post_with_cluster(data_test, len(categories),c_params)
+        associate_post_with_cluster(data_test, len(categories), c_params)
 
 
 def vectorize(data_test, data_train, c_params):
