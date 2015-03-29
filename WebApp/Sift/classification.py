@@ -89,7 +89,7 @@ def run_classification(data_train, data_test, num_features):
     # mapping from integer feature name to original token string
     feature_names = np.asarray(vectorizer.get_feature_names())
 
-    classify(L1LinearSVC(), data_test, X_train, y_train, X_test, feature_names, categories)
+    classify(L1LinearSVC(), data_test, X_train, y_train, X_test, feature_names, categories, c_params)
 
     if c_params.is_upload_enabled:
         associate_post_with_cluster(data_test, len(categories), c_params)
