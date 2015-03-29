@@ -32,7 +32,12 @@ body {
     font-weight:bold;
 }
 #settings {
-    padding-right:30px;
+    padding-top: 15px;
+    color: white;
+    font-size: 1.3em;
+    width: 139px;
+    height:55px;
+    cursor:pointer;
 }
 #logo {
   height:50px;
@@ -317,4 +322,27 @@ border: 1px solid #CF7F30 !important;
 }
 .spikeGraph {
     width:55%;
+}
+#hoverDropDown {
+    display:none;
+    top: 52px;
+  right: 8px;
+  position: fixed;
+  z-index: 2;
+  list-style: none;
+  background: rgb(34, 34, 34);
+  border-radius: 3px;
+  border: #111111;
+  font-size: 1.15em;
+    overflow:hidden;
+}
+#hoverDropDown li {
+    cursor:pointer;
+}
+.drop > li > a {
+    background-color:rgb(34, 34, 34);
+    color:white;
+}
+.drop > li > a:hover {
+    background-color:#202020;
 }

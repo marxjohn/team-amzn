@@ -57,7 +57,7 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
         chartArea: {
             left: 70,
             width: '100%',
-            height: '90%'
+            height: '80%'
         },
         fontSize: 14,
         vAxis: {title: "Cluster Volume"},

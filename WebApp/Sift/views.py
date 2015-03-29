@@ -20,38 +20,40 @@ def general(request):
     headline = "General Analytics"
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
-
-
-    pieData = [['Forum ID', 'Number of Posts']]
-    for cluster in trendingClusters:
-        pieData.append([cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
-
-    lineClusterNames = []
-
-    for cluster in trendingClusters:
-        lineClusterNames.append(cluster.name)
-
-    lineDates = []
-    lineData = {}
-    posts = Post.objects.values('creationdate', 'cluster').order_by('creationdate')
-    for post in posts:
-        id = post["cluster"]
-        if (id != None):
-            date = post["creationdate"].timetuple()
-            unix_date = int(time.mktime(date)) * 1000
-            try:
-                if unix_date in lineData:
-                    lineData[unix_date][id-1] += 1
-                else:
-                    lineData[unix_date] = [0] * len(lineClusterNames)
-                    lineData[unix_date][id-1] = 1
-                    lineDates.append(unix_date)
-            except:
-                pass
+    #
+    #
+    # pieData = [['Forum ID', 'Number of Posts']]
+    # for cluster in trendingClusters:
+    #     pieData.append([cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
+    #
+    # lineClusterNames = []
+    #
+    # for cluster in trendingClusters:
+    #     lineClusterNames.append(cluster.name)
+    #
+    # lineDates = []
+    # lineData = {}
+    # posts = Post.objects.values('creationdate', 'cluster').order_by('creationdate')
+    # for post in posts:
+    #     id = post["cluster"]
+    #     if (id != None):
+    #         date = post["creationdate"].timetuple()
+    #         unix_date = int(time.mktime(date)) * 1000
+    #         try:
+    #             if unix_date in lineData:
+    #                 lineData[unix_date][id-1] += 1
+    #             else:
+    #                 lineData[unix_date] = [0] * len(lineClusterNames)
+    #                 lineData[unix_date][id-1] = 1
+    #                 lineDates.append(unix_date)
+    #         except:
+    #             pass
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters':
-               trendingClusters, "headline": headline, 'pieData': pieData,
-               'lineData': lineData, 'lineDates': lineDates, 'lineClusterNames': lineClusterNames}
+               trendingClusters, "headline": headline,
+               #'pieData': pieData,
+               # 'lineData': lineData, 'lineDates': lineDates, 'lineClusterNames': lineClusterNames
+               }
 
     return render(request, 'general_analytics.html', context)
 
