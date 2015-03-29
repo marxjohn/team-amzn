@@ -5,11 +5,9 @@
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
     <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
     <script>
-
     $(document).ready(function(){
         $("#clusteringNav").hide();
     });
-
     </script>
     <script type="text/javascript" src="{% static 'js/clustering.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
@@ -69,12 +67,10 @@
 
 </div>
 <script>
-
 String.prototype.replaceWith = function(f, t) {
     var regExp = new RegExp(f, "g");
     return this.replace(regExp, t);
 };
-
 $(document).ready(function() {
     $('.datepicker').datepicker();
     $('#id_all_posts').change(function() {
@@ -92,9 +88,6 @@ $(document).ready(function() {
         $('#id_end_date').val(end);
     }
     });
-    //Stop Words List
-    {% autoescape off %}
-    {% endautoescape %}
 
 });
 
