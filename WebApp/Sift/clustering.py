@@ -326,7 +326,7 @@ def upload_clusters(data_set, data_count, km, order_centroids, terms, num_cluste
         # Associate Post with Cluster
         # do for every 5k
         for j in range(0, num_clusters):
-            query = "UPDATE posts SET posts.cluster = " + str(j+1) + " where"
+            query = "UPDATE Post SET Post.cluster = " + str(j+1) + " where"
             is_first = True
             count = 0
             for i in range(0, data_count):
@@ -336,17 +336,17 @@ def upload_clusters(data_set, data_count, km, order_centroids, terms, num_cluste
                     # increment count if post is part of query
                     count += 1
                     if is_first:
-                        query += " posts.postId = " + str(post_id)
+                        query += " Post.postId = " + str(post_id)
                         is_first = False
                     else:
-                        query += " OR posts.postId = " + str(post_id)
+                        query += " OR Post.postId = " + str(post_id)
 
                 if count >= 7500:
                     print("uploading part of cluster " + str(j))
                     cursor = connection.cursor()
                     cursor.execute(query)
                     cursor.close()
-                    query = "UPDATE posts SET posts.cluster = " + str(j+1) + " where"
+                    query = "UPDATE Post SET Post.cluster = " + str(j+1) + " where"
                     is_first = True
                     count = 0
 
