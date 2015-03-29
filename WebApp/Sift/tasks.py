@@ -5,7 +5,7 @@ from celery import shared_task
 from time import time
 from Sift.models import Post
 
-import Sift.NLTKClustering
+import Sift.clustering
 import logging
 
 @shared_task
@@ -17,8 +17,8 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features, i
     t0 = time()
 
     if isAllPosts:
-        dataset = Sift.NLTKClustering.ClusterData(Post.objects.all())
+        dataset = Sift.clustering.ClusterData(Post.objects.all())
     else:
-        dataset = Sift.NLTKClustering.ClusterData(Post.objects.filter(creationdate__range=(start_date, end_date)))
+        dataset = Sift.clustering.ClusterData(Post.objects.filter(creation_date__range=(start_date, end_date)))
 
-    Sift.NLTKClustering.cluster_posts(dataset, t0, num_clusters, max_features, start_date, end_date)
+    Sift.clustering.run_diagnostic_clustering(dataset, start_date, end_date, 1000, 5, .85, 20, 50, 150)

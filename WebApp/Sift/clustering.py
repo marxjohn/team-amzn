@@ -138,13 +138,13 @@ class ClusterData:
         return stemmed
 
     def stemmed_body(post):
-        if post.stemmedbody is not None:
-            return (post.stemmedbody, True, post.postid)
+        if post.stemmed_body is not None:
+            return (post.stemmed_body, True, post.post_id)
         else:
-            return (post.body, False, post.postid)
+            return (post.body, False, post.post_id)
 
     def __init__(self, inp):
-        self.id_list = [p.postid for p in inp]
+        self.id_list = [p.post_id for p in inp]
         self.data = np.fromiter(
             map(ClusterData.stemmed_body, inp),
             dtype=[("body", "|U5000"), ("stemmed", "b"), ("id", "i")],
@@ -396,7 +396,7 @@ def run_diagnostic_clustering(data_set, start_date, end_date, max_features, num_
     c_param = ClusterParameter(num_clusters=num_clusters, is_added_to_cluster_run=True,
                                batch_size_ratio=batch_size_ratio, is_idf_used=True, is_upload_enabled=False,
                                max_features=max_features, max_df=max_df, init_size_ratio=init_size_ratio, n_init=n_init,
-                               start_date=start_date, end_date=end_date, is_mini_used=True)
+                               start_date=start_date, end_date=end_date, is_mini_used=True, is_visualization_enabled=False)
     cluster_posts(data_set, c_param)
 
     return c_param.s_score, c_param.inertia

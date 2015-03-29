@@ -9,7 +9,7 @@ import os
 
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
-CHOICES = (('1', 'K-Means'), ('2', 'Mini-Batch'))
+CHOICES = (('1', 'Mini-Batch'), ('2', 'K-Means'))
 
 
 def monthdelta(date, delta):
