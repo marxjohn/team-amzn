@@ -81,7 +81,7 @@ def run_classification(data_train, data_test, num_features):
 
     categories = data_train.cluster_list
 
-    X_test, X_train, vectorizer, y_train = vectorize(data_test, data_train)
+    X_test, X_train, vectorizer, y_train = vectorize(data_test, data_train, c_params)
 
     if c_params.is_chi_squared_used:
         chi_squared_transformer(X_test, X_train, y_train)
