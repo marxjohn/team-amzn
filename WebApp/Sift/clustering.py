@@ -111,7 +111,7 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
                 return temp2
             else:
                 stemmed = english_stemmer.stemWords(analyzer(doc[0]))
-                post = Post.objects.get(postid=doc[2])
+                post = Post.objects.get(post_id=doc[2])
                 post.stemmedbody = ' '.join(stemmed)
                 post.save()
                 return stemmed
