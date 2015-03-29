@@ -4,11 +4,13 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}">
     <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="{% static 'css/general_analytics.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/font-awesome/css/font-awesome.min.css' %}">
     <link rel="icon" href="{% static 'img/favicon.ico' %}">
     <title>Sift</title>
     <script src="{% static 'js/jquery-2.1.3.js' %}"></script>
     <script src="{% static 'js/Chart.js' %}"></script>
     <script src="{% static 'js/graphing.js' %}"></script>
+    <script src="{% static 'js/hovernav.js' %}"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript">
@@ -48,17 +50,19 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-              <li class="nav-option" id="generalNav"><a href="{% url 'general:general' %}">General Analytics</a></li>
-              <li class="nav-option" id="clusteringNav"><a href="{% url 'general:clustering' %}">Clustering</a></li>
-            <li><a id="settings" href="{% url 'general:settings' %}">
-                <img src="{% static 'img/settings.png' %}">
-            </a></li>
+{#              <li class="nav-option" id="generalNav"><a href="{% url 'general:general' %}">General Analytics</a></li>#}
+{#              <li class="nav-option" id="clusteringNav"><a href="{% url 'general:clustering' %}">Clustering</a></li>#}
+            <div id="settings">
+                <i class="fa fa-gear"></i> Settings
+            </div>
+            <ul id="hoverDropDown" class="nav drop">
+          <li><a href="{% url 'general:clusters' %}"><i class="fa fa-bar-chart"></i> Clusters</a></li>
+          <li><a  href="{% url 'general:clustering' %}"><i class="fa fa-refresh"></i> Clustering</a></li>
+          <li><a href="{% url 'general:notifications' %}"><i class="fa fa-bell-o"></i> Notifications</a></li>
+    </ul>
+
           </ul>
-
         </div>
-
-
-
     </nav>
 
     <div class="container-fluid">

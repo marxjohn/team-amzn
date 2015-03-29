@@ -9,13 +9,16 @@ import Sift.NLTKClustering
 import logging
 
 @shared_task
-def cluster_posts_with_input(start_date, end_date, num_clusters, max_features, isMiniBatch):
+def cluster_posts_with_input(start_date, end_date, num_clusters, max_features, isMiniBatch, isAllPosts):
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
 
     print("Retrieving dataset from database")
     t0 = time()
 
-    dataset = Sift.NLTKClustering.ClusterData(Post.objects.filter(creationdate__range=(start_date, end_date)))
+    if isAllPosts:
+        dataset = Sift.NLTKClustering.ClusterData(Post.objects.all())
+    else:
+        dataset = Sift.NLTKClustering.ClusterData(Post.objects.filter(creationdate__range=(start_date, end_date)))
 
     Sift.NLTKClustering.cluster_posts(dataset, t0, num_clusters, max_features, start_date, end_date)

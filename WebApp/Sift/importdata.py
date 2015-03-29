@@ -6,23 +6,6 @@ try:
 except:
     pass
 
-from django.conf import settings
-if not settings.configured:
-    settings.configure(
-        DATABASES={'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'HOST': 'sellerforums.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
-            'PORT': '3306',
-            'USER': 'teamamzn',
-            'PASSWORD': 'TeamAmazon2015!',
-            'NAME': 'sellerforums',
-            'OPTIONS': {
-                'autocommit': True,
-            },
-        }
-        }
-    )
-
 # from models import *
 import logging
 from time import time
@@ -32,12 +15,12 @@ DATA_FILES = ['data/expSForums' + str(i) + '.cvs' for i in range(1,11)]
 
 def get_post_count(conn):
     cur = conn.cursor()
-    cur.execute("SELECT Count(*) FROM sellerforums.posts")
+    cur.execute("SELECT Count(*) FROM sellerforums.Post")
     return cur.fetchone()
 
 def commitPost(post, conn):
         cur = conn.cursor()
-        query = "INSERT INTO posts (threadId, messageId, forumId, userId, categoryId, subject, body, postedByModerator," \
+        query = "INSERT INTO Post (threadId, messageId, forumId, userId, categoryId, subject, body, postedByModerator," \
                 " resolutionState, helpfulAnswer, correctAnswer, userName, userPoints, creationDate, modificationDate, locale) VALUES "
         query += "(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         try:
@@ -62,7 +45,8 @@ def main():
                         format='%(asctime)s %(levelname)s %(message)s')
 
     # print("Creating Database")
-    conn = pymysql.connect(host='sellerforums.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
+    #conn = pymysql.connect(host='sellerforums.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
+    conn = pymysql.connect(host='restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
 
     print("Importing Data")
     # set up variables
@@ -71,10 +55,14 @@ def main():
     j = 500
     errors = 0
     cur = conn.cursor()
-    cur.execute("SELECT threadId, messageId from posts ORDER by postId desc LIMIT 1")
+    cur.execute("SELECT threadId, messageId from Post ORDER by postId desc LIMIT 1")
     delta = cur.fetchone()
-    delta = str(delta[0]) + str(delta[1])
-    caughtup = 0
+    caughtup = 1
+    #if(delta is None):
+    #    caughtup = 1
+    #else:
+    #    delta = str(delta[0]) + str(delta[1])
+    #    caughtup = 0
 
     for f in DATA_FILES:
         p = 0
