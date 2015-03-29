@@ -74,7 +74,7 @@ class L1LinearSVC(LinearSVC):
         return LinearSVC.predict(self, X)
 
 
-def run_classification(data_train, data_test):
+def run_classification(data_train, data_test, num_features):
     c_params = ClassificationParams(num_features=num_features, is_report_printed=False, is_chi_squared_used=True,
                                     is_idf_used=True, is_upload_enabled=True)
 

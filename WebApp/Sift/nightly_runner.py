@@ -69,7 +69,7 @@ def main():
     cluster_data = create_cluster_data(c_list)
     train_data = create_cluster_data(train_list)
 
-    run_classification(train_data, cluster_data)
+    run_classification(train_data, cluster_data, 1000)
     posts = Posts.objects.all()
     end_date, start_date = find_min_and_max_date(posts)
     s_score, s_inertia = run_diagnostic_clustering(posts, start_date, end_date, 1000, 5, .85, 20, 50, 150)
