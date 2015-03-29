@@ -84,13 +84,13 @@ class ClusterData:
         return stemmed
 
     def stemmed_body(post):
-        if post.stemmedbody is not None:
-            return (post.stemmedbody, True, post.postid)
+        if post.stemmed_body is not None:
+            return (post.stemmed_body, True, post.post_id)
         else:
-            return (post.body, False, post.postid)
+            return (post.body, False, post.post_id)
 
     def __init__(self, inp, cluster_inp):
-        self.id_list = [p.postid for p in inp]
+        self.id_list = [p.post_id for p in inp]
         self.cluster_of_posts = [p.cluster_id for p in inp]
         self.cluster_list = [c.clusterid for c in cluster_inp]
         self.data = np.fromiter(
@@ -101,13 +101,17 @@ class ClusterData:
 
 def get_cluster_data(start_date, end_date):
 
-    data_set = ClusterData(Post.objects.filter(creationdate__range=(start_date, end_date)), Cluster.objects.all())
+    data_set = ClusterData(Post.objects.filter(creation_date__range=(start_date, end_date)), Cluster.objects.all())
     return data_set
+
+
+def create_cluster_data(post_list):
+    return ClusterData(post_list, Cluster.objects.all())
 
 
 def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
     for j in range(0, num_clusters):
-        query = "UPDATE posts SET posts.cluster = " + str(j+1) + " where"
+        query = "UPDATE Post SET Post.cluster = " + str(j+1) + " where"
         is_first = True
         count = 0
         for i in range(0, len(data_set.id_list)):
@@ -117,17 +121,17 @@ def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
                 # increment count if post is part of query
                 count += 1
                 if is_first:
-                    query += " posts.postId = " + str(post_id)
+                    query += " Post.postId = " + str(post_id)
                     is_first = False
                 else:
-                    query += " OR posts.postId = " + str(post_id)
+                    query += " OR Post.postId = " + str(post_id)
 
             if count >= 7500:
                 print("uploading part of cluster " + str(j))
                 cursor = connection.cursor()
                 cursor.execute(query)
                 cursor.close()
-                query = "UPDATE posts SET posts.cluster = " + str(j+1) + " where"
+                query = "UPDATE Post SET posts.cluster = " + str(j+1) + " where"
                 is_first = True
                 count = 0
 

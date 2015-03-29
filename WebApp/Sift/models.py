@@ -44,25 +44,25 @@ class ClusterWord(models.Model):
 
 
 class Post(models.Model):
-    postid = models.IntegerField(db_column='postId', primary_key=True)  # Field name made lowercase.
-    threadid = models.IntegerField(db_column='threadId')  # Field name made lowercase.
-    messageid = models.IntegerField(db_column='messageId')  # Field name made lowercase.
-    forumid = models.IntegerField(db_column='forumId')  # Field name made lowercase.
-    userid = models.IntegerField(db_column='userId')  # Field name made lowercase.
-    categoryid = models.IntegerField(db_column='categoryId')  # Field name made lowercase.
+    post_id = models.IntegerField(db_column='postId', primary_key=True)  # Field name made lowercase.
+    thread_id = models.IntegerField(db_column='threadId')  # Field name made lowercase.
+    message_id = models.IntegerField(db_column='messageId')  # Field name made lowercase.
+    forum_id = models.IntegerField(db_column='forumId')  # Field name made lowercase.
+    user_id = models.IntegerField(db_column='userId')  # Field name made lowercase.
+    category_id = models.IntegerField(db_column='categoryId')  # Field name made lowercase.
     subject = models.CharField(max_length=512, blank=True)
     body = models.TextField(blank=True)
-    postedbymoderator = models.IntegerField(db_column='postedByModerator')  # Field name made lowercase.
-    resolutionstate = models.IntegerField(db_column='resolutionState')  # Field name made lowercase.
-    helpfulanswer = models.IntegerField(db_column='helpfulAnswer')  # Field name made lowercase.
-    correctanswer = models.IntegerField(db_column='correctAnswer')  # Field name made lowercase.
+    posted_by_moderator = models.IntegerField(db_column='postedByModerator')  # Field name made lowercase.
+    resolution_state = models.IntegerField(db_column='resolutionState')  # Field name made lowercase.
+    helpful_answer = models.IntegerField(db_column='helpfulAnswer')  # Field name made lowercase.
+    correct_answer = models.IntegerField(db_column='correctAnswer')  # Field name made lowercase.
     username = models.CharField(db_column='userName', max_length=64)  # Field name made lowercase.
-    userpoints = models.IntegerField(db_column='userPoints')  # Field name made lowercase.
-    creationdate = models.DateField(db_column='creationDate')  # Field name made lowercase.
-    modificationdate = models.DateField(db_column='modificationDate')  # Field name made lowercase.
+    user_points = models.IntegerField(db_column='userPoints')  # Field name made lowercase.
+    creation_date = models.DateField(db_column='creationDate')  # Field name made lowercase.
+    modification_date = models.DateField(db_column='modificationDate')  # Field name made lowercase.
     locale = models.CharField(max_length=64, blank=True)
     cluster = models.ForeignKey(Cluster, db_column='cluster', blank=True, null=True, on_delete=models.SET_NULL)
-    stemmedbody = models.TextField(db_column='stemmedBody', blank=True)  # Field name made lowercase.
+    stemmed_body = models.TextField(db_column='stemmedBody', blank=True)  # Field name made lowercase.
 
 
     class Meta:
