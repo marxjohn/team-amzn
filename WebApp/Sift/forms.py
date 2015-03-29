@@ -25,9 +25,9 @@ def monthdelta(date, delta):
 
 class ClusterForm(forms.Form):
     start_date = forms.DateField(label="Start Date", widget=DateInput(
-    ), initial=monthdelta(datetime.date.today(), -2).strftime('%m/%d/%Y'))
+    ), initial=monthdelta(datetime.date.today(), -2).strftime('%m/%d/%Y'), required=False)
     end_date = forms.DateField(
-        label="End Date", widget=DateInput(), initial=datetime.date.today().strftime('%m/%d/%Y'))
+        label="End Date", widget=DateInput(), initial=datetime.date.today().strftime('%m/%d/%Y'), required=False)
     all_posts = forms.BooleanField(required=False)
     num_clusters = forms.IntegerField(label="Number of Clusters", initial=8)
     max_features = forms.IntegerField(

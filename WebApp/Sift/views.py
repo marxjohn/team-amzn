@@ -95,17 +95,26 @@ def details(request, cluster_id):
     return render(request, 'details.html', context)
 
 
-def settings(request):
-    headline = "Settings"
+def notifications(request):
+    headline = "Notifications"
 
     if request.method == 'POST':
         Sift.Notification.main(request.POST['ADD_EMAIL'])
 
     email_list = Sift.Notification.verify(request._get_post())
-    context = {'email_list': email_list }
+    context = {"headline": headline, 'email_list': email_list }
 
 
-    return render(request, 'settings.html', context)
+    return render(request, 'notifications.html', context)
+
+
+def clusters(request):
+    headline = "Clusters"
+
+    context = {"headline": headline}
+
+
+    return render(request, 'clusters.html', context)
 
 
 def clustering(request):
@@ -118,9 +127,13 @@ def clustering(request):
                 is_mini_batched = False
             else:
                 is_mini_batched = True
+            if clusterForm.cleaned_data['all_posts'] == 1:
+                is_all_posts = True
+            else:
+                is_all_posts = False
             tasks.cluster_posts_with_input.delay(str(clusterForm.cleaned_data['start_date']), str(clusterForm.cleaned_data['end_date']),
                                                          int(clusterForm.cleaned_data['num_clusters']), int(clusterForm.cleaned_data['max_features']),
-                                                         is_mini_batched)
+                                                         is_mini_batched, is_all_posts)
     if request.method == "POST" and not clusterForm.is_valid():
         stopwordDelete = StopwordDelete(request.POST)
         if stopwordDelete.is_valid():
@@ -143,9 +156,3 @@ def clustering(request):
 
     context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'deleteForm': StopwordDelete(), 'addForm': StopwordAdd()}
     return render(request, 'clustering.html', context)
-
-
-def cluster_running(request):
-    headline = "Cluster Running"
-    context = {'headline': headline}
-    return render(request, 'cluster_running.html', context)

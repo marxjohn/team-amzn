@@ -3,7 +3,7 @@
 {% block head %}
 {% endblock %}
 {% block body_block %}
-<form action= '{% url 'general:settings' %}' method="POST">
+<form action= '{% url 'general:notifications' %}' method="POST">
 {% csrf_token %}
     <br><h4>Add Email</h4></h4>
     <input type="text" name="ADD_EMAIL">
