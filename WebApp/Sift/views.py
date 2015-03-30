@@ -110,9 +110,11 @@ def notifications(request):
 
 def clusters(request):
     headline = "Clusters"
-
-    context = {"headline": headline}
-
+    clusters = Cluster.objects.all();
+    context = {"headline": headline, 'clusters': clusters}
+    if request.method=='POST':
+        
+        print(request)
 
     return render(request, 'clusters.html', context)
 

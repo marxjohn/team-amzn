@@ -346,3 +346,6 @@ border: 1px solid #CF7F30 !important;
 .drop > li > a:hover {
     background-color:#202020;
 }
+#editClusterLine {
+    padding:3px;
+}

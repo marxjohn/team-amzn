@@ -14,26 +14,13 @@
 {% endblock %}
 {% block body_block %}
 <h1>Clusters</h1>
-{#<div id="formClustering">#}
-{#<form action="/clustering/" method="POST">#}
-{#    {% csrf_token %}#}
-{##}
-{#    <br><p>Date Range:</p>#}
-{#    {{ form.start_date }}#}
-{#    {{ form.end_date }}#}
-{#    <br /> All Posts#}
-{#    {{ form.all_posts }}#}
-{#    <br><br><p>Number of Clusters:</p>#}
-{#    {{ form.num_clusters }}#}
-{#    <br><br><p>Clustering Type:</p>#}
-{#    {{ form.cluster_type }}#}
-{#    <br><br><p>Max Number of Features</p>#}
-{#    {{ form.max_features }}#}
-{##}
-{#    <br><br>#}
-{##}
-{#    <br>#}
-{#    <input type="submit" name="Clustering" value="Run" />#}
-{#</form>#}
-{#<div id="stop_words">#}
+<form method="POST">
+{% csrf_token %}
+{% for cluster in clusters %}
+     <div id="editClusterLine">
+     <input type="text" id="{{ cluster.clusterid }}" value="{{ cluster.name }}">
+     </div>
+     {% endfor %}
+     <input type="submit">
+     </form>
 {% endblock %}

@@ -53,3 +53,6 @@ class StopwordAdd(forms.Form):
 
     def __unicode__(self):
         return self.add_word
+
+class EditClusterName(forms.Form):
+    edit_cluster = forms.CharField();
