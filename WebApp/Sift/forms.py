@@ -31,7 +31,7 @@ class ClusterForm(forms.Form):
     all_posts = forms.BooleanField(required=False)
     num_clusters = forms.IntegerField(label="Number of Clusters", initial=8)
     max_features = forms.IntegerField(
-        label="Max Number of Features", initial=10000)
+        label="Max Number of Features", initial=1000)
     cluster_type = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
 
 
