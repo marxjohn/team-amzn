@@ -39,7 +39,8 @@ class StopwordDelete(forms.Form):
     def __init__(self, *args, **kwargs):
         super(StopwordDelete, self).__init__(*args, **kwargs)
         self.fields['word'].help_text = None
-    word = forms.ModelMultipleChoiceField(queryset=StopWord.objects.all(), label="")
+        self.fields['word'].widget.attrs['size'] = '12'
+    word = forms.ModelMultipleChoiceField(queryset=StopWord.objects.all().order_by('word'), label="")
 
     def __unicode__(self):
         return self.word
