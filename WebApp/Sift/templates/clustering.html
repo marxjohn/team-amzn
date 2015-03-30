@@ -34,6 +34,21 @@
     <br>
     <input type="submit" name="Clustering" value="Run" />
 </form>
+
+</div>
+<div id="aboutClustering">
+
+    <h1>Info {{ word }}</h1>
+    <p>This site uses <a href='http://en.wikipedia.org/wiki/Tf%E2%80%93idf'>term frequency-inverse document frequency (tf-idf)</a> vectorization of posts on the Amazon Seller Forums to perform fast <a href='http://en.wikipedia.org/wiki/K-means_clustering'>K-means clustering</a> using the <a href='http://www.eecs.tufts.edu/~dsculley/papers/fastkmeans.pdf'>mini-batch algorithm</a>. 
+    <ul>
+      <li><b>Date Range: </b>Generate clusters on posts made in a certain date range, or cluster all posts</li>
+      <li><b>Number of Clusters: </b>Adjust the number of clusters the algorithm attempts to fit posts to</li>
+      <li><b>Clustering Type: </b>Select whether standard K-means or mini-batch (faster) clustering is used</li>
+      <li><b>Max Number of Features: </b>The max features attributes indicates how many unique words should be considered when clustering; additional (lower-frequency) words will be ignored by the clustering algorithm.</li>
+    </ul>
+    </p>
+
+</div>
 <br><hr />
 <div id="stop_words">
 <br><p>Stop Words</p>
@@ -52,20 +67,9 @@
 </form>
 </div>
 </div>
-</div>
-<div id="aboutClustering">
-
-    <h1>Info {{ word }}</h1>
-    <p>This site uses <a href='http://en.wikipedia.org/wiki/Tf%E2%80%93idf'>term frequency-inverse document frequency (tf-idf)</a> vectorization of posts on the Amazon Seller Forums to perform fast <a href='http://en.wikipedia.org/wiki/K-means_clustering'>K-means clustering</a> using the <a href='http://www.eecs.tufts.edu/~dsculley/papers/fastkmeans.pdf'>mini-batch algorithm</a>. 
-    <ul>
-      <li><b>Date Range: </b>Generate clusters on posts made in a certain date range, or cluster all posts</li>
-      <li><b>Number of Clusters: </b>Adjust the number of clusters the algorithm attempts to fit posts to</li>
-      <li><b>Clustering Type: </b>Select whether standard K-means or mini-batch (faster) clustering is used</li>
-      <li><b>Max Number of Features: </b>The max features attributes indicates how many unique words should be considered when clustering; additional (lower-frequency) words will be ignored by the clustering algorithm.</li>
-    </ul>
-    </p>
-
-</div>
+<br><hr />
+<h1>Cluster Run Details</h1>
+<div id="table_chart"></div>
 <script>
 String.prototype.replaceWith = function(f, t) {
     var regExp = new RegExp(f, "g");
@@ -88,7 +92,18 @@ $(document).ready(function() {
         $('#id_end_date').val(end);
     }
     });
-
+    // Table visualization
+{#    var lineChartData = new google.visualization.arrayToDataTable({{ runclustering }});#}
+{#    var myTable = new google.visualization.ChartWrapper({#}
+{#        'chartType': 'Table',#}
+{#        'containerId': 'table_chart',#}
+{#        'options': {#}
+{#            'page': 'enable',#}
+{#            'pageSize': 50,#}
+{#            'sortColumn': 0,#}
+{#            'fontName': "Lato"#}
+{#        }#}
+{#    });#}
 });
 
 </script>

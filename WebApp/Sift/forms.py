@@ -42,9 +42,6 @@ class StopwordDelete(forms.Form):
         self.fields['word'].widget.attrs['size'] = '12'
     word = forms.ModelMultipleChoiceField(queryset=StopWord.objects.all().order_by('word'), label="")
 
-    def __unicode__(self):
-        return self.word
-
 
 class StopwordAdd(forms.Form):
     def __init__(self, *args, **kwargs):
@@ -52,8 +49,6 @@ class StopwordAdd(forms.Form):
         self.fields['add_word'].help_text = None
     add_word = forms.CharField(label="")
 
-    def __unicode__(self):
-        return self.add_word
 
 class EditClusterName(forms.Form):
-    edit_cluster = forms.CharField();
+    edit_cluster = forms.CharField()

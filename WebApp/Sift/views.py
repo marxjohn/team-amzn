@@ -13,6 +13,7 @@ import Sift.clustering
 import Sift.Notification
 import Sift.tasks as tasks
 import Sift.forms
+from Sift.models import ClusterRun
 from Sift.forms import StopwordDelete, StopwordAdd
 
 
@@ -112,8 +113,8 @@ def clusters(request):
     headline = "Clusters"
     clusters = Cluster.objects.all();
     context = {"headline": headline, 'clusters': clusters}
-    if request.method=='POST':
-        
+    if request.method =='POST':
+
         print(request)
 
     return render(request, 'clusters.html', context)
@@ -155,6 +156,7 @@ def clustering(request):
 
 
     stopwords = StopWord.objects.all().values_list("word", flat=True)
+    runclustering = ClusterRun.objects.all()
 
-    context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'deleteForm': StopwordDelete(), 'addForm': StopwordAdd()}
+    context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(), 'runclustering': runclustering}
     return render(request, 'clustering.html', context)
