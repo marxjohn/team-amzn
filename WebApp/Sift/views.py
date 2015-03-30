@@ -9,7 +9,7 @@ from django.core.cache import cache
 import os
 
 import time
-import Sift.NLTKClustering
+import Sift.clustering
 import Sift.Notification
 import Sift.tasks as tasks
 import Sift.forms
@@ -33,11 +33,11 @@ def general(request):
 
     lineDates = []
     lineData = {}
-    posts = Post.objects.values('creationdate', 'cluster').order_by('creationdate')
+    posts = Post.objects.values('creation_date', 'cluster').order_by('creation_date')
     for post in posts:
         id = post["cluster"]
         if (id != None):
-            date = post["creationdate"].timetuple()
+            date = post["creation_date"].timetuple()
             unix_date = int(time.mktime(date)) * 1000
             try:
                 if unix_date in lineData:
@@ -67,10 +67,10 @@ def details(request, cluster_id):
     # data
     cluster_posts = {}
     posts = Post.objects.values(
-        'creationdate', 'body').filter(cluster=cluster_id)
+        'creation_date', 'body').filter(cluster=cluster_id)
     for post in posts:
         # convert date object to unix timestamp int
-        date = post["creationdate"].timetuple()
+        date = post["creation_date"].timetuple()
         unix_date = int(time.mktime(date)) * 1000
         if unix_date in cluster_posts:
             cluster_posts[unix_date]['numPosts'] += 1

@@ -9,7 +9,7 @@ import os
 
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
-CHOICES = (('1', 'K-Means'), ('2', 'Mini-Batch'))
+CHOICES = (('1', 'Mini-Batch'), ('2', 'K-Means'))
 
 
 def monthdelta(date, delta):
@@ -39,7 +39,8 @@ class StopwordDelete(forms.Form):
     def __init__(self, *args, **kwargs):
         super(StopwordDelete, self).__init__(*args, **kwargs)
         self.fields['word'].help_text = None
-    word = forms.ModelMultipleChoiceField(queryset=StopWord.objects.all(), label="")
+        self.fields['word'].widget.attrs['size'] = '12'
+    word = forms.ModelMultipleChoiceField(queryset=StopWord.objects.all().order_by('word'), label="")
 
     def __unicode__(self):
         return self.word
