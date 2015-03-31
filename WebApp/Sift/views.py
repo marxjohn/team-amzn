@@ -38,15 +38,14 @@ def general(request):
     for post in posts:
         id = post["cluster"]
         if (id != None):
-            date = post["creation_date"].timetuple()
-            unix_date = int(time.mktime(date)) * 1000
+            date = int(time.mktime(post["creation_date"].timetuple())) * 1000
             try:
-                if unix_date in lineData:
-                    lineData[unix_date][id-1] += 1
+                if date in lineData:
+                    lineData[date][id-1] += 1
                 else:
-                    lineData[unix_date] = [0] * len(lineClusterNames)
-                    lineData[unix_date][id-1] = 1
-                    lineDates.append(unix_date)
+                    lineData[date] = [0] * len(lineClusterNames)
+                    lineData[date][id-1] = 1
+                    lineDates.append(date)
             except:
                 pass
 
@@ -70,18 +69,16 @@ def details(request, cluster_id):
     posts = Post.objects.values(
         'creation_date', 'body').filter(cluster=cluster_id)
     for post in posts:
-        # convert date object to unix timestamp int
-        date = post["creation_date"].timetuple()
-        unix_date = int(time.mktime(date)) * 1000
-        if unix_date in cluster_posts:
-            cluster_posts[unix_date]['numPosts'] += 1
+        date = int(time.mktime(post["creation_date"].timetuple())) * 1000
+        if date in cluster_posts:
+            cluster_posts[date]['numPosts'] += 1
         else:
             # bbcode_body = body.text_content()
-            cluster_posts[unix_date] = {"numPosts": 1, "posts": []}
+            cluster_posts[date] = {"numPosts": 1, "posts": []}
 
         # body = html.document_fromstring(post['body']).drop_tag()
         body = BeautifulSoup(post['body']).getText()
-        cluster_posts[unix_date]['posts'].append(body)
+        cluster_posts[date]['posts'].append(body)
 
     #Cluster word count
     wordPieData = [['Word', 'Instances']]
@@ -154,9 +151,15 @@ def clustering(request):
     form = Sift.forms.ClusterForm()
     headline = "Clustering"
 
-
     stopwords = StopWord.objects.all().values_list("word", flat=True)
     runclustering = ClusterRun.objects.all()
+
+    for clusterrun in runclustering:
+        clusterrun.run_date = int(time.mktime(clusterrun.run_date.timetuple())) * 1000
+        clusterrun.start_date = int(time.mktime(clusterrun.start_date.timetuple())) * 1000
+        clusterrun.end_date = int(time.mktime(clusterrun.end_date.timetuple())) * 1000
+        if clusterrun.silo_score == None:
+            clusterrun.silo_score = 'null'
 
     context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(), 'runclustering': runclustering}
     return render(request, 'clustering.html', context)

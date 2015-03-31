@@ -93,17 +93,36 @@ $(document).ready(function() {
     }
     });
     // Table visualization
-{#    var lineChartData = new google.visualization.arrayToDataTable({{ runclustering }});#}
-{#    var myTable = new google.visualization.ChartWrapper({#}
-{#        'chartType': 'Table',#}
-{#        'containerId': 'table_chart',#}
-{#        'options': {#}
-{#            'page': 'enable',#}
-{#            'pageSize': 50,#}
-{#            'sortColumn': 0,#}
-{#            'fontName': "Lato"#}
-{#        }#}
-{#    });#}
+    var tableData = new google.visualization.DataTable();
+    tableData.addColumn('date', 'RunDate');
+    tableData.addColumn('date', 'StartDate');
+    tableData.addColumn('date', 'EndDate');
+    tableData.addColumn('number', 'Inertia');
+    tableData.addColumn('number', 'Clusters');
+    tableData.addColumn('number', 'Features');
+    tableData.addColumn('number', 'BatchSize');
+    tableData.addColumn('number', 'SampleSize');
+    tableData.addColumn('number', 'Number of Posts');
+    tableData.addColumn('number', 'SiloScore');
+
+    {% for item in runclustering %}
+        tableData.addRow([new Date({{ item.run_date }}), new Date({{ item.start_date }}), new Date({{ item.end_date }}),
+        {{ item.normalized_inertia }}, {{ item.num_clusters }}, {{ item.num_features }}, {{ item.batch_size }},
+        {{ item.sample_size }}, {{ item.num_posts }}, {{ item.silo_score }}]);
+    {% endfor %}
+    var myTable = new google.visualization.ChartWrapper({
+        'chartType': 'Table',
+        'containerId': 'table_chart',
+        'dataTable': tableData,
+        'options': {
+            'page': 'enable',
+            'pageSize': 10,
+            'sortAscending': false,
+            'sortColumn': 0,
+            'fontName': "Lato"
+        }
+    });
+    myTable.draw();
 });
 
 </script>

@@ -21,7 +21,6 @@ function drawGeneralPieChart(array) {
 
 function drawGeneralLineChart(array, lineDates, clusterNames) {
     var data = new google.visualization.DataTable();
-    console.log(array);
     data.addColumn('date', 'Day');
 
     for(i=0; i<clusterNames.length; i++) {
@@ -29,7 +28,7 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
     }
 
     for(i=0; i< lineDates.length; i++) {
-        row = [new Date(parseInt(lineDates[i]))];
+        row = [new Date(lineDates[i])];
 
         for(j=0; j<clusterNames.length; j++) {
             row.push(array[lineDates[i]][j]);
@@ -106,7 +105,7 @@ function draw_dashboard1(data) {
     for (key in data) {
         //console.log(new Date(parseInt(key)));
         lineChartData.addRows([
-            [new Date(parseInt(key)), data[key]['numPosts']]
+            [new Date(key), data[key]['numPosts']]
         ]);
 
     }
@@ -174,7 +173,7 @@ function draw_dashboard2(data) {
     for (key in data) {
         for (i = 0; i < data[key]['posts'].length; i++) {
             lineChartData.addRows([
-                [new Date(parseInt(key)), data[key]['posts'][i]]
+                [new Date(key), data[key]['posts'][i]]
             ]);
         }
     }
