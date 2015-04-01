@@ -116,6 +116,7 @@ class SESMessage( object ):
         except:
             print ( 'Connection not Found.' )
 
+
 class VerifyEmail( object ):
 
     def __init__( __self ):

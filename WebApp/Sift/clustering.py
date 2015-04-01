@@ -149,7 +149,7 @@ class ClusterData:
         self.data = np.fromiter(
             map(ClusterData.stemmed_body, inp),
             dtype=[("body", "|U5000"), ("stemmed", "b"), ("id", "i")],
-            count=len(inp))
+            count=inp.count())
 
 
 def print_posts_in_cluster(data_count, data_set, km, num_posts, num_clusters):
