@@ -49,6 +49,7 @@ def main():
     print("grabbing posts from db")
     dataset = Post.objects.all()
 
+
     print("sentiment time!")
     for post in dataset:
         body = html.document_fromstring(BeautifulSoup(post.body).getText()).text_content()
