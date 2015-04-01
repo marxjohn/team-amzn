@@ -70,10 +70,11 @@ def send_nightly_runner(s_score, s_inertia):
     if email_list == None:
         return False
     else:
-        topic = 'Nightly Runner Notification'
-        send_message = SESMessage(email_list[0], email_list[0], topic)
+        topic = 'SIFT MSU Runner Notification'
+        send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
         for i in range(1, len(email_list)):
             send_message.add_cc_address(email_list[i])
+        # Create email contents with information
         text = 's_score = ' + str(s_score) + ', ' + 's_inertia = ' + str(s_inertia)
         send_message.enter_text(text)
         send_message.send()
