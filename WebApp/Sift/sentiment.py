@@ -39,7 +39,6 @@ from time import time
 django.setup()
 
 
-
 def main():
     t0 = time()
     print("grabbing posts from db")
