@@ -377,15 +377,17 @@ def upload_clusters(data_set, data_count, km, order_centroids, terms, num_cluste
 def create_cluster_run(km, c_param):
     format = '%Y-%m-%d'
     inertia = km.inertia_ / len(km.labels_)
-    start_datetime = datetime.strptime(c_param.start_date, format)
-    end_datetime = datetime.strptime(c_param.end_date, format)
+    start_datetime = c_param.start_date
+    end_datetime = c_param.end_date
 
     cr = ClusterRun(start_date=start_datetime, end_date=end_datetime, normalized_inertia=inertia,
                     run_date=datetime.today(), n_init=c_param.n_init, num_features=c_param.max_features,
                     num_clusters=c_param.num_clusters, batch_size=int(len(km.labels_)/c_param.batch_size_ratio),
-                    sample_size=int(len(km.labels_)/c_param.init_size_ratio), max_df=c_param.init_size_ratio,
+                    #sample_size=int(len(km.labels_)/c_param.init_size_ratio), max_df=c_param.init_size_ratio,
+                    sample_size=0, max_df=0.0,
                     num_posts=len(km.labels_), total_inertia=km.inertia_,
                     batch_size_ratio=1/c_param.batch_size_ratio, sample_size_ratio=1/c_param.init_size_ratio,
+                    #batch_size_ratio=0, sample_size_ratio=0,
                     silo_score=c_param.s_score)
     cr.save()
 

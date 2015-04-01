@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 import boto
 import boto.ses
 
@@ -5,7 +6,10 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 
-from Sift.models import *
+try:
+    from Sift.models import *
+except:
+    from models import *
 
 connection = boto.ses.connect_to_region( 'us-west-2',
                                          aws_access_key_id = 'AKIAJPAOUUTITYRIGX2A',
