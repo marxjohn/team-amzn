@@ -97,18 +97,18 @@ $(document).ready(function() {
     tableData.addColumn('date', 'RunDate');
     tableData.addColumn('date', 'StartDate');
     tableData.addColumn('date', 'EndDate');
-    tableData.addColumn('number', 'Inertia');
     tableData.addColumn('number', 'Clusters');
     tableData.addColumn('number', 'Features');
     tableData.addColumn('number', 'BatchSize');
     tableData.addColumn('number', 'SampleSize');
     tableData.addColumn('number', 'Number of Posts');
+    tableData.addColumn('number', 'Normalized Inertia');
     tableData.addColumn('number', 'SiloScore');
 
     {% for item in runclustering %}
         tableData.addRow([new Date({{ item.run_date }}), new Date({{ item.start_date }}), new Date({{ item.end_date }}),
-        {{ item.normalized_inertia }}, {{ item.num_clusters }}, {{ item.num_features }}, {{ item.batch_size }},
-        {{ item.sample_size }}, {{ item.num_posts }}, {{ item.silo_score }}]);
+        {{ item.num_clusters }}, {{ item.num_features }}, {{ item.batch_size }},
+        {{ item.sample_size }}, {{ item.num_posts }}, {{ item.normalized_inertia }}, {{ item.silo_score }}]);
     {% endfor %}
     var myTable = new google.visualization.ChartWrapper({
         'chartType': 'Table',

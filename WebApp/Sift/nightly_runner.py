@@ -63,20 +63,20 @@ def find_min_and_max_date(c_list):
     return end_date, start_date
 
 
-def send_nightly_runner(s_score, s_inertia):
+def send_nightly_runner(send_message):
     make_email_list = VerifyEmail()
     email_list = make_email_list.make_verify_email_list()
 
     if email_list == None:
         return False
     else:
-        topic = 'SIFT MSU Runner Notification'
-        send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
+        # topic = 'SIFT MSU Runner Notification'
+        # send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
         for i in range(1, len(email_list)):
             send_message.add_cc_address(email_list[i])
         # Create email contents with information
-        text = 's_score = ' + str(s_score) + ', ' + 's_inertia = ' + str(s_inertia)
-        send_message.enter_text(text)
+        # text = email_text
+        # send_message.enter_text(text)
         send_message.send()
         return True
 
@@ -98,9 +98,11 @@ def main():
     end_date, start_date = find_min_and_max_date(posts)
     s_score, s_inertia = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
 
-    # TODO: Some Magic here involving sending email alerts
-
-    send_nightly_runner(s_score, s_inertia)
+    # Some Magic here involving sending email alerts
+    send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", 'SIFT MSU Runner Notification')
+    send_message.enter_text("The status of the clusters are as follows:")
+    send_message.enter_text("s_score: " + s_score + ", s_intertia: " + s_inertia)
+    send_nightly_runner(send_message)
 
 if __name__ == '__main__':
     main()
