@@ -54,8 +54,8 @@ class SESMessage( object ):
         else:
             return False
 
-    def add_cc_address( __self, cc_address ):
-        if cc_addresses in __self._cc_addresses:
+    def add_cc_address(__self, cc_address):
+        if cc_address in __self._cc_addresses:
             return False
         else:
             __self._cc_addresses.append( cc_address )

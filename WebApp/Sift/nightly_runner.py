@@ -73,9 +73,9 @@ def send_nightly_runner(s_score, s_inertia):
         topic = 'Nightly Runner Notification'
         send_message = SESMessage(email_list[0], email_list[0], topic)
         for i in range(1, len(email_list)):
-            send_message.add_bcc_address(email_list[i])
+            send_message.add_cc_address(email_list[i])
         text = 's_score = ' + str(s_score) + ', ' + 's_inertia = ' + str(s_inertia)
-        send_message.set_text(text)
+        send_message.enter_text(text)
         send_message.send()
         return True
 
