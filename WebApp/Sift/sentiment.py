@@ -1,6 +1,14 @@
-from __future__ import absolute_import
+try:
+    from models import Post, Sentiment
+except:
+    from Sift.models import Post, Sentiment
 
-import os
+from lxml import html
+import requests
+import django
+from time import time
+
+django.setup()
 
 try:
     import pymysql
@@ -26,47 +34,41 @@ if not settings.configured:
         }
     )
 
-import matplotlib.pyplot as plt
-try:
-    from models import Post, Sentiment
-except:
-    from Sift.models import Post, Sentiment
-
-from bs4 import BeautifulSoup
-from lxml import html
-import requests
-import django
-from time import time
-from datetime import datetime
-
-django.setup()
-
-
-
 def main():
     conn = pymysql.connect(host='restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
     t0 = time()
     print("grabbing posts from db")
-    dataset = Post.objects.all()
+    # dataset = Post.objects.all()
+    dataset = Post.objects.filter(creation_date__range=("2015-03-15", "2015-03-30"))
 
-
+    suc = 0
+    skip = 0
     print("sentiment time!")
     for post in dataset:
-        body = html.document_fromstring(BeautifulSoup(post.body).getText()).text_content()
-        payload = {'text': body[:80000]}
-        r = requests.post("http://text-processing.com/api/sentiment/", data=payload)
-        try:
-            # print(payload)
-            # print(r.json())
-            senti = Sentiment(post_id=post, prob_negative=r.json()['probability']['neg'],
-                              prob_neutral=r.json()['probability']['neutral'], prob_positive=r.json()['probability']['pos'],
-                              label=r.json()['label'])
-            senti.save()
-        except:
-            print("broke :(")
-            print(r)
-            break
-    print("complete")
+        sentimentobj = Sentiment.objects.filter(post_id=post.post_id)
+        if sentimentobj.__len__() is 0:
+            body = html.document_fromstring(post.body).text_content()
+            payload = {'text': body[:80000]}
+            r = requests.post("http://text-processing.com/api/sentiment/", data=payload)
+            try:
+                print(payload)
+                print(r.json())
+                senti = Sentiment(post_id=post, prob_negative=r.json()['probability']['neg'],
+                                  prob_neutral=r.json()['probability']['neutral'], prob_positive=r.json()['probability']['pos'],
+                                  label=r.json()['label'])
+                senti.save()
+                suc += 1
+            except:
+                print("broke :(")
+                print(r)
+                break
+        else:
+            skip += 1
+            print("skipped")
+
+    print("Successfully sentimented: " + str(suc) + " posts")
+    print("Skipped over: " + str(skip) + " posts")
+    print("done in %fs" % (time() - t0))
 
 
 

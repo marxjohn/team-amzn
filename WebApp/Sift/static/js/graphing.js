@@ -98,14 +98,15 @@ function drawWordPieChart(array) {
  */
 function draw_dashboard1(data) {
 
+    console.log(data);
+
     var lineChartData = new google.visualization.DataTable();
 
     lineChartData.addColumn('date', 'Date');
     lineChartData.addColumn('number', 'Posts');
     for (key in data) {
-        //console.log(new Date(parseInt(key)));
         lineChartData.addRows([
-            [new Date(key), data[key]['numPosts']]
+            [new Date(parseInt(key)), data[key]['numPosts']]
         ]);
 
     }
@@ -173,11 +174,10 @@ function draw_dashboard2(data) {
     for (key in data) {
         for (i = 0; i < data[key]['posts'].length; i++) {
             lineChartData.addRows([
-                [new Date(key), data[key]['posts'][i]]
+                [new Date(parseInt(key)), data[key]['posts'][i]]
             ]);
         }
     }
-    console.log(lineChartData);
     // Create a dashboard.
     var dash_container = document.getElementById('dashboard'),
         myDashboard = new google.visualization.Dashboard(dash_container);

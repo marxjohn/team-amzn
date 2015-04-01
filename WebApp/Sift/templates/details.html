@@ -41,8 +41,8 @@ $('ul.nav a').filter(function() {
 <script>
     //this allows for responsive design
     $(window).resize(function(){
-        console.log("hello")
         {% autoescape off %}
+        console.log({{ cluster_posts }});
             drawWordPieChart({{ wordPieData }});
             draw_dashboard1({{ cluster_posts }});
             draw_dashboard2({{ cluster_posts }});
