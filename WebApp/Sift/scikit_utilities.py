@@ -90,13 +90,14 @@ class ClusterData:
             return (post.body, False, post.post_id)
 
     def __init__(self, inp, cluster_inp):
+
         self.id_list = [p.post_id for p in inp]
         self.cluster_of_posts = [p.cluster_id for p in inp]
         self.cluster_list = [c.clusterid for c in cluster_inp]
         self.data = np.fromiter(
             map(ClusterData.stemmed_body, inp),
             dtype=[("body", "|U5000"), ("stemmed", "b"), ("id", "i")],
-            count=len(inp))
+            count=inp.count())
 
 
 def get_cluster_data(start_date, end_date):

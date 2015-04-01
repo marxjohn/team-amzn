@@ -77,6 +77,7 @@ def details(request, cluster_id):
             cluster_posts[date] = {"numPosts": 1, "posts": []}
 
         # body = html.document_fromstring(post['body']).drop_tag()
+        # body = html.document_fromstring(BeautifulSoup(post['body']).getText()).text_content()
         body = BeautifulSoup(post['body']).getText()
         cluster_posts[date]['posts'].append(body)
 

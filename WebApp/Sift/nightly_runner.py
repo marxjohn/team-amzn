@@ -81,27 +81,35 @@ def send_nightly_runner(send_message):
         return True
 
 
+def run_clustering(data, posts):
+    end_date, start_date = find_min_and_max_date(posts)
+    s_score, s_inertia = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
+    return s_inertia, s_score
+
+
 def main():
-    test_list = Post.objects.filter(cluster_id__isnull=True)
+    test_list = Post.objects.filter(cluster_id__isnull=True)[:10000]
     end_date, start_date = find_min_and_max_date(test_list)
     #
 
-    train_list = Post.objects.filter(cluster_id__isnull=False)
+    train_list = Post.objects.filter(cluster_id__isnull=False, creation_date__range=('2014-01-01', '2014-01-12'))
     #train_end_date, train_start_date = find_min_and_max_date(train_list)
     #
     test_data = create_cluster_data(test_list)
     train_data = create_cluster_data(train_list)
     #
     run_classification(train_data, test_data, 1000, start_date, end_date)
+
     posts = Post.objects.all()
     data = create_cluster_data(posts)
-    end_date, start_date = find_min_and_max_date(posts)
-    s_score, s_inertia = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
+    s_inertia, s_score = run_clustering(data, posts)
+
+
 
     # Some Magic here involving sending email alerts
     send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", 'SIFT MSU Runner Notification')
-    send_message.enter_text("The status of the clusters are as follows:")
-    send_message.enter_text("s_score: " + s_score + ", s_intertia: " + s_inertia)
+    send_message.set_text("The status of the clusters are as follows: \n")
+    send_message.set_text("s_score: " + s_score + ",  s_intertia: " + s_inertia)
     send_nightly_runner(send_message)
 
 if __name__ == '__main__':

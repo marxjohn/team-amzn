@@ -37,8 +37,10 @@ class SESMessage( object ):
         __self._to_address = to_address
 
     def set_subject( __self, subject ):
-        __self.subject = subject
+        __self.subject = __self.subject + subject
 
+    def set_text( __self, text):
+        __self.text = __self.text + text
 
     def add_bcc_addresses( __self, bcc_address ):
         if bcc_address in __self._bcc_addresses:
@@ -82,9 +84,6 @@ class SESMessage( object ):
         else:
             return False
 
-    def enter_text( __self, text):
-        __self.text = text
-
     def send( __self ):
         try:
 
@@ -115,6 +114,7 @@ class SESMessage( object ):
                     destinations = __self._cc_addresses )
         except:
             print ( 'Connection not Found.' )
+
 
 class VerifyEmail( object ):
 
