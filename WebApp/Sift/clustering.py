@@ -97,6 +97,7 @@ class ClusterParameter:
         self.is_visualization_enabled = is_visualization_enabled
         self.s_score = 0
         self.inertia = 0
+        self.normalized_inertia = 0
 
 
 class StemmedTfidfVectorizer(TfidfVectorizer):
@@ -376,11 +377,11 @@ def upload_clusters(data_set, data_count, km, order_centroids, terms, num_cluste
 
 def create_cluster_run(km, c_param):
     format = '%Y-%m-%d'
-    inertia = km.inertia_ / len(km.labels_)
+    c_param.normalized_inertia = km.inertia_ / len(km.labels_)
     start_datetime = c_param.start_date
     end_datetime = c_param.end_date
 
-    cr = ClusterRun(start_date=start_datetime, end_date=end_datetime, normalized_inertia=inertia,
+    cr = ClusterRun(start_date=start_datetime, end_date=end_datetime, normalized_inertia=c_param.normalized_inertia,
                     run_date=datetime.today(), n_init=c_param.n_init, num_features=c_param.max_features,
                     num_clusters=c_param.num_clusters, batch_size=int(len(km.labels_)/c_param.batch_size_ratio),
                     sample_size=int(len(km.labels_)/c_param.init_size_ratio), max_df=c_param.max_df,
@@ -399,7 +400,7 @@ def run_diagnostic_clustering(data_set, start_date, end_date, max_features, num_
                                start_date=start_date, end_date=end_date, is_mini_used=True, is_visualization_enabled=False)
     cluster_posts(data_set, c_param)
 
-    return c_param.s_score, c_param.inertia
+    return c_param.s_score, c_param.normalized_inertia
 
 
 # def main():

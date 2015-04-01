@@ -80,19 +80,19 @@ def send_nightly_runner(s_score, s_inertia):
         return True
 
 
-
 def main():
-    # c_list = Post.objects.filter(cluster_id=None).order_by('creation_date')
-    # # end_date, start_date = find_min_and_max_date(c_list)
+    test_list = Post.objects.filter(cluster_id__isnull=True)
+    end_date, start_date = find_min_and_max_date(test_list)
     #
-    # train_list = Post.objects.filter(cluster_id=not None).order_by('creation_date')
-    # # train_end_date, train_start_date = find_min_and_max_date(train_list)
+
+    train_list = Post.objects.filter(cluster_id__isnull=False)
+    #train_end_date, train_start_date = find_min_and_max_date(train_list)
     #
-    # cluster_data = create_cluster_data(c_list)
-    # train_data = create_cluster_data(train_list)
+    test_data = create_cluster_data(test_list)
+    train_data = create_cluster_data(train_list)
     #
-    # run_classification(train_data, cluster_data, 1000)
-    posts = Post.objects.filter(creation_date__range=('2014-01-01', '2014-01-02'))
+    run_classification(train_data, test_data, 1000, start_date, end_date)
+    posts = Post.objects.all()
     data = create_cluster_data(posts)
     end_date, start_date = find_min_and_max_date(posts)
     s_score, s_inertia = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
