@@ -14,7 +14,7 @@ except:
 
 from scikit_utilities import create_cluster_data
 
-
+from Sift.models import Notification
 
 
 
@@ -59,6 +59,24 @@ def find_min_and_max_date(c_list):
     return end_date, start_date
 
 
+def send_nightly_runner( s_score, s_inertia ):
+    make_email_list = VerifyEmail()
+    email_list = make_email_list.make_verify_email_list()
+
+    if email_list == None:
+        return False
+    else:
+        topic = 'Nightly Runner Notification'
+        send_message = SESMessage( email_list[0], email_list[0], topic )
+        for i in range( 1, len(email_list) ):
+            send_message.add_bcc_address( email_list[i] )
+        text = 's_score = ' + str(s_score) + ', ' + 's_inertia = ' + str(s_inertia)
+        send_message.set_text( text )
+        send_message.send()
+        return True
+
+
+
 def main():
     c_list = Post.objects.filter(cluster_id=None).order_by('creation_date')
     # end_date, start_date = find_min_and_max_date(c_list)
@@ -75,6 +93,8 @@ def main():
     s_score, s_inertia = run_diagnostic_clustering(posts, start_date, end_date, 1000, 5, .85, 20, 50, 150)
 
     # TODO: Some Magic here involving sending email alerts
+
+    send_nightly_runner( s_score, s_inertia )
 
 if __name__ == '__main__':
     main()

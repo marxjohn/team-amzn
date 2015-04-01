@@ -1,39 +1,9 @@
 import boto
 import boto.ses
-import re
 
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
-
-
-try:
-    import pymysql
-    pymysql.install_as_MySQLdb()
-except:
-    pass
-
-from django.conf import settings
-
-if not settings.configured:
-    settings.configure(
-        DATABASES=
-        {
-        'default':
-            {
-            'ENGINE': 'django.db.backends.mysql',
-            'HOST': 'sellerforums.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
-            'PORT': '3306',
-            'USER': 'teamamzn',
-            'PASSWORD': 'TeamAmazon2015!',
-            'NAME': 'sellerforums',
-            'OPTIONS':
-                {
-                'autocommit': True,
-                }
-            }
-        }
-    )
 
 from Sift.models import *
 
@@ -108,6 +78,9 @@ class SESMessage( object ):
         else:
             return False
 
+    def enter_text( __self, text):
+        __self.text = text
+
     def send( __self ):
         try:
 
@@ -152,17 +125,23 @@ class VerifyEmail( object ):
             temp = value
         temp = str(temp)
         temp = temp.split("'VerifiedEmailAddresses': ['")
-        temp = str(temp[1])
-        temp = temp.split("']}, 'ResponseMetadata'")
-        temp = str(temp[0])
-        temp = temp.split(']}}')
-        temp = str(temp[0])
-        temp = temp.split("', '")
-        __self.email_list = temp
+        try:
+            temp = str(temp[1])
+            temp = temp.split("']}, 'ResponseMetadata'")
+            temp = str(temp[0])
+            temp = temp.split(']}}')
+            temp = str(temp[0])
+            temp = temp.split("', '")
 
-        return( __self.email_list )
+            if temp[len(temp)-1][len(temp[len(temp)-1])-1] == "'":
+                temp[len(temp)-1] = temp[len(temp)-1][:-1]
 
+            __self.email_list = temp
 
+            return( __self.email_list )
+        except IndexError:
+            __self.email_list = []
+            return( __self.email_list )
 
     def list_verified_email( __self ):
         return __self.email_list
@@ -192,22 +171,19 @@ class VerifyEmail( object ):
             return False
 
 def main( email_address ):
-    d = VerifyEmail()
+    email_list = VerifyEmail()
+    email_create = SESMessage(email_address, email_address, "test")
+    email_list.verify_email(email_address)
 
-    c = SESMessage(email_address, email_address, "test")
+def verify():
+    email_list = VerifyEmail()
+    email_list.make_verify_email_list()
+    return email_list.list_verified_email()
 
-    d.verify_email(email_address)
-
-def verify( email_address ):
-    d = VerifyEmail()
-
-    d.make_verify_email_list()
-
-    return d.list_verified_email()
-
-
-if __name__ == "__main__":
-    main()
+def remove( email_address ):
+    email_list = VerifyEmail()
+    email_list.make_verify_email_list()
+    email_list.delete_verified_email( email_address )
 
 
 # source = 'johnnyclarence@hotmail.com'
