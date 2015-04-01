@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{#{% load widget_tweaks %}#}
+{% load widget_tweaks %}
 {% block head %}
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
@@ -13,8 +13,11 @@
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
 {% block body_block %}
+<div id="top">
 <h1>Clustering Configuration</h1>
+<h3>Run Clustering</h3>
 <div id="formClustering">
+<div id="runClustering">
 <form action="/clustering/" method="POST">
     {% csrf_token %}
     <div class="line">
@@ -30,48 +33,68 @@
             {{ form.num_clusters }}
         </div>
         <div class="line_obj">
-        <p>Clustering Type:</p>
-        {{ form.cluster_type }}
+            <p>Clustering Type:</p>
+            {{ form.cluster_type|add_class:"styled-select slate" }}
         </div>
     </div>
     <div class="line">
-        <p>Max Number of Features</p>
-        {{ form.max_features }}
-
+        <div class="line_obj">
+            <p>Max Number of Features</p>
+            {{ form.max_features }}
+        </div>
         <input type="submit" name="Clustering" value="Run" />
     </div>
+    </div>
 </form>
-<br><hr />
-<div id="stop_words">
-<br><p>Stop Words</p>
+<h3>Stop Words</h3>
 <div id="delete">
 <form method="POST">
 {% csrf_token %}
+<div id="stop_words">
     {{ deleteForm.as_p }}
+    </div>
     <input type="submit" name="Delete" value="Delete">
 </form>
 </div>
 <div id="add">
 <form method="POST">
 {% csrf_token %}
-    {{ addForm.as_p }}
+    {{ addForm }}
     <input type="submit" name="Add" value="Add">
 </form>
 </div>
 </div>
-</div>
+
 <div id="aboutClustering">
 
-    <h1>Info {{ word }}</h1>
+    <h2>Info {{ word }}</h2>
     <p>This site uses <a href='http://en.wikipedia.org/wiki/Tf%E2%80%93idf'>term frequency-inverse document frequency (tf-idf)</a> vectorization of posts on the Amazon Seller Forums to perform fast <a href='http://en.wikipedia.org/wiki/K-means_clustering'>K-means clustering</a> using the <a href='http://www.eecs.tufts.edu/~dsculley/papers/fastkmeans.pdf'>mini-batch algorithm</a>. 
-    <ul>
-      <li><b>Date Range: </b>Generate clusters on posts made in a certain date range, or cluster all posts</li>
-      <li><b>Number of Clusters: </b>Adjust the number of clusters the algorithm attempts to fit posts to</li>
-      <li><b>Clustering Type: </b>Select whether standard K-means or mini-batch (faster) clustering is used</li>
-      <li><b>Max Number of Features: </b>The max features attributes indicates how many unique words should be considered when clustering; additional (lower-frequency) words will be ignored by the clustering algorithm.</li>
+    <ul id="info_list">
+      <li>
+          <p>Date Range </p>
+          <p>Generate clusters on posts made in a certain date range, or cluster all posts</p>
+      </li>
+      <li>
+        <p>Number of Clusters </p>
+        <p>Adjust the number of clusters the algorithm attempts to fit posts to</p>
+      </li>
+      <li>
+        <p>Clustering Type </p>
+        <p>Select whether standard K-means or mini-batch (faster) clustering is used</p>
+      </li>
+      <li>
+        <p>Max Number of Features </p>
+        <p>The max features attributes indicates how many unique words should be considered when clustering;
+         additional (lower-frequency) words will be ignored by the clustering algorithm.</p>
+      </li>
     </ul>
     </p>
 
+</div>
+</div>
+<div id="runDeets">
+    <h1>Cluster Run Details</h1>
+    <div id="table_chart"></div>
 </div>
 <script>
 String.prototype.replaceWith = function(f, t) {
@@ -95,7 +118,38 @@ $(document).ready(function() {
         $('#id_end_date').val(end);
     }
     });
+    // Table visualization
+    var tableData = new google.visualization.DataTable();
+    tableData.addColumn('date', 'RunDate');
+    tableData.addColumn('date', 'StartDate');
+    tableData.addColumn('date', 'EndDate');
+    tableData.addColumn('number', 'Clusters');
+    tableData.addColumn('number', 'Features');
+    tableData.addColumn('number', 'BatchSize');
+    tableData.addColumn('number', 'SampleSize');
+    tableData.addColumn('number', 'Number of Posts');
+    tableData.addColumn('number', 'Normalized Inertia');
+    tableData.addColumn('number', 'SiloScore');
 
+    {% for item in runclustering %}
+        tableData.addRow([new Date({{ item.run_date }}), new Date({{ item.start_date }}), new Date({{ item.end_date }}),
+        {{ item.num_clusters }}, {{ item.num_features }}, {{ item.batch_size }},
+        {{ item.sample_size }}, {{ item.num_posts }}, {{ item.normalized_inertia }}, {{ item.silo_score }}]);
+    {% endfor %}
+    var myTable = new google.visualization.ChartWrapper({
+        'chartType': 'Table',
+        'containerId': 'table_chart',
+        'dataTable': tableData,
+        'options': {
+            'page': 'enable',
+            'pageSize': 10,
+            'sortAscending': false,
+            'sortColumn': 0,
+            'fontName': "Lato",
+            'width':'100%'
+        }
+    });
+    myTable.draw();
 });
 
 </script>

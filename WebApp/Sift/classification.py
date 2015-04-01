@@ -74,8 +74,8 @@ class L1LinearSVC(LinearSVC):
         return LinearSVC.predict(self, X)
 
 
-def run_classification(data_train, data_test, num_features):
-    c_params = ClassificationParams(num_features=num_features, is_report_printed=False, is_chi_squared_used=True,
+def run_classification(data_train, data_test, num_features, start_date, end_date):
+    c_params = ClassificationParams(num_features=num_features, is_report_printed=False, is_chi_squared_used=False,
                                     is_idf_used=True, is_upload_enabled=True)
 
 
@@ -92,7 +92,7 @@ def run_classification(data_train, data_test, num_features):
     classify(L1LinearSVC(), data_test, X_train, y_train, X_test, feature_names, categories, c_params)
 
     if c_params.is_upload_enabled:
-        associate_post_with_cluster(data_test, len(categories), c_params)
+        associate_post_with_cluster(data_test, len(categories), start_date, end_date)
 
 
 def vectorize(data_test, data_train, c_params):

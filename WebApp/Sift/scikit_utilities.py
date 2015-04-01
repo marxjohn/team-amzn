@@ -147,8 +147,8 @@ def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
         c = Cluster.objects.get(clusterid=x)
 
         for cw in ClusterWord.objects.all():
-            count = len(Post.objects.filter(cluster=c, stemmedbody__contains=cw.word,
-                                            creationdate__range=(start_date, end_date)))
+            count = len(Post.objects.filter(cluster=c, stemmed_body__contains=cw.word,
+                                            creation_date__range=(start_date, end_date)))
 
             cw.count += count
             cw.save()

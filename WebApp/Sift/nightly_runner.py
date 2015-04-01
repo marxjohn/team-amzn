@@ -7,10 +7,14 @@ try:
     from Sift.clustering import run_diagnostic_clustering
     from Sift.classification import classify_on_date_range
     from Sift.scikit_utilities import create_cluster_data
+    from Sift.models import Notification
+    from Sift.Notification import *
 except:
     from clustering import run_diagnostic_clustering
     from classification import run_classification
     from models import *
+    from models import Notification
+    from Notification import *
 
 from scikit_utilities import create_cluster_data
 
@@ -59,22 +63,46 @@ def find_min_and_max_date(c_list):
     return end_date, start_date
 
 
+def send_nightly_runner(send_message):
+    make_email_list = VerifyEmail()
+    email_list = make_email_list.make_verify_email_list()
+
+    if email_list == None:
+        return False
+    else:
+        # topic = 'SIFT MSU Runner Notification'
+        # send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
+        for i in range(1, len(email_list)):
+            send_message.add_cc_address(email_list[i])
+        # Create email contents with information
+        # text = email_text
+        # send_message.enter_text(text)
+        send_message.send()
+        return True
+
+
 def main():
-    c_list = Post.objects.filter(cluster_id=None).order_by('creation_date')
-    # end_date, start_date = find_min_and_max_date(c_list)
+    test_list = Post.objects.filter(cluster_id__isnull=True)
+    end_date, start_date = find_min_and_max_date(test_list)
+    #
 
-    train_list = Post.objects.filter(cluster_id=not None).order_by('creation_date')
-    # train_end_date, train_start_date = find_min_and_max_date(train_list)
-
-    cluster_data = create_cluster_data(c_list)
+    train_list = Post.objects.filter(cluster_id__isnull=False)
+    #train_end_date, train_start_date = find_min_and_max_date(train_list)
+    #
+    test_data = create_cluster_data(test_list)
     train_data = create_cluster_data(train_list)
-
-    run_classification(train_data, cluster_data, 1000)
-    posts = Posts.objects.all()
+    #
+    run_classification(train_data, test_data, 1000, start_date, end_date)
+    posts = Post.objects.all()
+    data = create_cluster_data(posts)
     end_date, start_date = find_min_and_max_date(posts)
-    s_score, s_inertia = run_diagnostic_clustering(posts, start_date, end_date, 1000, 5, .85, 20, 50, 150)
+    s_score, s_inertia = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
 
-    # TODO: Some Magic here involving sending email alerts
+    # Some Magic here involving sending email alerts
+    send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", 'SIFT MSU Runner Notification')
+    send_message.enter_text("The status of the clusters are as follows:")
+    send_message.enter_text("s_score: " + s_score + ", s_intertia: " + s_inertia)
+    send_nightly_runner(send_message)
 
 if __name__ == '__main__':
     main()
