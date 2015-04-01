@@ -108,8 +108,8 @@ def main():
 
     # Some Magic here involving sending email alerts
     send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", 'SIFT MSU Runner Notification')
-    send_message.enter_text("The status of the clusters are as follows: \n")
-    send_message.enter_text("s_score: " + s_score + ",  s_intertia: " + s_inertia)
+    send_message.set_text("The status of the clusters are as follows: \n")
+    send_message.set_text("s_score: " + s_score + ",  s_intertia: " + s_inertia)
     send_nightly_runner(send_message)
 
 if __name__ == '__main__':
