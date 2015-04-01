@@ -86,7 +86,7 @@ def main():
     end_date, start_date = find_min_and_max_date(test_list)
     #
 
-    train_list = Post.objects.filter(cluster_id__isnull=False)[:10000]
+    train_list = Post.objects.filter(cluster_id__isnull=False, creation_date__range=('2014-01-01', '2014-01-12'))
     #train_end_date, train_start_date = find_min_and_max_date(train_list)
     #
     test_data = create_cluster_data(test_list)
