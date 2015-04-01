@@ -39,15 +39,15 @@ from time import time
 django.setup()
 
 
-def main():
+def lazy_sentiment(start_date, end_date):
     t0 = time()
     print("grabbing posts from db")
     # dataset = Post.objects.all()
-    dataset = Post.objects.filter(creation_date__range=("2015-03-15", "2015-03-30"))
+    dataset = Post.objects.filter(creation_date__range=(start_date, end_date))
 
     suc = 0
     skip = 0
-    print("sentiment time!")
+    print("lazy sentiment time!")
     for post in dataset:
         sentimentobj = Sentiment.objects.filter(post_id=post.post_id)
         if sentimentobj.__len__() is 0:
@@ -67,8 +67,8 @@ def main():
                 print(r)
                 if r == "<Response [400]>":
                     print("bad text")
-                # else:
-                #     break
+                else:
+                    break
         else:
             skip += 1
             print(str(skip) + " skipped")
@@ -76,6 +76,11 @@ def main():
     print("Successfully sentimented: " + str(suc) + " posts")
     print("Skipped over: " + str(skip) + " posts")
     print("done in %fs" % (time() - t0))
+
+
+
+def main():
+    lazy_sentiment("2015-01-01", "2015-04-01")
 
 
 
