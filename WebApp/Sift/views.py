@@ -96,11 +96,15 @@ def details(request, cluster_id):
 def notifications(request):
     headline = "Notifications"
 
-    if request.method == 'POST':
-        Sift.Notification.main(request.POST['ADD_EMAIL'])
-
-    email_list = Sift.Notification.verify(request._get_post())
+    email_list = Sift.Notification.verify()
     context = {"headline": headline, 'email_list': email_list }
+
+    if request.method == 'POST':
+        if 'ADD_EMAIL' in request.POST:
+            Sift.Notification.main(request.POST['ADD_EMAIL'])
+        elif 'Remove' in request.POST:
+            Sift.Notification.remove(request.POST.get('email'))
+            return HttpResponseRedirect('/notifications')
 
 
     return render(request, 'notifications.html', context)
