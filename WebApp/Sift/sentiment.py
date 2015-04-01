@@ -41,7 +41,6 @@ django.setup()
 
 
 def main():
-    conn = pymysql.connect(host='restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
     t0 = time()
     print("grabbing posts from db")
     # dataset = Post.objects.all()
@@ -67,10 +66,13 @@ def main():
             except:
                 print("broke :(")
                 print(r)
-                break
+                if r == "<Response [400]>":
+                    print("bad text")
+                # else:
+                #     break
         else:
             skip += 1
-            print("skipped")
+            print(str(skip) + " skipped")
 
     print("Successfully sentimented: " + str(suc) + " posts")
     print("Skipped over: " + str(skip) + " posts")
