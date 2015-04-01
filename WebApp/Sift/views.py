@@ -113,8 +113,14 @@ def clusters(request):
     clusters = Cluster.objects.all();
     context = {"headline": headline, 'clusters': clusters}
     if request.method=='POST':
-        
-        print(request)
+        # edit the name of the cluster.
+        cluster_names = request.POST.items()
+        for key, value in cluster_names:
+            if(key!="csrfmiddlewaretoken"):
+                c = Cluster.objects.get(clusterid=key)
+                c.name = value
+                c.save()
+
 
     return render(request, 'clusters.html', context)
 

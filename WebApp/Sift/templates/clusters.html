@@ -9,7 +9,6 @@
         $("#clusteringNav").hide();
     });
     </script>
-    <script type="text/javascript" src="{% static 'js/clustering.js' %}"></script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
 {% block body_block %}
@@ -18,7 +17,7 @@
 {% csrf_token %}
 {% for cluster in clusters %}
      <div id="editClusterLine">
-     <input type="text" id="{{ cluster.clusterid }}" value="{{ cluster.name }}">
+     <input type="text" name="{{ cluster.clusterid }}" value="{{ cluster.name }}">
      </div>
      {% endfor %}
      <input type="submit">

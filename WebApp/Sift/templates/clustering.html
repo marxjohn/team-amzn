@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{#{% load widget_tweaks %}#}
 {% block head %}
     <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
     <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
@@ -16,23 +17,29 @@
 <div id="formClustering">
 <form action="/clustering/" method="POST">
     {% csrf_token %}
-
-    <br><p>Date Range:</p>
+    <div class="line">
+    <p>Date Range:</p>
     {{ form.start_date }}
     {{ form.end_date }}
     <br /> All Posts
     {{ form.all_posts }}
-    <br><br><p>Number of Clusters:</p>
-    {{ form.num_clusters }}
-    <br><br><p>Clustering Type:</p>
-    {{ form.cluster_type }}
-    <br><br><p>Max Number of Features</p>
-    {{ form.max_features }}
+    </div>
+    <div class="line">
+        <div class="line_obj">
+            <p>Number of Clusters:</p>
+            {{ form.num_clusters }}
+        </div>
+        <div class="line_obj">
+        <p>Clustering Type:</p>
+        {{ form.cluster_type }}
+        </div>
+    </div>
+    <div class="line">
+        <p>Max Number of Features</p>
+        {{ form.max_features }}
 
-    <br><br>
-
-    <br>
-    <input type="submit" name="Clustering" value="Run" />
+        <input type="submit" name="Clustering" value="Run" />
+    </div>
 </form>
 <br><hr />
 <div id="stop_words">
