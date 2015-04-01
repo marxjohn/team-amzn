@@ -1,14 +1,6 @@
-try:
-    from models import Post, Sentiment
-except:
-    from Sift.models import Post, Sentiment
+from __future__ import absolute_import
 
-from lxml import html
-import requests
-import django
-from time import time
-
-django.setup()
+import os
 
 try:
     import pymysql
@@ -33,6 +25,20 @@ if not settings.configured:
         }
         }
     )
+
+try:
+    from models import Post, Sentiment
+except:
+    from Sift.models import Post, Sentiment
+
+from lxml import html
+import requests
+import django
+from time import time
+
+django.setup()
+
+
 
 def main():
     conn = pymysql.connect(host='restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
