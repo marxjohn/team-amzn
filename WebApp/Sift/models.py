@@ -109,3 +109,15 @@ class ClusterRun(models.Model):
         managed = False
         db_table = 'ClusterRun'
         app_label = 'cr'
+
+class Sentiment(models.Model):
+    postid = models.ForeignKey(Post, db_column='postId', primary_key=True)  # Field name made lowercase.
+    probnegative = models.DecimalField(db_column='probNegative', max_digits=21, decimal_places=20, blank=True, null=True)  # Field name made lowercase.
+    probneutral = models.DecimalField(db_column='probNeutral', max_digits=21, decimal_places=20, blank=True, null=True)  # Field name made lowercase.
+    probpositive = models.DecimalField(db_column='probPositive', max_digits=21, decimal_places=20, blank=True, null=True)  # Field name made lowercase.
+    label = models.CharField(max_length=45, blank=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Sentiment'
+        app_label = 's'
