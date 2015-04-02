@@ -26,7 +26,7 @@ class SESMessage( object ):
         __self._bcc_addresses = []
 
         __self.subject = subject
-        __self.text = None
+        __self.text = ""
         __self.html = None
         __self.attachments = []
 

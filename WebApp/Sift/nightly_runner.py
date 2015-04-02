@@ -75,7 +75,7 @@ def send_nightly_runner(email_text):
         for i in range(1, len(email_list)):
             send_message.add_cc_address(email_list[i])
         # Create email contents with information
-        send_message.enter_text(email_text)
+        send_message.set_text(email_text)
         send_message.send()
         return True
 
@@ -106,7 +106,7 @@ def main():
 
 
     # Some Magic here involving sending email alerts
-    text = "The status of the clusters are as follows: s_score: " + s_score + ",  s_intertia: " + s_inertia
+    text = "The status of the clusters are as follows: s_score: " + str(s_score) + ",  s_intertia: " + str(s_inertia)
     send_nightly_runner(text)
 
 if __name__ == '__main__':
