@@ -11,14 +11,19 @@ try:
 except:
     from models import *
 
-connection = boto.ses.connect_to_region( 'us-west-2',
+connection_ses = boto.ses.connect_to_region( 'us-west-2',
                                          aws_access_key_id = 'AKIAJPAOUUTITYRIGX2A',
                                          aws_secret_access_key = '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' )
+
+connection_sns = boto.sns.connect_to_region( 'us-west-2',
+                                         aws_access_key_id = 'AKIAJPAOUUTITYRIGX2A',
+                                         aws_secret_access_key = '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' )
+
 
 class SESMessage( object ):
 
     def __init__( __self, source, to_addresses, subject, **kw):
-        __self.ses = connection
+        __self.ses = connection_ses
 
         __self._source = source
         __self._to_addresses = to_addresses
@@ -26,7 +31,7 @@ class SESMessage( object ):
         __self._bcc_addresses = []
 
         __self.subject = subject
-        __self.text = None
+        __self.text = ''
         __self.html = None
         __self.attachments = []
 
@@ -173,6 +178,29 @@ class VerifyEmail( object ):
         else:
             print ( 'The email address is not in the verified Email list.' )
             return False
+
+class SNSnotify( object ):
+
+    def __init__( __self ):
+        __self.sns = connection_sns
+
+        __self.topic = ''
+        __self.arn = ''
+
+        __self.subject = ''
+        __self.message = ''
+
+    def create_topic( __self, topic ):
+        __self.sns.create_topic( topic )
+
+    def subscription( __self, protocol, email_address):
+        c = 0
+
+
+    def publication( __self ):
+        __self.sns.publish( __self.arn, __self.message, __self.subject )
+
+
 
 def main( email_address ):
     email_list = VerifyEmail()
