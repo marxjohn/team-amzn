@@ -12,7 +12,7 @@ import Sift.clustering
 import Sift.Notification
 import Sift.tasks as tasks
 import Sift.forms
-from Sift.models import ClusterRun
+from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
 
 
@@ -25,6 +25,11 @@ def general(request):
     pieData = [['Forum ID', 'Number of Posts']]
     for cluster in trendingClusters:
         pieData.append([cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
+
+    sentimentData = [['Sentiment', 'Number of Posts']]
+    sentimentData.append(["Positive", Sentiment.objects.filter(label="pos").count()])
+    sentimentData.append(["Negative", Sentiment.objects.filter(label="neg").count()])
+    sentimentData.append(["Neutral", Sentiment.objects.filter(label="neutral").count()])
 
     lineClusterNames = []
 
@@ -51,8 +56,8 @@ def general(request):
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters':
                trendingClusters, "headline": headline,
                'pieData': pieData,
-               'lineData': lineData, 'lineDates': lineDates, 'lineClusterNames': lineClusterNames
-               }
+               'lineData': lineData, 'lineDates': lineDates, 'lineClusterNames': lineClusterNames,
+               'sentimentData': sentimentData}
 
     return render(request, 'general_analytics.html', context)
 
@@ -73,8 +78,10 @@ def details(request, cluster_id):
             cluster_posts[date]['numPosts'] += 1
         else:
             cluster_posts[date] = {"numPosts": 1, "posts": []}
-
-        body = html.document_fromstring(post['body']).text_content()
+        try:
+            body = html.document_fromstring(post['body']).text_content()
+        except:
+            body = post['body']
         cluster_posts[date]['posts'].append(body)
 
     #Cluster word count
