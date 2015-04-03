@@ -35,8 +35,8 @@ class SESMessage( object ):
         __self.html = None
         __self.attachments = []
 
-    def set_sourse ( __self, sourse ):
-        __self._source = sourse
+    def set_source ( __self, source ):
+        __self._source = source
 
     def set_to_address( __self, to_address):
         __self._to_address = to_address
@@ -124,7 +124,7 @@ class SESMessage( object ):
 class VerifyEmail( object ):
 
     def __init__( __self ):
-        __self.ses = connection
+        __self.ses = connection_ses
         __self.email_list = []
 
     def make_verify_email_list( __self ):
@@ -216,12 +216,3 @@ def remove( email_address ):
     email_list = VerifyEmail()
     email_list.make_verify_email_list()
     email_list.delete_verified_email( email_address )
-
-
-# source = 'johnnyclarence@hotmail.com'
-# to_address = 'kangzhuang17@gmail.com'
-# subject = 'test'
-# msg = SESMessage( source, to_address, subject )
-# msg.text = 'This is a test!'
-# msg.html = 'HTML body'
-# msg.send()
