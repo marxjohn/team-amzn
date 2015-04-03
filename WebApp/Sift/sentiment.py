@@ -51,40 +51,32 @@ def lazy_sentiment(start_date, end_date):
     for post in dataset:
         sentimentobj = Sentiment.objects.filter(post_id=post.post_id)
         if sentimentobj.__len__() is 0:
-            attempt = True
-            tries = 0
-            while attempt:
+            try:
                 body = html.document_fromstring(post.body).text_content()
-                payload = {'text': body[:80000]}
-                r = requests.post("http://text-processing.com/api/sentiment/", data=payload)
-                try:
-                    print(payload)
-                    print(r.json())
-                    senti = Sentiment(post_id=post, prob_negative=r.json()['probability']['neg'],
-                                      prob_neutral=r.json()['probability']['neutral'], prob_positive=r.json()['probability']['pos'],
-                                      label=r.json()['label'])
+            except:
+                body = ""
+            payload = {'text': body[:80000]}
+            r = requests.post("http://text-processing.com/api/sentiment/", data=payload)
+            try:
+                print(payload)
+                print(r.json())
+                senti = Sentiment(post_id=post, prob_negative=r.json()['probability']['neg'],
+                                  prob_neutral=r.json()['probability']['neutral'], prob_positive=r.json()['probability']['pos'],
+                                  label=r.json()['label'])
+                senti.save()
+                suc += 1
+            except:
+                print("broke :(")
+                print(r)
+                if str(r) == "<Response [400]>":
+                    print("bad text")
+                    senti = Sentiment(post_id=post, prob_negative=0,
+                                  prob_neutral=0, prob_positive=0,
+                                  label="none")
                     senti.save()
-                    suc += 1
-                    attempt = False
-                except:
-                    print("broke :(")
-                    print(r)
-                    if str(r) == "Response [400]":
-                        print("bad text")
-                        senti = Sentiment(post_id=post, prob_negative=0,
-                                      prob_neutral=0, prob_positive=0,
-                                      label="none")
-                        senti.save()
-                        attempt = False
-                    else:
-                        if tries == 0:
-                            print("resetting ip")
-                            input("Reset IP then press enter")
-                            # os.system('sudo ipconfig set en1 DHCP')
-                        if tries >= 5:
-                            print("ip reset fail")
-                            break
-                        tries += 1
+                else:
+                    print("reset ip and launch again")
+                    break
 
         else:
             skip += 1
