@@ -14,7 +14,7 @@ if not settings.configured:
     settings.configure(
         DATABASES={'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': 'restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
+            'HOST': 'siftmsu.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
             'PORT': '3306',
             'USER': 'teamamzn',
             'PASSWORD': 'TeamAmazon2015!',

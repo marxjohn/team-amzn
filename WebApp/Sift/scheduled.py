@@ -64,7 +64,7 @@ def find_min_and_max_date(c_list):
 
 
 def send_nightly_runner(email_text):
-    make_email_list = VerifyEmail()
+    make_email_list = SESVerifyEmail()
     email_list = make_email_list.make_verify_email_list()
 
     if email_list == None:
