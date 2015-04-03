@@ -63,20 +63,19 @@ def find_min_and_max_date(c_list):
     return end_date, start_date
 
 
-def send_nightly_runner(send_message):
+def send_nightly_runner(email_text):
     make_email_list = VerifyEmail()
     email_list = make_email_list.make_verify_email_list()
 
     if email_list == None:
         return False
     else:
-        # topic = 'SIFT MSU Runner Notification'
-        # send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
+        topic = 'SIFT MSU Runner Notification'
+        send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
         for i in range(1, len(email_list)):
             send_message.add_cc_address(email_list[i])
         # Create email contents with information
-        # text = email_text
-        # send_message.enter_text(text)
+        send_message.set_text(email_text)
         send_message.send()
         return True
 
@@ -107,10 +106,8 @@ def main():
 
 
     # Some Magic here involving sending email alerts
-    send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", 'SIFT MSU Runner Notification')
-    send_message.set_text("The status of the clusters are as follows: \n")
-    send_message.set_text("s_score: " + s_score + ",  s_intertia: " + s_inertia)
-    send_nightly_runner(send_message)
+    text = "The status of the clusters are as follows: s_score: " + str(s_score) + ",  s_intertia: " + str(s_inertia)
+    send_nightly_runner(text)
 
 if __name__ == '__main__':
     main()
