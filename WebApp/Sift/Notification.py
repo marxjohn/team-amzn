@@ -160,7 +160,38 @@ class SESVerifyEmail( object ):
             print ( 'The email address is not in the verified Email list.' )
             return False
 
-class SNSnotify( object ):
+class SNSNotification( object ):
+
+    class arn( object ):
+        def __init__ ( __self ):
+            __self.topic = ''
+            __self.arn = ''
+            __self.endpoint = []
+            __self.protocol = ''
+
+        def set_topic( __self, topic ):
+            __self.topic = topic
+
+        def set_arn(  __self, arn ):
+            __self.arn = arn
+
+        def set_arn_endpoint( __self, endpoint ):
+            __self.endpoint = endpoint
+
+        def set_protocol( __self, protocol ):
+            __self.protocol = protocol
+
+        def get_topic( __self ):
+            return( __self.topic )
+
+        def get_arn( __self ):
+            return( __self.arn )
+
+        def get_endpoint( __self ):
+            return ( __self.endpoint )
+
+        def get_protocol( __self ):
+            return( __self.protocol )
 
     def __init__( __self ):
         __self.sns = connection_sns
@@ -170,8 +201,8 @@ class SNSnotify( object ):
 
         __self.subject = ''
         __self.message = ''
-        __self.topic_list = []
         __self.arn_list = []
+        __self.subscription_list = []
 
 
     def make_arn_list( __self ):
@@ -179,16 +210,26 @@ class SNSnotify( object ):
         topic_list = topic_list['ListTopicsResponse']['ListTopicsResult']['Topics']
 
         for i in range( len(topic_list) ):
-            __self.arn_list.append( topic_list[i]['TopicArn'] )
+            temp_arn = arn()
+
+            temp = topic_list[i]['TopicArn']
+            temp_arn.set_arn( temp )
+
             temp = topic_list[i]['TopicArn'].split(':')
             temp = temp[len(temp)-1]
-            __self.topic_list.append( temp )
+            temp_arn.set_topic( temp )
 
-    def get_arn_list(  __self ):
-        return( __self.arn_list )
+            __self.arn_list.append( temp_arn )
+
+    def make_subscription_list( __self ):
+        c = 0
 
     def get_topic_list( __self ):
-        return( __self.topic_list )
+        temp = []
+        for i in __self.arn_list:
+            temp.append( i.get_topic() )
+        return ( temp )
+
 
     def set_subject( __self, subject ):
         __self.subject = subject
