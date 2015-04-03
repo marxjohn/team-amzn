@@ -170,12 +170,25 @@ class SNSnotify( object ):
 
         __self.subject = ''
         __self.message = ''
+        __self.topic_list = []
+        __self.arn_list = []
 
-    def set_topic( __self, topic ):
-        __self.topic = topic
 
-    def set_arn( __self ):
-        set_arn = 0
+    def make_arn_list( __self ):
+        topic_list = __self.sns.get_all_topics()
+        topic_list = topic_list['ListTopicsResponse']['ListTopicsResult']['Topics']
+
+        for i in range( len(topic_list) ):
+            __self.arn_list.append( topic_list[i]['TopicArn'] )
+            temp = topic_list[i]['TopicArn'].split(':')
+            temp = temp[len(temp)-1]
+            __self.topic_list.append( temp )
+
+    def get_arn_list(  __self ):
+        return( __self.arn_list )
+
+    def get_topic_list( __self ):
+        return( __self.topic_list )
 
     def set_subject( __self, subject ):
         __self.subject = subject
@@ -189,10 +202,10 @@ class SNSnotify( object ):
     def delete_topic( __self, topic ):
         __self.sns.delete_topic( topic )
 
-    def subscribe( __self, protocol, end_point ):
+    def subscribe( __self, topic_arn, protocol, end_point ):
         c = 0
 
-    def unsubscribe( __self, protocol, end_point ):
+    def unsubscribe( __self, topic_arn, protocol, end_point ):
         c = 0
 
     def publication( __self ):
@@ -201,7 +214,7 @@ class SNSnotify( object ):
 
 
 def main( email_address ):
-    email_list = VerifyEmail()
+    email_list = SESVerifyEmail()
     email_create = SESMessage(email_address, email_address, "test")
     email_list.verify_email(email_address)
 
