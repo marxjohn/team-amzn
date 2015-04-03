@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import boto
 import boto.ses
+import boto.sns
 
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
@@ -121,36 +122,16 @@ class SESMessage( object ):
             print ( 'Connection not Found.' )
 
 
-class VerifyEmail( object ):
+class SESVerifyEmail( object ):
 
     def __init__( __self ):
         __self.ses = connection_ses
         __self.email_list = []
 
     def make_verify_email_list( __self ):
-        email_list = {}
-        email_list = __self.ses.list_verified_email_addresses()
-        for key, value in email_list.items():
-            temp = value
-        temp = str(temp)
-        temp = temp.split("'VerifiedEmailAddresses': ['")
-        try:
-            temp = str(temp[1])
-            temp = temp.split("']}, 'ResponseMetadata'")
-            temp = str(temp[0])
-            temp = temp.split(']}}')
-            temp = str(temp[0])
-            temp = temp.split("', '")
-
-            if temp[len(temp)-1][len(temp[len(temp)-1])-1] == "'":
-                temp[len(temp)-1] = temp[len(temp)-1][:-1]
-
-            __self.email_list = temp
-
-            return( __self.email_list )
-        except IndexError:
-            __self.email_list = []
-            return( __self.email_list )
+        temp_email_list = __self.ses.list_verified_email_addresses()
+        __self.email_list = temp_email_list['ListVerifiedEmailAddressesResponse']['ListVerifiedEmailAddressesResult']['VerifiedEmailAddresses']
+        return( __self.email_list )
 
     def list_verified_email( __self ):
         return __self.email_list
@@ -190,12 +171,29 @@ class SNSnotify( object ):
         __self.subject = ''
         __self.message = ''
 
+    def set_topic( __self, topic ):
+        __self.topic = topic
+
+    def set_arn( __self ):
+        set_arn = 0
+
+    def set_subject( __self, subject ):
+        __self.subject = subject
+
+    def set_message( __self, message ):
+        __self.message = message
+
     def create_topic( __self, topic ):
         __self.sns.create_topic( topic )
 
-    def subscription( __self, protocol, email_address):
+    def delete_topic( __self, topic ):
+        __self.sns.delete_topic( topic )
+
+    def subscribe( __self, protocol, end_point ):
         c = 0
 
+    def unsubscribe( __self, protocol, end_point ):
+        c = 0
 
     def publication( __self ):
         __self.sns.publish( __self.arn, __self.message, __self.subject )
@@ -208,11 +206,11 @@ def main( email_address ):
     email_list.verify_email(email_address)
 
 def verify():
-    email_list = VerifyEmail()
+    email_list = SESVerifyEmail()
     email_list.make_verify_email_list()
     return email_list.list_verified_email()
 
 def remove( email_address ):
-    email_list = VerifyEmail()
+    email_list = SESVerifyEmail()
     email_list.make_verify_email_list()
     email_list.delete_verified_email( email_address )
