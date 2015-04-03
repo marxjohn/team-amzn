@@ -14,7 +14,7 @@ if not settings.configured:
     settings.configure(
         DATABASES={'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': 'restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
+            'HOST': 'siftmsu.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
             'PORT': '3306',
             'USER': 'teamamzn',
             'PASSWORD': 'TeamAmazon2015!',
@@ -27,9 +27,9 @@ if not settings.configured:
     )
 
 try:
-    from models import Post, Sentiment
+    from models import *
 except:
-    from Sift.models import Post, Sentiment
+    from Sift.models import *
 
 from lxml import html
 import requests
@@ -42,12 +42,14 @@ django.setup()
 def lazy_sentiment(start_date, end_date):
     t0 = time()
     print("grabbing posts from db")
-    dataset = Post.objects.all()
-    # dataset = Post.objects.filter(creation_date__range=(start_date, end_date))
+    # dataset = Post.objects.all()
+    dataset = Post.objects.filter(creation_date__range=(start_date, end_date))
+    # dataset = Post.objects.filter(sentiment__post_id__isnull=True)
+
 
     suc = 0
     skip = 0
-    goto = 47518
+    goto = 26546
     i = 0
     print("lazy sentiment time!")
     for post in dataset:
@@ -94,7 +96,7 @@ def lazy_sentiment(start_date, end_date):
 
 
 def main():
-    lazy_sentiment("2012-01-01", "2014-04-01")
+    lazy_sentiment("2013-01-01", "2014-04-01")
 
 
 

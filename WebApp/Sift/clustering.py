@@ -200,9 +200,8 @@ def fit_clusters(X, c_param):
     t0 = time()
     km.fit(X)
     labels = km.labels_
-    print('done with clustering')
-
-    s_score = silhouette_score(X, labels, metric='euclidean')
+    print('done with clustering, calculating silhouette score')
+    s_score = silhouette_score(X, labels, metric='euclidean', sample_size=25000)
     print(s_score)
     print()
     return km, s_score

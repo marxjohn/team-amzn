@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import boto
 import boto.ses
+import boto.sns
 
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication

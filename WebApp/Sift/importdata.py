@@ -46,7 +46,7 @@ def main():
 
     # print("Creating Database")
     #conn = pymysql.connect(host='sellerforums.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
-    conn = pymysql.connect(host='restorestemmedbody.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
+    conn = pymysql.connect(host='siftmsu.cqtoghgwmxut.us-west-2.rds.amazonaws.com', port=3306, user='teamamzn', passwd='TeamAmazon2015!', db='sellerforums')
 
     print("Importing Data")
     # set up variables
