@@ -116,7 +116,7 @@ def notifications(request):
 
 def clusters(request):
     headline = "Clusters"
-    clusters = Cluster.objects.all();
+    clusters = Cluster.objects.all()
     context = {"headline": headline, 'clusters': clusters}
     if request.method=='POST':
         # edit the name of the cluster.
