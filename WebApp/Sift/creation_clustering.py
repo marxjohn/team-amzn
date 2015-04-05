@@ -1,4 +1,3 @@
-__author__ = 'cse498'
 from __future__ import absolute_import
 
 from datetime import date
@@ -63,18 +62,6 @@ def find_min_and_max_date(c_list):
     end_date = max_date
     return end_date, start_date
 
-
-    if email_list == None:
-        return False
-    else:
-        topic = 'SIFT MSU Runner Notification'
-        send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
-        for i in range(1, len(email_list)):
-            send_message.add_cc_address(email_list[i])
-        # Create email contents with information
-        send_message.set_text(email_text)
-        send_message.send()
-        return True
 
 
 def run_clustering(data, posts):

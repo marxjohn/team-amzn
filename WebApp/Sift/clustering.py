@@ -364,7 +364,6 @@ def upload_clusters(data_set, data_count, km, order_centroids, terms, num_cluste
                 num_centroids = len(order_centroids)
 
             for ind in order_centroids[x - 1, :num_centroids]:
-                order_centroids.
                 count = len(Post.objects.filter(cluster=c, stemmedbody__contains=terms[ind]))
 
                 cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
