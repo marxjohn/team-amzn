@@ -100,6 +100,7 @@ class ClusterData:
             count=inp.count())
 
 
+
 def get_cluster_data(start_date, end_date):
 
     data_set = ClusterData(Post.objects.filter(creation_date__range=(start_date, end_date)), Cluster.objects.all())

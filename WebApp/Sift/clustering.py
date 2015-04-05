@@ -360,7 +360,11 @@ def upload_clusters(data_set, data_count, km, order_centroids, terms, num_cluste
         for x in range(1, num_clusters + 1):
             c = Cluster.objects.get(clusterid=x)
             cwL = []
-            for ind in order_centroids[x - 1, :10]:
+            if len(order_centroids) < 100:
+                num_centroids = len(order_centroids)
+
+            for ind in order_centroids[x - 1, :num_centroids]:
+                order_centroids.
                 count = len(Post.objects.filter(cluster=c, stemmedbody__contains=terms[ind]))
 
                 cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
@@ -401,6 +405,17 @@ def run_diagnostic_clustering(data_set, start_date, end_date, max_features, num_
 
     return c_param.s_score, c_param.normalized_inertia
 
+
+def run_creation_clustering(data_set, start_date, end_date, max_features, num_clusters,
+                            max_df, batch_size_ratio, init_size_ratio, n_init):
+
+    c_param = ClusterParameter(num_clusters=num_clusters, is_added_to_cluster_run=True,
+                               batch_size_ratio=batch_size_ratio, is_idf_used=True, is_upload_enabled=True,
+                               max_features=max_features, max_df=max_df, init_size_ratio=init_size_ratio, n_init=n_init,
+                               start_date=start_date, end_date=end_date, is_mini_used=True, is_visualization_enabled=False)
+    cluster_posts(data_set, c_param)
+
+    return c_param.s_score, c_param.normalized_inertia
 
 # def main():
 #         # Display progress logs on stdout
