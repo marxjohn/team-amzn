@@ -49,7 +49,7 @@ def lazy_sentiment(start_date, end_date):
 
     suc = 0
     skip = 0
-    goto = 26546
+    goto = 111446
     i = 0
     print("lazy sentiment time!")
     for post in dataset:
