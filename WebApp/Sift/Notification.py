@@ -175,8 +175,8 @@ class SNSNotification( object ):
         def set_arn(  __self, arn ):
             __self.arn = arn
 
-        def set_arn_endpoint( __self, endpoint ):
-            __self.endpoint = endpoint
+        def set_arn_endpoint( __self, endpoint, endpoint_arn ):
+            __self.endpoint.append( endpoint, endpoint_arn )
 
         def set_protocol( __self, protocol ):
             __self.protocol = protocol
@@ -188,7 +188,10 @@ class SNSNotification( object ):
             return( __self.arn )
 
         def get_endpoint( __self ):
-            return ( __self.endpoint )
+            temp = []
+            for i in __self.endpoint:
+                temp.append( __self.endpoint )
+            return ( temp )
 
         def get_protocol( __self ):
             return( __self.protocol )
@@ -215,21 +218,30 @@ class SNSNotification( object ):
             temp = topic_list[i]['TopicArn']
             temp_arn.set_arn( temp )
 
+            subscription_list = __self.sns.get_all_subscriptions_by_topic( topic_list[i]['TopicArn'] )
+            subscription_list = subscription_list['ListSubscriptionsByTopicResponse']['ListSubscriptionsByTopicResult']['Subscriptions']
+
+            for j in subscription_list:
+                temp_arn.set_protocol = j['Protocol']
+                temp_arn.set_arn_endpoint( j['Endpoint'], j['TopicArn'])
+
             temp = topic_list[i]['TopicArn'].split(':')
             temp = temp[len(temp)-1]
             temp_arn.set_topic( temp )
 
             __self.arn_list.append( temp_arn )
 
-    def make_subscription_list( __self ):
-        c = 0
-
     def get_topic_list( __self ):
         temp = []
         for i in __self.arn_list:
             temp.append( i.get_topic() )
-        return ( temp )
+        return( temp )
 
+    def get_subscription_list( __self ):
+        temp = []
+        for i in __self.arn_list:
+            temp.append( i )
+        return( temp )
 
     def set_subject( __self, subject ):
         __self.subject = subject
@@ -243,8 +255,12 @@ class SNSNotification( object ):
     def delete_topic( __self, topic ):
         __self.sns.delete_topic( topic )
 
-    def subscribe( __self, topic_arn, protocol, end_point ):
-        c = 0
+    def subscribe( __self, topic, protocol, end_point ):
+        for i in __self.arn_list:
+            if i.get_topic() == topic:
+                topic_arn = i.get_arn()
+        __self.sns.subscribe( topic_arn, protocol, end_point )
+
 
     def unsubscribe( __self, topic_arn, protocol, end_point ):
         c = 0

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from Sift.models import Cluster, Post, ClusterWord, StopWord
 from django.http import HttpResponseRedirect
-# from postmarkup import render_bbcode
+from bs4 import BeautifulSoup
 from lxml import html
 from django.core.cache import cache
 
@@ -79,8 +79,8 @@ def details(request, cluster_id):
         else:
             cluster_posts[date] = {"numPosts": 1, "posts": []}
         try:
-            body = html.document_fromstring(post['body']).text_content()
-        except:
+            body = html.document_fromstring(BeautifulSoup(post['body']).getText()).text_content()
+        except :
             body = post['body']
         cluster_posts[date]['posts'].append(body)
 
