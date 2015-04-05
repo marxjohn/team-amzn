@@ -1,21 +1,9 @@
 from __future__ import print_function
 
-import logging
 import numpy as np
-from optparse import OptionParser
-import sys
 from time import time
-import matplotlib.pyplot as plt
-
 from sklearn.feature_selection import SelectKBest, chi2
-from sklearn.linear_model import RidgeClassifier
 from sklearn.svm import LinearSVC
-from sklearn.linear_model import SGDClassifier
-from sklearn.linear_model import Perceptron
-from sklearn.linear_model import PassiveAggressiveClassifier
-from sklearn.naive_bayes import BernoulliNB, MultinomialNB
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.neighbors import NearestCentroid
 from sklearn.utils.extmath import density
 
 from scikit_utilities import StemmedTfidfVectorizer, get_cluster_data, associate_post_with_cluster

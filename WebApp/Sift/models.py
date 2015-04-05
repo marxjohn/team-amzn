@@ -63,6 +63,10 @@ class Post(models.Model):
     locale = models.CharField(max_length=64, blank=True)
     cluster = models.ForeignKey(Cluster, db_column='cluster', blank=True, null=True, on_delete=models.SET_NULL)
     stemmed_body = models.TextField(db_column='stemmedBody', blank=True)  # Field name made lowercase.
+    probpositive = models.DecimalField(db_column='probPositive', max_digits=21, decimal_places=20, blank=True, null=True)  # Field name made lowercase.
+    probneutral = models.DecimalField(db_column='probNeutral', max_digits=21, decimal_places=20, blank=True, null=True)  # Field name made lowercase.
+    probnegative = models.DecimalField(db_column='probNegative', max_digits=21, decimal_places=20, blank=True, null=True)  # Field name made lowercase.
+    sentiment = models.CharField(max_length=45, blank=True)
 
 
     class Meta:

@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 
-from datetime import date
 from datetime import datetime
 try:
     from Sift.models import *
@@ -61,7 +60,6 @@ def find_min_and_max_date(c_list):
     start_date = min_date
     end_date = max_date
     return end_date, start_date
-
 
 
 def run_clustering(data, posts):
