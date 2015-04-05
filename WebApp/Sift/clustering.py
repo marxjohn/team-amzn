@@ -294,7 +294,7 @@ def cluster_posts(data_set, c_param):
     terms = vectorizer.get_feature_names()
 
     if c_param.is_upload_enabled:
-        upload_clusters(data_set, data_count, km, order_centroids, terms, num_clusters)
+        upload_clusters(data_set, data_count, km, order_centroids, terms, c_param.num_clusters)
 
     if c_param.is_visualization_enabled:
         visualize_clusters(c_param.num_clusters, vectorized_data, vectorizer)
@@ -364,7 +364,7 @@ def upload_clusters(data_set, data_count, km, order_centroids, terms, num_cluste
                 num_centroids = len(order_centroids)
 
             for ind in order_centroids[x - 1, :num_centroids]:
-                count = len(Post.objects.filter(cluster=c, stemmedbody__contains=terms[ind]))
+                count = len(Post.objects.filter(cluster=c, stemmed_body__contains=terms[ind]))
 
                 cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
                 cwL.append(cw)
