@@ -116,8 +116,15 @@ def notifications(request):
 
 def clusters(request):
     headline = "Clusters"
-    clusters = Cluster.objects.all();
-    context = {"headline": headline, 'clusters': clusters}
+    clusters = Cluster.objects.all()
+    print("IN CLUSTERS")
+    top = ClusterWord.objects.all()
+    top_words = []
+    for object in top:
+        top_words.append(object.word)
+
+    context = {"headline": headline, 'clusters': clusters, 'top_words': top_words}
+
     if request.method=='POST':
         # edit the name of the cluster.
         cluster_names = request.POST.items()

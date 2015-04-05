@@ -8,9 +8,13 @@
     $(document).ready(function(){
         $("#clusteringNav").hide();
     });
+    console.log({{ top_words }})
     </script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
+{#{% block sidebar %}#}
+{#    {% include 'sidebar.html' %}#}
+{#{% endblock %}#}
 {% block body_block %}
 <h1>Clusters</h1>
 <form method="POST">

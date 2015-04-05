@@ -29,8 +29,11 @@ function drawSentimentPieChart(array) {
             easing: 'out',
             startup: true
           },
+        legend: {
+          position:"none"
+        },
         fontName: "Lato",
-        colors: ['#22dd22','#ff0000','#b6b0b0']
+        colors: ['#2ecc71','#e74c3c','#95a5a6']
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('sentiment_piechart_3d'));
