@@ -63,7 +63,7 @@ def find_min_and_max_date(c_list):
     return end_date, start_date
 
 
-def send_nightly_runner( email_text ):
+def send_nightly_runner(email_text):
     make_nightly_subscription = SNSNotification()
     make_nightly_subscription.make_arn_list()
     nightly_subscription = Sift.Notification.get_nightly_list()
@@ -71,10 +71,11 @@ def send_nightly_runner( email_text ):
     if nightly_subscription == None:
         return False
     else:
-        make_nightly_subscription.set_topic_arn( 'NightlyRun' )
-        make_nightly_subscription.set_message( email_text )
+        make_nightly_subscription.set_topic_arn('NightlyRun')
+        make_nightly_subscription.set_message(email_text)
 
         make_nightly_subscription.publication()
+        return True
 
     # make_email_list = SESVerifyEmail()
     # email_list = make_email_list.make_verify_email_list()

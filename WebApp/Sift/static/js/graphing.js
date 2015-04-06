@@ -31,7 +31,9 @@ function drawSentimentChart(array) {
         legend: {
           position:"none"
         },
-        axisTitlesPosition: 'none',
+        hAxis: {
+            textPosition:"null"
+        },
         isStacked: true,
         fontName: "Lato",
         colors: ['#DC3912', '#95a5a6','#109618'],
@@ -264,7 +266,7 @@ function drawClusterSentimentChart(array) {
         legend: {
           position:"none"
         },
-        axisTitlesPosition: 'none',
+        axisTitlesPosition:"none",
         isStacked: true,
         fontName: "Lato",
         colors: ['#DC3912', '#95a5a6','#109618'],
