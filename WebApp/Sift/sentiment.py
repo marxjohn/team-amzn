@@ -52,6 +52,7 @@ def lazy_sentiment(start_date, end_date):
                 post.probnegative = r.json()['probability']['neg']
                 post.probneutral = r.json()['probability']['neutral']
                 post.probpositive = r.json()['probability']['pos']
+                print("saving..")
                 post.save()
                 suc += 1
             except:
@@ -73,7 +74,7 @@ def lazy_sentiment(start_date, end_date):
 
 
 def main():
-    lazy_sentiment("2013-01-01", "2014-04-01")
+    lazy_sentiment("2000-01-01", "2016-04-01")
 
 
 # Only run the main function if this code is called directly

@@ -10,7 +10,7 @@
     <h1 id="bodyTitle">{{ cluster.name }}</h1>
     <div id="dashboard">
         <div id="piechart_3d"></div>
-{#        <div id="sentiment_piechart_3d"></div>#}
+        <div id="sentiment_barchart"></div>
         <div id="main_slider"></div>
         <div id="hidden_slider"></div> <!--this is hidden from page-->
         <div id="wordPie_slider"></div>
@@ -26,6 +26,7 @@
              var width = "150px !important";
              $('.google-visualization-table-th:contains(' + title + ')').css('width', width);
             drawWordPieChart({{ wordPieData }});
+            drawClusterSentimentChart({{ sentimentData }});
         });
         var url = window.location;
 // Will only work if string in href matches with location
@@ -38,7 +39,6 @@ $('ul.nav a').filter(function() {
             //Call Graphing Functions
             google.load('visualization', '1', {packages: ['controls']});
             google.setOnLoadCallback(draw_all_dashboards({{ cluster_posts }}));
-            google.setOnLoadCallback(drawClusterSentimentPieChart({{ sentimentData }}));
         </script>
 <script>
     //this allows for responsive design
@@ -46,7 +46,7 @@ $('ul.nav a').filter(function() {
         {% autoescape off %}
         console.log({{ cluster_posts }});
             drawWordPieChart({{ wordPieData }});
-            drawClusterSentimentPieChart({{ sentimentData }});
+            drawClusterSentimentChart({{ sentimentData }});
             draw_dashboard1({{ cluster_posts }});
             draw_dashboard2({{ cluster_posts }});
         {% endautoescape %}

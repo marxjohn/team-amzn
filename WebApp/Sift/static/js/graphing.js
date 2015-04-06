@@ -19,24 +19,26 @@ function drawGeneralPieChart(array) {
     chart.draw(data, options);
 }
 
-function drawSentimentPieChart(array) {
+function drawSentimentChart(array) {
     var data = google.visualization.arrayToDataTable(array);
 
     var options = {
-      is3D: true,
         animation: {
-            duration: 10000,
+            duration: 1000,
             easing: 'out',
             startup: true
           },
         legend: {
           position:"none"
         },
+        axisTitlesPosition: 'none',
+        isStacked: true,
         fontName: "Lato",
-        colors: ['#109618','#DC3912','#95a5a6']
+        colors: ['#DC3912', '#95a5a6','#109618'],
+        bar: {groupWidth: '100%'}
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('sentiment_piechart_3d'));
+    var chart = new google.visualization.BarChart(document.getElementById('sentiment_barchart'));
     chart.draw(data, options);
 }
 
@@ -250,20 +252,25 @@ function draw_dashboard2(data) {
 
 }
 
-function drawClusterSentimentPieChart(array) {
+function drawClusterSentimentChart(array) {
     var data = google.visualization.arrayToDataTable(array);
 
     var options = {
-      is3D: true,
         animation: {
-            duration: 10000,
+            duration: 1000,
             easing: 'out',
             startup: true
           },
+        legend: {
+          position:"none"
+        },
+        axisTitlesPosition: 'none',
+        isStacked: true,
         fontName: "Lato",
-        colors: ['#109618','#DC3912','#95a5a6']
+        colors: ['#DC3912', '#95a5a6','#109618'],
+        bar: {groupWidth: '100%'}
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('sentiment_piechart_3d'));
+    var chart = new google.visualization.BarChart(document.getElementById('sentiment_barchart'));
     chart.draw(data, options);
 }
