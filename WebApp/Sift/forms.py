@@ -1,11 +1,10 @@
 from Sift.models import StopWord
-
-__author__ = 'cse498'
-
 from django import forms
 from functools import partial
 import datetime
 import os
+
+__author__ = 'cse498'
 
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
@@ -24,10 +23,13 @@ def monthdelta(date, delta):
 
 
 class ClusterForm(forms.Form):
-    start_date = forms.DateField(label="Start Date", widget=DateInput(
-    ), initial=monthdelta(datetime.date.today(), -2).strftime('%m/%d/%Y'), required=False)
+    start_date = forms.DateField(label="Start Date", widget=DateInput(),
+                                 initial=monthdelta(datetime.date.today(),
+                                                    -2).strftime('%m/%d/%Y'),
+                                 required=False)
     end_date = forms.DateField(
-        label="End Date", widget=DateInput(), initial=datetime.date.today().strftime('%m/%d/%Y'), required=False)
+        label="End Date", widget=DateInput(),
+        initial=datetime.date.today().strftime('%m/%d/%Y'), required=False)
     all_posts = forms.BooleanField(required=False)
     num_clusters = forms.IntegerField(label="Number of Clusters", initial=8)
     max_features = forms.IntegerField(
@@ -36,14 +38,19 @@ class ClusterForm(forms.Form):
 
 
 class StopwordDelete(forms.Form):
+
     def __init__(self, *args, **kwargs):
         super(StopwordDelete, self).__init__(*args, **kwargs)
         self.fields['word'].help_text = None
         self.fields['word'].widget.attrs['size'] = '12'
-    word = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,queryset=StopWord.objects.all().order_by('word'), label="")
+    word = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,
+                                          queryset=StopWord.objects.all()
+                                          .order_by('word'),
+                                          label="")
 
 
 class StopwordAdd(forms.Form):
+
     def __init__(self, *args, **kwargs):
         super(StopwordAdd, self).__init__(*args, **kwargs)
         self.fields['add_word'].help_text = None

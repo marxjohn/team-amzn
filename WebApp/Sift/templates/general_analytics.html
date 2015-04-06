@@ -20,7 +20,7 @@
 </div>
 <div id="sentiment_pie">
     <h2>Overall Sentiment</h2>
-    <div id="sentiment_piechart_3d"></div>
+    <div id="sentiment_barchart"></div>
 </div>
 <div id="cluster_volume">
 <h2>Cluster Volume</h2>
@@ -33,7 +33,7 @@
     $(document).ready(function() {
         {% autoescape off %}
             drawGeneralPieChart({{ pieData }});
-            drawSentimentPieChart({{ sentimentData }});
+            drawSentimentChart({{ sentimentData }});
             drawGeneralLineChart({{ lineData }}, {{ lineDates }}, {{ lineClusterNames }});
         {% endautoescape %}
     });
@@ -41,7 +41,7 @@
     $(window).resize(function(){
         {% autoescape off %}
             drawGeneralPieChart({{ pieData }});
-            drawSentimentPieChart({{ sentimentData }});
+            drawSentimentChart({{ sentimentData }});
             drawGeneralLineChart({{ lineData }}, {{ lineDates }}, {{ lineClusterNames }});
         {% endautoescape %}
     });
