@@ -98,6 +98,12 @@ def run_clustering(data, posts):
     return s_inertia, s_score
 
 
+def run_clustering(data, posts):
+    end_date, start_date = find_min_and_max_date(posts)
+    s_score, s_inertia = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
+    return s_inertia, s_score
+
+
 def main():
     test_list = Post.objects.filter(cluster_id__isnull=True)[:10000]
     end_date, start_date = find_min_and_max_date(test_list)
