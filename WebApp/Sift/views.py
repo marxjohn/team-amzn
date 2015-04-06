@@ -27,13 +27,12 @@ def general(request):
             [cluster.name,
                 Post.objects.filter(cluster=cluster.clusterid).count()])
 
-    sentimentData = [['Sentiment', 'Number of Posts']]
-    sentimentData.append(
-        ["Positive", Post.objects.filter(sentiment="pos").count()])
-    sentimentData.append(
-        ["Negative", Post.objects.filter(sentiment="neg").count()])
-    sentimentData.append(
-        ["Neutral", Post.objects.filter(sentiment="neutral").count()])
+    sentimentData = [['Group', 'Negative', 'Neutral', 'Positive']]
+    s_neg = Post.objects.filter(sentiment="neg").count()
+    s_neutral = Post.objects.filter(sentiment="neutral").count()
+    s_pos = Post.objects.filter(sentiment="pos").count()
+    s_all = s_neg + s_neutral + s_pos
+    sentimentData.append(["All", round((s_neg/s_all)*100, 2), round((s_neutral/s_all)*100, 2), round((s_pos/s_all)*100, 2)])
 
     lineClusterNames = []
 
@@ -105,17 +104,13 @@ def details(request, cluster_id):
         wordPieData.append([w.word, w.count])
 
     # Sentiment Data
-    sentimentData = [['Sentiment', 'Number of Posts']]
-    sentimentData.append(
-        ["Positive",
-            Post.objects.filter(cluster=cluster_id, sentiment="pos").count()])
-    sentimentData.append(
-        ["Negative",
-            Post.objects.filter(cluster=cluster_id, sentiment="neg").count()])
-    sentimentData.append(
-        ["Neutral",
-            Post.objects.filter(cluster=cluster_id,
-                                sentiment="neutral").count()])
+    sentimentData = [['Group', 'Negative', 'Neutral', 'Positive']]
+    s_neg = Post.objects.filter(cluster='cluster_id', sentiment="neg").count()
+    s_neutral = Post.objects.filter(cluster='cluster_id', sentiment="neutral").count()
+    s_pos = Post.objects.filter(cluster='cluster_id', sentiment="pos").count()
+    s_all = s_neg + s_neutral + s_pos
+    sentimentData.append(["All", round((s_neg/s_all)*100, 2), round((s_neutral/s_all)*100, 2), round((s_pos/s_all)*100, 2)])
+
 
     context = {'pinnedClusters': pinnedClusters,
                'trendingClusters': trendingClusters, "headline": headline,
