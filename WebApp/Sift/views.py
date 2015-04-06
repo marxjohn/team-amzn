@@ -129,13 +129,13 @@ def notifications(request):
 def clusters(request):
     headline = "Clusters"
     clusters = Cluster.objects.all()
-    top = ClusterWord.objects.raw('SELECT * FROM ClusterWord JOIN Cluster on ClusterWord.clusterid=Cluster.clusterid')
+    top = ClusterWord.objects.raw('SELECT * FROM ClusterWord JOIN Cluster on ClusterWord.clusterId=Cluster.clusterId')
     top_words = {}
     for object in top:
-        if (object.name, object.clusterid.clusterid) in top_words:
-            top_words[(object.name, object.clusterid.clusterid)].append((object.word, object.id))
+        if (object.name, object.cluster_id.clusterid) in top_words:
+            top_words[(object.name, object.cluster_id.clusterid)].append((object.word, object.count))
         else:
-            top_words[(object.name, object.clusterid.clusterid)] = [(object.word, object.id)]
+            top_words[(object.name, object.cluster_id.clusterid)] = [(object.word, object.count)]
 
 
     context = {"headline": headline, 'clusters': clusters, 'top_words': top_words.items()}
@@ -144,10 +144,14 @@ def clusters(request):
         # edit the name of the cluster.
         cluster_names = request.POST.items()
         for key, value in cluster_names:
-            if(key!="csrfmiddlewaretoken"):
-                c = Cluster.objects.get(clusterid=key)
-                c.name = value
-                c.save()
+            if value == "on":
+                StopWord(word=key).save()
+            elif key != "csrfmiddlewaretoken":
+                if value != "" or value:
+                    print("updating cluster ", value)
+                    c = Cluster.objects.get(clusterid=key)
+                    c.name = value
+                    c.save()
 
 
     return render(request, 'clusters.html', context)

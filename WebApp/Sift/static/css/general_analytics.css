@@ -8,8 +8,11 @@ body {
     font-family:Lato;
     overflow-y:scroll;
 }
-h1,h2, h3 {
+h2, h3 {
     font-weight:300;
+}
+h1 {
+
 }
 .under-nav {
     position:relative;
@@ -466,6 +469,5 @@ label {
     position:relative;
     z-index:1;
     margin-top:-50px;
-    overflow-x: scroll;
     width:100%;
 }
