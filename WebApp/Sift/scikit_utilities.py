@@ -8,7 +8,7 @@ import numpy as np
 import django
 from django.db import connection
 import Stemmer
-from models import Post, Cluster, ClusterWord, StopWord
+from Sift.models import Post, Cluster, ClusterWord, StopWord
 import pymysql
 pymysql.install_as_MySQLdb()
 if not settings.configured:
