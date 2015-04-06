@@ -63,21 +63,33 @@ def find_min_and_max_date(c_list):
     return end_date, start_date
 
 
-def send_nightly_runner(email_text):
-    make_email_list = SESVerifyEmail()
-    email_list = make_email_list.make_verify_email_list()
+def send_nightly_runner( email_text ):
+    make_nightly_subscription = SNSNotification()
+    make_nightly_subscription.make_arn_list()
+    nightly_subscription = Sift.Notification.get_nightly_list()
 
-    if email_list == None:
+    if nightly_subscription == None:
         return False
     else:
-        topic = 'SIFT MSU Runner Notification'
-        send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
-        for i in range(1, len(email_list)):
-            send_message.add_cc_address(email_list[i])
-        # Create email contents with information
-        send_message.set_text(email_text)
-        send_message.send()
-        return True
+        make_nightly_subscription.set_topic_arn( 'NightlyRun' )
+        make_nightly_subscription.set_message( email_text )
+
+        make_nightly_subscription.publication()
+
+    # make_email_list = SESVerifyEmail()
+    # email_list = make_email_list.make_verify_email_list()
+    #
+    # if email_list == None:
+    #     return False
+    # else:
+    #     topic = 'SIFT MSU Runner Notification'
+    #     send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
+    #     for i in range(1, len(email_list)):
+    #         send_message.add_cc_address(email_list[i])
+    #     # Create email contents with information
+    #     send_message.set_text(email_text)
+    #     send_message.send()
+    #     return True
 
 
 def run_clustering(data, posts):

@@ -121,7 +121,6 @@ class SESMessage( object ):
         except:
             print ( 'Connection not Found.' )
 
-
 class SESVerifyEmail( object ):
 
     def __init__( __self ):
@@ -176,7 +175,10 @@ class SNSNotification( object ):
             __self.arn = arn
 
         def set_arn_endpoint( __self, endpoint, endpoint_arn ):
-            __self.endpoint.append( endpoint, endpoint_arn )
+            temp = []
+            temp.append( endpoint )
+            temp.append( endpoint_arn )
+            __self.endpoint.append( temp )
 
         def set_protocol( __self, protocol ):
             __self.protocol = protocol
@@ -190,8 +192,8 @@ class SNSNotification( object ):
         def get_endpoint( __self ):
             temp = []
             for i in __self.endpoint:
-                temp.append( __self.endpoint )
-            return ( temp )
+                temp.append( i )
+            return( temp )
 
         def get_protocol( __self ):
             return( __self.protocol )
@@ -213,7 +215,7 @@ class SNSNotification( object ):
         topic_list = topic_list['ListTopicsResponse']['ListTopicsResult']['Topics']
 
         for i in range( len(topic_list) ):
-            temp_arn = arn()
+            temp_arn = SNSNotification.arn()
 
             temp = topic_list[i]['TopicArn']
             temp_arn.set_arn( temp )
@@ -223,7 +225,7 @@ class SNSNotification( object ):
 
             for j in subscription_list:
                 temp_arn.set_protocol = j['Protocol']
-                temp_arn.set_arn_endpoint( j['Endpoint'], j['TopicArn'])
+                temp_arn.set_arn_endpoint( j['Endpoint'], j['SubscriptionArn'])
 
             temp = topic_list[i]['TopicArn'].split(':')
             temp = temp[len(temp)-1]
@@ -236,6 +238,20 @@ class SNSNotification( object ):
         for i in __self.arn_list:
             temp.append( i.get_topic() )
         return( temp )
+
+    def get_topic_arn( __self, topic ):
+        for i in __self.arn_list:
+            if i.get_topic() == topic:
+                return( i.get_arn() )
+
+    def get_arn_list( __self ):
+        return( __self.arn_list )
+
+    def set_topic_arn( __self, topic ):
+        for i in __self.arn_list:
+            if i.get_topic() == topic:
+                __self.arn = i.get_arn()
+        return( __self.arn )
 
     def get_subscription_list( __self ):
         temp = []
@@ -261,26 +277,74 @@ class SNSNotification( object ):
                 topic_arn = i.get_arn()
         __self.sns.subscribe( topic_arn, protocol, end_point )
 
+    def unsubscribe( __self, endpoint ):
+        for i in __self.arn_list:
+            temp = i.get_endpoint()
+            for j in temp:
+                if j[0] == endpoint:
+                    __self.sns.unsubscribe( j[1] )
 
-    def unsubscribe( __self, topic_arn, protocol, end_point ):
-        c = 0
 
     def publication( __self ):
-        __self.sns.publish( __self.arn, __self.message, __self.subject )
+        __self.sns.publish( __self.arn, __self.message )
 
 
+def add_email( email_address ):
+    subscription_list = SNSNotification()
+    subscription_list.make_arn_list()
+    subscription_list.subscribe( 'NightlyRun', 'email', email_address )
 
-def main( email_address ):
-    email_list = SESVerifyEmail()
-    email_create = SESMessage(email_address, email_address, "test")
-    email_list.verify_email(email_address)
+def email_verify():
+    subscription_list = SNSNotification()
+    subscription_list.make_arn_list()
+    temp = subscription_list.get_arn_list()
+    email_list = []
+    temp_list = []
 
-def verify():
-    email_list = SESVerifyEmail()
-    email_list.make_verify_email_list()
-    return email_list.list_verified_email()
+    for i in temp:
+        for j in i.get_endpoint():
+            temp_list.append( j )
+    for i in temp_list:
+        email_list.append(i[0])
+
+    return( email_list )
+
+def get_nightly_list():
+    subscription_list = SNSNotification()
+    subscription_list.make_arn_list()
+    temp = subscription_list.get_arn_list()
+    nightly_list = []
+    temp_list = []
+
+    for i in temp:
+        if 'NightlyRun' == i.get_topic():
+            temp_list = i.get_endpoint()
+    for i in temp_list:
+        nightly_list.append(i[0])
+
+    return ( nightly_list )
+
+def get_important_list():
+    subscription_list = SNSNotification()
+    subscription_list.make_arn_list()
+    temp = subscription_list.get_arn_list()
+    important_list = []
+    temp_list = []
+
+    for i in temp:
+        if 'ImportantChanges' == i.get_topic():
+            temp_list = i.get_endpoint()
+    for i in temp_list:
+        important_list.append(i[0])
+
+    return ( important_list )
+
 
 def remove( email_address ):
-    email_list = SESVerifyEmail()
-    email_list.make_verify_email_list()
-    email_list.delete_verified_email( email_address )
+    subscription_list = SNSNotification()
+    subscription_list.make_arn_list()
+    subscription_list.unsubscribe( email_address )
+
+    # email_list = SESVerifyEmail()
+    # email_list.make_verify_email_list()
+    # email_list.delete_verified_email( email_address )
