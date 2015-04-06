@@ -246,3 +246,21 @@ function draw_dashboard2(data) {
     return myDateSlider;
 
 }
+
+function drawClusterSentimentPieChart(array) {
+    var data = google.visualization.arrayToDataTable(array);
+
+    var options = {
+      is3D: true,
+        animation: {
+            duration: 10000,
+            easing: 'out',
+            startup: true
+          },
+        fontName: "Lato",
+        colors: ['#22dd22','#ff0000','#b6b0b0']
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('sentiment_piechart_3d'));
+    chart.draw(data, options);
+}
