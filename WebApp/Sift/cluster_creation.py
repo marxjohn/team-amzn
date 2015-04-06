@@ -1,33 +1,18 @@
 from __future__ import absolute_import
 
 from datetime import datetime
-try:
-    from Sift.models import *
-    from Sift.clustering import run_diagnostic_clustering
-    from Sift.classification import classify_on_date_range
-    from Sift.scikit_utilities import create_cluster_data
-    from Sift.models import Notification
-    from Sift.Notification import *
-except:
-    from clustering import run_creation_clustering
-    from classification import run_classification
-    from models import *
-    from models import Notification
-    from Notification import *
-
+from Sift.models import *
+from Sift.clustering import run_diagnostic_clustering
+from Sift.classification import classify_on_date_range
+from Sift.scikit_utilities import create_cluster_data
+from Sift.models import Notification
+from Sift.Notification import *
 from scikit_utilities import create_cluster_data
-
-
-try:
-    import pymysql
-    pymysql.install_as_MySQLdb()
-
-except:
-    pass
-
+import pymysql
 import django
-django.setup()
 from django.conf import settings
+pymysql.install_as_MySQLdb()
+django.setup()
 if not settings.configured:
     settings.configure(
         DATABASES={'default': {

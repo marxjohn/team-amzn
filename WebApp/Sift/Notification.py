@@ -1,24 +1,21 @@
 from __future__ import absolute_import
 import boto
-import boto.ses
-import boto.sns
-
+from boto.ses import connect_to_region as ses_c2r
+from boto.sns import connect_to_region as sns_c2r
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
+from Sift.models import *
+ACCESS_KEY = 'K+RYvGRfhARIGsvX55PEzLyXThlsH5wng62f+iqj'
+connection_ses = ses_c2r('us-west-2',
+                         aws_access_key_id='AKIAJPAOUUTITYRIGX2A',
+                         aws_secret_access_key=ACCESS_KEY
+                         )
 
-try:
-    from Sift.models import *
-except:
-    from models import *
-
-connection_ses = boto.ses.connect_to_region('us-west-2',
-                                            aws_access_key_id='AKIAJPAOUUTITYRIGX2A',
-                                            aws_secret_access_key='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')
-
-connection_sns = boto.sns.connect_to_region('us-west-2',
-                                            aws_access_key_id='AKIAJPAOUUTITYRIGX2A',
-                                            aws_secret_access_key='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')
+connection_sns = sns_c2r('us-west-2',
+                         aws_access_key_id='AKIAJPAOUUTITYRIGX2A',
+                         aws_secret_access_key=ACCESS_KEY
+                         )
 
 
 class SESMessage(object):
@@ -92,13 +89,15 @@ class SESMessage(object):
 
     def send(__self):
         try:
-
             __self.ses
             if not __self.attachments:
-
-                __self.ses.send_email(__self._source, __self.subject, __self.text or __self.html,
-                                      __self._to_addresses, __self._cc_addresses,
-                                      __self._bcc_addresses, format='text' if __self.text else 'html')
+                __self.ses.send_email(__self._source,
+                                      __self.subject,
+                                      __self.text or __self.html,
+                                      __self._to_addresses,
+                                      __self._cc_addresses,
+                                      __self._bcc_addresses,
+                                      format='text' if __self.text else 'html')
 
             else:
                 message = MIMEMultipart()
@@ -116,7 +115,8 @@ class SESMessage(object):
                                           filename=name)
                     message.attach(attachment)
 
-                __self.ses.send_raw_email(message.as_string(), source=__self._source,
+                __self.ses.send_raw_email(message.as_string(),
+                                          source=__self._source,
                                           destinations=__self._cc_addresses)
         except:
             print('Connection not Found.')
@@ -129,8 +129,8 @@ class SESVerifyEmail(object):
         __self.email_list = []
 
     def make_verify_email_list(__self):
-        temp_email_list = __self.ses.list_verified_email_addresses()
-        __self.email_list = temp_email_list['ListVerifiedEmailAddressesResponse'][
+        temp_emails = __self.ses.list_verified_email_addresses()
+        __self.email_list = temp_emails['ListVerifiedEmailAddressesResponse'][
             'ListVerifiedEmailAddressesResult']['VerifiedEmailAddresses']
         return(__self.email_list)
 
@@ -221,9 +221,9 @@ class SNSNotification(object):
             temp = topic_list[i]['TopicArn']
             temp_arn.set_arn(temp)
 
-            subscription_list = __self.sns.get_all_subscriptions_by_topic(
+            subscriptions = __self.sns.get_all_subscriptions_by_topic(
                 topic_list[i]['TopicArn'])
-            subscription_list = subscription_list['ListSubscriptionsByTopicResponse'][
+            subscriptions = subscriptions['ListSubscriptionsByTopicResponse'][
                 'ListSubscriptionsByTopicResult']['Subscriptions']
 
             for j in subscription_list:

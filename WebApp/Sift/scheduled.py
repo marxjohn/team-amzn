@@ -1,34 +1,17 @@
-from __future__ import absolute_import
-
 from datetime import date
 from datetime import datetime
-try:
-    from Sift.models import *
-    from Sift.clustering import run_diagnostic_clustering
-    from Sift.classification import classify_on_date_range
-    from Sift.scikit_utilities import create_cluster_data
-    from Sift.models import Notification
-    from Sift.Notification import *
-except:
-    from clustering import run_diagnostic_clustering
-    from classification import run_classification
-    from models import *
-    from models import Notification
-    from Notification import *
-
+from Sift.models import *
+from Sift.clustering import run_diagnostic_clustering
+from Sift.classification import classify_on_date_range
+from Sift.scikit_utilities import create_cluster_data
+from Sift.models import Notification
+from Sift.Notification import *
 from scikit_utilities import create_cluster_data
-
-
-try:
-    import pymysql
-    pymysql.install_as_MySQLdb()
-
-except:
-    pass
-
 import django
-django.setup()
 from django.conf import settings
+import pymysql
+pymysql.install_as_MySQLdb()
+django.setup()
 if not settings.configured:
     settings.configure(
         DATABASES={'default': {
@@ -64,7 +47,7 @@ def send_nightly_runner(email_text):
     make_email_list = SESVerifyEmail()
     email_list = make_email_list.make_verify_email_list()
 
-    if email_list == None:
+    if email_list is None:
         return False
     else:
         topic = 'SIFT MSU Runner Notification'
@@ -91,8 +74,9 @@ def main():
     #
 
     train_list = Post.objects.filter(
-        cluster_id__isnull=False, creation_date__range=('2014-01-01', '2014-01-12'))
-    #train_end_date, train_start_date = find_min_and_max_date(train_list)
+        cluster_id__isnull=False,
+        creation_date__range=('2014-01-01', '2014-01-12'))
+    # train_end_date, train_start_date = find_min_and_max_date(train_list)
     #
     test_data = create_cluster_data(test_list)
     train_data = create_cluster_data(train_list)

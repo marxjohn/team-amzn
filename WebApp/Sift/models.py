@@ -23,7 +23,6 @@ class Cluster(models.Model):
     name = models.CharField(unique=True, max_length=32)
     # Field name made lowercase.
     ispinned = models.IntegerField(db_column='isPinned')
-    # notificationC = models.ForeignKey(Notification, db_column='notification', blank=True, null=True)
 
     class Meta:
         managed = False
@@ -82,18 +81,22 @@ class Post(models.Model):
     modification_date = models.DateField(db_column='modificationDate')
     locale = models.CharField(max_length=64, blank=True)
     cluster = models.ForeignKey(
-        Cluster, db_column='cluster', blank=True, null=True, on_delete=models.SET_NULL)
+        Cluster, db_column='cluster', blank=True, null=True,
+        on_delete=models.SET_NULL)
     # Field name made lowercase.
     stemmed_body = models.TextField(db_column='stemmedBody', blank=True)
     # Field name made lowercase.
     probpositive = models.DecimalField(
-        db_column='probPositive', max_digits=21, decimal_places=20, blank=True, null=True)
+        db_column='probPositive', max_digits=21, decimal_places=20,
+        blank=True, null=True)
     # Field name made lowercase.
     probneutral = models.DecimalField(
-        db_column='probNeutral', max_digits=21, decimal_places=20, blank=True, null=True)
+        db_column='probNeutral', max_digits=21, decimal_places=20,
+        blank=True, null=True)
     # Field name made lowercase.
     probnegative = models.DecimalField(
-        db_column='probNegative', max_digits=21, decimal_places=20, blank=True, null=True)
+        db_column='probNegative', max_digits=21, decimal_places=20,
+        blank=True, null=True)
     sentiment = models.CharField(max_length=45, blank=True)
 
     class Meta:
@@ -156,7 +159,8 @@ class ClusterRun(models.Model):
     sample_size_ratio = models.DecimalField(
         db_column='SampleSizeRatio', max_digits=3, decimal_places=3)
     silo_score = models.DecimalField(
-        db_column='SiloScore', max_digits=8, decimal_places=4, blank=True, null=True)
+        db_column='SiloScore', max_digits=8, decimal_places=4,
+        blank=True, null=True)
 
     class Meta:
         managed = False
@@ -169,13 +173,16 @@ class Sentiment(models.Model):
     post_id = models.ForeignKey(Post, db_column='postId', primary_key=True)
     # Field name made lowercase.
     prob_negative = models.DecimalField(
-        db_column='probNegative', max_digits=21, decimal_places=20, blank=True, null=True)
+        db_column='probNegative', max_digits=21, decimal_places=20,
+        blank=True, null=True)
     # Field name made lowercase.
     prob_neutral = models.DecimalField(
-        db_column='probNeutral', max_digits=21, decimal_places=20, blank=True, null=True)
+        db_column='probNeutral', max_digits=21, decimal_places=20,
+        blank=True, null=True)
     # Field name made lowercase.
     prob_positive = models.DecimalField(
-        db_column='probPositive', max_digits=21, decimal_places=20, blank=True, null=True)
+        db_column='probPositive', max_digits=21, decimal_places=20,
+        blank=True, null=True)
     label = models.CharField(max_length=45, blank=True)
 
     class Meta:

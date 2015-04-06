@@ -1,15 +1,11 @@
-from __future__ import absolute_import
-
 import os
-
-try:
-    import pymysql
-    pymysql.install_as_MySQLdb()
-
-except:
-    pass
-
 from django.conf import settings
+from Sift.models import *
+import requests
+import django
+from time import time
+import pymysql
+pymysql.install_as_MySQLdb()
 if not settings.configured:
     settings.configure(
         DATABASES={'default': {
@@ -26,15 +22,6 @@ if not settings.configured:
         }
     )
 
-try:
-    from models import *
-except:
-    from Sift.models import *
-
-from lxml import html
-import requests
-import django
-from time import time
 
 django.setup()
 
@@ -49,7 +36,7 @@ def lazy_sentiment(start_date, end_date):
     skip = 0
     print("lazy sentiment time!")
     for post in dataset:
-        if post.sentiment == None:
+        if post.sentiment is None:
             try:
                 body = html.document_fromstring(post.body).text_content()
             except:

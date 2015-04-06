@@ -1,13 +1,16 @@
-from __future__ import absolute_import
-# K-means clustering of seller forums posts
-
-try:
-    import pymysql
-    pymysql.install_as_MySQLdb()
-except:
-    pass
-
 from django.conf import settings
+from sklearn.feature_extraction.text import TfidfVectorizer
+from nltk import word_tokenize
+from nltk.stem import WordNetLemmatizer
+from nltk.corpus import stopwords
+import re
+import numpy as np
+import django
+from django.db import connection
+import Stemmer
+from models import Post, Cluster, ClusterWord, StopWord
+import pymysql
+pymysql.install_as_MySQLdb()
 if not settings.configured:
     settings.configure(
         DATABASES={'default': {
@@ -24,20 +27,6 @@ if not settings.configured:
         }
     )
 
-
-from models import Post, Cluster, ClusterWord, StopWord
-
-
-from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk import word_tokenize
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import stopwords
-import re
-import numpy as np
-import django
-from django.db import connection
-
-import Stemmer
 english_stemmer = Stemmer.Stemmer('en')
 
 django.setup()
@@ -53,7 +42,8 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
         def analyze(doc):
             if doc[1]:
                 temp = ' '.join(
-                    [i for i in doc[0].split(' ') if i not in STOP_WORDS]).split(' ')
+                    [i for i in doc[0].split(' ')
+                        if i not in STOP_WORDS]).split(' ')
                 temp2 = list(filter(''.__ne__, temp))
                 return temp2
             else:
@@ -79,8 +69,8 @@ class ClusterData:
         '''Consumes a post from the seller forums and returns the
         tokenized, stemmed version'''
         post = ClusterData.exp.sub('', post).lower()
-        keep = lambda word: not word in ClusterData.STOPWORDS
-        tokenized = filter(keep, word_tokenize(post))
+        tokenized = filter(lambda word: word not in ClusterData.STOPWORDS,
+                           word_tokenize(post))
         stemmed = set(map(ClusterData.stemmer.lemmatize, tokenized))
         return stemmed
 
@@ -150,8 +140,10 @@ def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
         c = Cluster.objects.get(clusterid=x)
 
         for cw in ClusterWord.objects.all():
-            count = len(Post.objects.filter(cluster=c, stemmed_body__contains=cw.word,
-                                            creation_date__range=(start_date, end_date)))
+            count = len(Post.objects.filter(cluster=c,
+                                            stemmed_body__contains=cw.word,
+                                            creation_date__range=(start_date,
+                                                                  end_date)))
 
             cw.count += count
             cw.save()

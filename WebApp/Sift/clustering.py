@@ -1,37 +1,8 @@
-from __future__ import absolute_import
-
 import os
-
-try:
-    import pymysql
-    pymysql.install_as_MySQLdb()
-
-except:
-    pass
-
 from django.conf import settings
-if not settings.configured:
-    settings.configure(
-        DATABASES={'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'HOST': 'siftmsu.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
-            'PORT': '3306',
-            'USER': 'teamamzn',
-            'PASSWORD': 'TeamAmazon2015!',
-            'NAME': 'sellerforums',
-            'OPTIONS': {
-                'autocommit': True,
-            },
-        }
-        }
-    )
-
+import pymysql
 import matplotlib.pyplot as plt
-try:
-    from models import Post, Cluster, ClusterWord, ClusterRun, StopWord
-except:
-    from Sift.models import Post, Cluster, ClusterWord, ClusterRun, StopWord
-
+from Sift.models import Post, Cluster, ClusterWord, ClusterRun, StopWord
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans, MiniBatchKMeans
 from sklearn.decomposition import TruncatedSVD
@@ -54,7 +25,22 @@ import numpy as np
 import django
 from datetime import datetime
 import Stemmer
-
+pymysql.install_as_MySQLdb()
+if not settings.configured:
+    settings.configure(
+        DATABASES={'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': 'siftmsu.cqtoghgwmxut.us-west-2.rds.amazonaws.com',
+            'PORT': '3306',
+            'USER': 'teamamzn',
+            'PASSWORD': 'TeamAmazon2015!',
+            'NAME': 'sellerforums',
+            'OPTIONS': {
+                'autocommit': True,
+            },
+        }
+        }
+    )
 # K-means clustering of seller forums posts
 # MAX_FEATURES = 1000
 # IS_MINI_USED = True
@@ -79,9 +65,10 @@ english_stemmer = Stemmer.Stemmer('en')
 
 class ClusterParameter:
 
-    def __init__(self, max_features, is_idf_used, is_upload_enabled, num_clusters, is_mini_used,
-                 is_added_to_cluster_run, max_df, batch_size_ratio, init_size_ratio,
-                 n_init, start_date, end_date, is_visualization_enabled):
+    def __init__(self, max_features, is_idf_used, is_upload_enabled,
+                 num_clusters, is_mini_used, is_added_to_cluster_run,
+                 max_df, batch_size_ratio, init_size_ratio, n_init,
+                 start_date, end_date, is_visualization_enabled):
 
         self.max_features = max_features
         self.is_idf_used = is_idf_used
@@ -109,7 +96,8 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
         def analyze(doc):
             if doc[1]:
                 temp = ' '.join(
-                    [i for i in doc[0].split(' ') if i not in STOP_WORDS]).split(' ')
+                    [i for i in doc[0].split(' ') if i not in STOP_WORDS]
+                ).split(' ')
                 temp2 = list(filter(''.__ne__, temp))
                 return temp2
             else:
@@ -135,8 +123,8 @@ class ClusterData:
         '''Consumes a post from the seller forums and returns the
         tokenized, stemmed version'''
         post = ClusterData.exp.sub('', post).lower()
-        keep = lambda word: not word in ClusterData.STOPWORDS
-        tokenized = filter(keep, word_tokenize(post))
+        tokenized = filter(lambda word: word not in ClusterData.STOPWORDS,
+                           word_tokenize(post))
         stemmed = set(map(ClusterData.stemmer.lemmatize, tokenized))
         return stemmed
 
@@ -184,9 +172,10 @@ def fit_clusters(X, c_param):
         # n_clusters:   Number of clusters created
         # init:         Method of cluster mean initialization
         # n_init:       Number of random initializations that are tried
-        # init_size:    Number of samples to randomly sample to speed up initialization
+        # init_size:    Number of samples to randomly sample
         # batch_size:   Size of the mini batches
-        km = MiniBatchKMeans(n_clusters=c_param.num_clusters, init='k-means++', n_init=c_param.n_init,
+        km = MiniBatchKMeans(n_clusters=c_param.num_clusters,
+                             init='k-means++', n_init=c_param.n_init,
                              init_size=int(
                                  len(X.data) / c_param.init_size_ratio),
                              batch_size=int(
@@ -198,8 +187,8 @@ def fit_clusters(X, c_param):
         # max_iter:     Number of iterations of k-means in a single run
         # n_init        Number of times the k-means algorithm will be run, best
         # result chosen (important)
-        km = KMeans(n_clusters=c_param.num_clusters, init='k-means++', max_iter=300, n_init=10, n_jobs=-1,
-                    verbose=False)
+        km = KMeans(n_clusters=c_param.num_clusters, init='k-means++',
+                    max_iter=300, n_init=10, n_jobs=-1, verbose=False)
     print("Clustering sparse data with %s" % km)
     t0 = time()
     km.fit(X)
@@ -229,9 +218,12 @@ def print_cluster_centroids(km, vectorizer, num_clusters):
 
 
 def vectorize_data(data_set, c_param):
-    vectorizer = StemmedTfidfVectorizer(max_df=c_param.max_df, max_features=c_param.max_features,
+    vectorizer = StemmedTfidfVectorizer(max_df=c_param.max_df,
+                                        max_features=c_param.max_features,
                                         min_df=1,
-                                        use_idf=c_param.is_idf_used, analyzer='word', ngram_range=(1, 1))
+                                        use_idf=c_param.is_idf_used,
+                                        analyzer='word',
+                                        ngram_range=(1, 1))
 
     vectorized_data = vectorizer.fit_transform(data_set.data)
 
@@ -241,8 +233,9 @@ def vectorize_data(data_set, c_param):
 def visualize_clusters(num_clusters, vectorized_data, vectorizer):
     reduced_data = PCA(n_components=2).fit_transform(
         vectorized_data.toarray())  # .toarray())
-    k_means = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++', n_init=N_INIT,
-                              init_size=INIT_SIZE_RATIO, batch_size=BATCH_SIZE_RATIO, verbose=True)
+    k_means = MiniBatchKMeans(n_clusters=num_clusters, init='k-means++',
+                              n_init=N_INIT, init_size=INIT_SIZE_RATIO,
+                              batch_size=BATCH_SIZE_RATIO, verbose=True)
     k_means.fit(reduced_data)
     # Step size of the mesh. Decrease to increase the quality of the VQ.
     h = .001  # point in the mesh [x_min, m_max]x[y_min, y_max].
@@ -284,7 +277,8 @@ def visualize_clusters(num_clusters, vectorized_data, vectorizer):
 def cluster_posts(data_set, c_param):
     data_count = len(data_set.data)
     print(
-        "Extracting features from the training dataset using a sparse vectorizer")
+        "Extracting features from the training dataset\
+                using a sparse vectorizer")
     vectorized_data, vectorizer = vectorize_data(data_set, c_param)
     # svd = TruncatedSVD(n_components = 100)
     # lsa = make_pipeline(svd, Normalizer(copy=False))
@@ -303,7 +297,8 @@ def cluster_posts(data_set, c_param):
 
     if c_param.is_upload_enabled:
         upload_clusters(
-            data_set, data_count, km, order_centroids, terms, c_param.num_clusters)
+            data_set, data_count, km, order_centroids, terms,
+            c_param.num_clusters)
 
     if c_param.is_visualization_enabled:
         visualize_clusters(c_param.num_clusters, vectorized_data, vectorizer)
@@ -312,7 +307,8 @@ def cluster_posts(data_set, c_param):
         create_cluster_run(km, c_param)
 
 
-def upload_clusters(data_set, data_count, km, order_centroids, terms, num_clusters):
+def upload_clusters(data_set, data_count, km, order_centroids,
+                    terms, num_clusters):
     t0 = time()
     print("Uploading Clusters")
 
@@ -376,7 +372,8 @@ def upload_clusters(data_set, data_count, km, order_centroids, terms, num_cluste
         # Save top 100 cluster words
         for ind in order_centroids[x - 1, :100]:
             count = len(
-                Post.objects.filter(cluster=c, stemmed_body__contains=terms[ind]))
+                Post.objects.filter(cluster=c,
+                                    stemmed_body__contains=terms[ind]))
 
             cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
             cwL.append(cw)
@@ -395,62 +392,52 @@ def create_cluster_run(km, c_param):
     start_datetime = c_param.start_date
     end_datetime = c_param.end_date
 
-    cr = ClusterRun(start_date=start_datetime, end_date=end_datetime, normalized_inertia=c_param.normalized_inertia,
-                    run_date=datetime.today(), n_init=c_param.n_init, num_features=c_param.max_features,
+    cr = ClusterRun(start_date=start_datetime, end_date=end_datetime,
+                    normalized_inertia=c_param.normalized_inertia,
+                    run_date=datetime.today(), n_init=c_param.n_init,
+                    num_features=c_param.max_features,
                     num_clusters=c_param.num_clusters, batch_size=int(
                         len(km.labels_) / c_param.batch_size_ratio),
-                    sample_size=int(len(km.labels_) / c_param.init_size_ratio), max_df=c_param.max_df,
+                    sample_size=int(len(km.labels_) / c_param.init_size_ratio),
+                    max_df=c_param.max_df,
                     num_posts=len(km.labels_), total_inertia=km.inertia_,
-                    batch_size_ratio=1 / c_param.batch_size_ratio, sample_size_ratio=1 / c_param.init_size_ratio,
+                    batch_size_ratio=1 / c_param.batch_size_ratio,
+                    sample_size_ratio=1 / c_param.init_size_ratio,
                     silo_score=c_param.s_score)
     cr.save()
 
 
-def run_diagnostic_clustering(data_set, start_date, end_date, max_features, num_clusters,
-                              max_df, batch_size_ratio, init_size_ratio, n_init):
+def run_diagnostic_clustering(data_set, start_date, end_date, max_features,
+                              num_clusters, max_df, batch_size_ratio,
+                              init_size_ratio, n_init):
 
-    c_param = ClusterParameter(num_clusters=num_clusters, is_added_to_cluster_run=True,
-                               batch_size_ratio=batch_size_ratio, is_idf_used=True, is_upload_enabled=False,
-                               max_features=max_features, max_df=max_df, init_size_ratio=init_size_ratio, n_init=n_init,
-                               start_date=start_date, end_date=end_date, is_mini_used=True, is_visualization_enabled=False)
+    c_param = ClusterParameter(num_clusters=num_clusters,
+                               is_added_to_cluster_run=True,
+                               batch_size_ratio=batch_size_ratio,
+                               is_idf_used=True, is_upload_enabled=False,
+                               max_features=max_features, max_df=max_df,
+                               init_size_ratio=init_size_ratio, n_init=n_init,
+                               start_date=start_date, end_date=end_date,
+                               is_mini_used=True,
+                               is_visualization_enabled=False)
     cluster_posts(data_set, c_param)
 
     return c_param.s_score, c_param.normalized_inertia
 
 
-def run_creation_clustering(data_set, start_date, end_date, max_features, num_clusters,
-                            max_df, batch_size_ratio, init_size_ratio, n_init):
+def run_creation_clustering(data_set, start_date, end_date, max_features,
+                            num_clusters, max_df, batch_size_ratio,
+                            init_size_ratio, n_init):
 
-    c_param = ClusterParameter(num_clusters=num_clusters, is_added_to_cluster_run=True,
-                               batch_size_ratio=batch_size_ratio, is_idf_used=True, is_upload_enabled=True,
-                               max_features=max_features, max_df=max_df, init_size_ratio=init_size_ratio, n_init=n_init,
-                               start_date=start_date, end_date=end_date, is_mini_used=True, is_visualization_enabled=False)
+    c_param = ClusterParameter(num_clusters=num_clusters,
+                               is_added_to_cluster_run=True,
+                               batch_size_ratio=batch_size_ratio,
+                               is_idf_used=True, is_upload_enabled=True,
+                               max_features=max_features, max_df=max_df,
+                               init_size_ratio=init_size_ratio,
+                               n_init=n_init, start_date=start_date,
+                               end_date=end_date, is_mini_used=True,
+                               is_visualization_enabled=False)
     cluster_posts(data_set, c_param)
 
     return c_param.s_score, c_param.normalized_inertia
-
-# def main():
-# Display progress logs on stdout
-#     logging.basicConfig(level=logging.INFO,
-#                         format='%(asctime)s %(levelname)s %(message)s')
-#
-#     print("Retrieving dataset from database")
-#     t0 = time()
-#
-#     start_date = "2014-01-01"
-#     end_date = "2014-02-01"
-#
-#     data_set = ClusterData(Post.objects.filter(creationdate__range=(start_date, end_date)))
-#
-#     cluster_param = ClusterParameter(num_clusters=5, is_added_to_cluster_run=True, max_df=.85,
-#                                      batch_size_ratio=20, is_idf_used=True, is_upload_enabled=False,
-#                                      max_features=1000, init_size_ratio=50, n_init=150,
-#                                      start_date=start_date, end_date=end_date, is_mini_used=True,
-#                                      is_visualization_enabled=False)
-#
-#     cluster_posts(data_set, cluster_param)
-#
-# Only run the main function if this code is called directly
-# Not if it's imported as a module
-# if __name__ == "__main__":
-#     main()
