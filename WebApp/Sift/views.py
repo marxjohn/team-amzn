@@ -71,18 +71,24 @@ def details(request, cluster_id):
     # data
     cluster_posts = {}
     posts = Post.objects.values(
-        'creation_date', 'body').filter(cluster=cluster_id)
+        'creation_date', 'sentiment', 'body').filter(cluster=cluster_id)
     for post in posts:
         date = int(time.mktime(post["creation_date"].timetuple())) * 1000
         if date in cluster_posts:
             cluster_posts[date]['numPosts'] += 1
         else:
-            cluster_posts[date] = {"numPosts": 1, "posts": []}
+            cluster_posts[date] = {"numPosts": 1, "posts": [], "sentiments": []}
         try:
             body = html.document_fromstring(BeautifulSoup(post['body']).getText()).text_content()
         except :
             body = post['body']
         cluster_posts[date]['posts'].append(body)
+
+        # Add sentiment
+        if post['sentiment'] is None:
+            cluster_posts[date]['sentiments'].append('null')
+        else:
+            cluster_posts[date]['sentiments'].append(post['sentiment'])
 
     #Cluster word count
     wordPieData = [['Word', 'Instances']]
