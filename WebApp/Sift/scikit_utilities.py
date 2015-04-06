@@ -25,7 +25,6 @@ if not settings.configured:
     )
 
 
-
 from models import Post, Cluster, ClusterWord, StopWord
 
 
@@ -45,6 +44,7 @@ django.setup()
 REMOVE_LIST = set(StopWord.objects.all().values_list("word", flat=True))
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 
+
 class StemmedTfidfVectorizer(TfidfVectorizer):
 
     def build_analyzer(self):
@@ -52,7 +52,8 @@ class StemmedTfidfVectorizer(TfidfVectorizer):
 
         def analyze(doc):
             if doc[1]:
-                temp = ' '.join([i for i in doc[0].split(' ') if i not in STOP_WORDS]).split(' ')
+                temp = ' '.join(
+                    [i for i in doc[0].split(' ') if i not in STOP_WORDS]).split(' ')
                 temp2 = list(filter(''.__ne__, temp))
                 return temp2
             else:
@@ -100,10 +101,10 @@ class ClusterData:
             count=inp.count())
 
 
-
 def get_cluster_data(start_date, end_date):
 
-    data_set = ClusterData(Post.objects.filter(creation_date__range=(start_date, end_date)), Cluster.objects.all())
+    data_set = ClusterData(Post.objects.filter(
+        creation_date__range=(start_date, end_date)), Cluster.objects.all())
     return data_set
 
 
@@ -113,7 +114,7 @@ def create_cluster_data(post_list):
 
 def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
     for j in range(0, num_clusters):
-        query = "UPDATE Post SET Post.cluster = " + str(j+1) + " where"
+        query = "UPDATE Post SET Post.cluster = " + str(j + 1) + " where"
         is_first = True
         count = 0
         for i in range(0, len(data_set.id_list)):
@@ -133,7 +134,8 @@ def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
                 cursor = connection.cursor()
                 cursor.execute(query)
                 cursor.close()
-                query = "UPDATE Post SET posts.cluster = " + str(j+1) + " where"
+                query = "UPDATE Post SET posts.cluster = " + \
+                    str(j + 1) + " where"
                 is_first = True
                 count = 0
 
@@ -141,7 +143,6 @@ def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
         cursor = connection.cursor()
         cursor.execute(query)
         cursor.close()
-
 
     print("Counting Cluster Words")
     # cwList = []
@@ -154,6 +155,3 @@ def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
 
             cw.count += count
             cw.save()
-
-
-

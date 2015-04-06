@@ -18,9 +18,6 @@ except:
 from scikit_utilities import create_cluster_data
 
 
-
-
-
 try:
     import pymysql
     pymysql.install_as_MySQLdb()
@@ -64,7 +61,8 @@ def find_min_and_max_date(c_list):
 
 def run_clustering(data, posts):
     end_date, start_date = find_min_and_max_date(posts)
-    s_score, s_inertia = run_creation_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
+    s_score, s_inertia = run_creation_clustering(
+        data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
     return s_inertia, s_score
 
 
@@ -72,7 +70,6 @@ def main():
     posts = Post.objects.all()
     data = create_cluster_data(posts)
     run_clustering(data, posts)
-
 
 
 if __name__ == '__main__':

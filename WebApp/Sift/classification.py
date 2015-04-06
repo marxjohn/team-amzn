@@ -66,10 +66,10 @@ def run_classification(data_train, data_test, num_features, start_date, end_date
     c_params = ClassificationParams(num_features=num_features, is_report_printed=False, is_chi_squared_used=False,
                                     is_idf_used=True, is_upload_enabled=True)
 
-
     categories = data_train.cluster_list
 
-    X_test, X_train, vectorizer, y_train = vectorize(data_test, data_train, c_params)
+    X_test, X_train, vectorizer, y_train = vectorize(
+        data_test, data_train, c_params)
 
     if c_params.is_chi_squared_used:
         chi_squared_transformer(X_test, X_train, y_train, c_params)
@@ -77,16 +77,19 @@ def run_classification(data_train, data_test, num_features, start_date, end_date
     # mapping from integer feature name to original token string
     feature_names = np.asarray(vectorizer.get_feature_names())
 
-    classify(L1LinearSVC(), data_test, X_train, y_train, X_test, feature_names, categories, c_params)
+    classify(L1LinearSVC(), data_test, X_train, y_train,
+             X_test, feature_names, categories, c_params)
 
     if c_params.is_upload_enabled:
-        associate_post_with_cluster(data_test, len(categories), start_date, end_date)
+        associate_post_with_cluster(
+            data_test, len(categories), start_date, end_date)
 
 
 def vectorize(data_test, data_train, c_params):
     # list of cluster associated with each posts
     y_train = data_train.cluster_of_posts
-    print("Extracting features from the training dataset using a sparse vectorizer")
+    print(
+        "Extracting features from the training dataset using a sparse vectorizer")
     t0 = time()
     vectorizer = StemmedTfidfVectorizer(max_df=.8, max_features=c_params.num_features,
                                         min_df=1,
@@ -152,7 +155,7 @@ def classify(clf, cluster_data, X_train, y_train, X_test, feature_names, categor
 #                                     result_end_date="2013-06-01", result_start_date="2013-05-01",
 #                                     num_features=1000, is_report_printed=False, is_chi_squared_used=True,
 #                                     is_idf_used=True, is_upload_enabled=True)
-#     # Display progress logs on stdout
+# Display progress logs on stdout
 #     logging.basicConfig(level=logging.INFO,
 #                         format='%(asctime)s %(levelname)s %(message)s')
 #     print()
@@ -165,55 +168,55 @@ def classify(clf, cluster_data, X_train, y_train, X_test, feature_names, categor
 #     categories = data_train.cluster_list
 #
 #     X_test, X_train, vectorizer, y_train = vectorize(data_test, data_train, c_params)
-#     # Here down is essentially black magic... But I suppose it works
+# Here down is essentially black magic... But I suppose it works
 #     if c_params.is_chi_squared_used:
 #         chi_squared_transformer(X_test, X_train, y_train, c_params)
 #
 #
 #
-#     # mapping from integer feature name to original token string
+# mapping from integer feature name to original token string
 #     feature_names = np.asarray(vectorizer.get_feature_names())
 #     results = []
-#     # for clf, name in (
-#     #         (RidgeClassifier(tol=1e-2, solver="lsqr"), "Ridge Classifier"),
-#     #         (Perceptron(n_iter=50), "Perceptron"),
-#     #         (PassiveAggressiveClassifier(n_iter=50), "Passive-Aggressive")):
-#     #     # (KNeighborsClassifier(n_neighbors=10), "kNN")):
-#     #     print('=' * 80)
-#     #     print(name)
-#     #     results.append(classify(clf, data_test))
-#     # for penalty in ["l2", "l1"]:
-#     #     print('=' * 80)
-#     #     print("%s penalty" % penalty.upper())
-#     #     # Train Liblinear model
-#     #     results.append(classify(LinearSVC(loss='l2', penalty=penalty,
-#     #                                       dual=False, tol=1e-3), data_test))
+# for clf, name in (
+# (RidgeClassifier(tol=1e-2, solver="lsqr"), "Ridge Classifier"),
+# (Perceptron(n_iter=50), "Perceptron"),
+# (PassiveAggressiveClassifier(n_iter=50), "Passive-Aggressive")):
+# (KNeighborsClassifier(n_neighbors=10), "kNN")):
+# print('=' * 80)
+# print(name)
+# results.append(classify(clf, data_test))
+# for penalty in ["l2", "l1"]:
+# print('=' * 80)
+# print("%s penalty" % penalty.upper())
+# Train Liblinear model
+# results.append(classify(LinearSVC(loss='l2', penalty=penalty,
+# dual=False, tol=1e-3), data_test))
 #     #
-#     #     # Train SGD model
-#     #     results.append(classify(SGDClassifier(alpha=.0001, n_iter=50,
-#     #                                           penalty=penalty), data_test))
+# Train SGD model
+# results.append(classify(SGDClassifier(alpha=.0001, n_iter=50,
+# penalty=penalty), data_test))
 #     #
-#     # # Train SGD with Elastic Net penalty
-#     # print('=' * 80)
-#     # print("Elastic-Net penalty")
-#     # results.append(classify(SGDClassifier(alpha=.0001, n_iter=50,
-#     #                                       penalty="elasticnet"), data_test))
-#     # # Train NearestCentroid without threshold
-#     # print('=' * 80)
-#     # print("NearestCentroid (aka Rocchio classifier)")
-#     # results.append(classify(NearestCentroid(), data_test))
-#     # # Train sparse Naive Bayes classifiers
-#     # print('=' * 80)
-#     # print("Naive Bayes")
-#     # results.append(classify(MultinomialNB(alpha=.01), data_test))
-#     # results.append(classify(BernoulliNB(alpha=.01), data_test))
+# Train SGD with Elastic Net penalty
+# print('=' * 80)
+# print("Elastic-Net penalty")
+# results.append(classify(SGDClassifier(alpha=.0001, n_iter=50,
+# penalty="elasticnet"), data_test))
+# Train NearestCentroid without threshold
+# print('=' * 80)
+# print("NearestCentroid (aka Rocchio classifier)")
+# results.append(classify(NearestCentroid(), data_test))
+# Train sparse Naive Bayes classifiers
+# print('=' * 80)
+# print("Naive Bayes")
+# results.append(classify(MultinomialNB(alpha=.01), data_test))
+# results.append(classify(BernoulliNB(alpha=.01), data_test))
 #
 #
 #
 #     print('=' * 80)
 #     print("LinearSVC with L1-based feature selection")
 #     results.append(classify(L1LinearSVC(), data_test, X_train, y_train, X_test, feature_names, categories, c_params))
-#     # make some plots
+# make some plots
 #     if IS_PLOTTING_ON:
 #
 #         indices = np.arange(len(results))

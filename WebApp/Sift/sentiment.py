@@ -42,8 +42,8 @@ django.setup()
 def lazy_sentiment(start_date, end_date):
     t0 = time()
     print("grabbing posts from db")
-    dataset = Post.objects.filter(creation_date__range=(start_date, end_date), sentiment__isnull=True)
-
+    dataset = Post.objects.filter(
+        creation_date__range=(start_date, end_date), sentiment__isnull=True)
 
     suc = 0
     skip = 0
@@ -55,7 +55,8 @@ def lazy_sentiment(start_date, end_date):
             except:
                 body = ""
             payload = {'text': body[:80000]}
-            r = requests.post("http://text-processing.com/api/sentiment/", data=payload)
+            r = requests.post(
+                "http://text-processing.com/api/sentiment/", data=payload)
             try:
                 print(payload)
                 print(r.json())
@@ -84,10 +85,8 @@ def lazy_sentiment(start_date, end_date):
     print("done in %fs" % (time() - t0))
 
 
-
 def main():
     lazy_sentiment("2013-01-01", "2014-04-01")
-
 
 
 # Only run the main function if this code is called directly

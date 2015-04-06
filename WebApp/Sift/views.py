@@ -21,15 +21,18 @@ def general(request):
     trendingClusters = Cluster.objects.filter(ispinned=0)
     pinnedClusters = Cluster.objects.filter(ispinned=1)
 
-
     pieData = [['Forum ID', 'Number of Posts']]
     for cluster in trendingClusters:
-        pieData.append([cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
+        pieData.append(
+            [cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
 
     sentimentData = [['Sentiment', 'Number of Posts']]
-    sentimentData.append(["Positive", Post.objects.filter(sentiment="pos").count()])
-    sentimentData.append(["Negative", Post.objects.filter(sentiment="neg").count()])
-    sentimentData.append(["Neutral", Post.objects.filter(sentiment="neutral").count()])
+    sentimentData.append(
+        ["Positive", Post.objects.filter(sentiment="pos").count()])
+    sentimentData.append(
+        ["Negative", Post.objects.filter(sentiment="neg").count()])
+    sentimentData.append(
+        ["Neutral", Post.objects.filter(sentiment="neutral").count()])
 
     lineClusterNames = []
 
@@ -38,17 +41,18 @@ def general(request):
 
     lineDates = []
     lineData = {}
-    posts = Post.objects.values('creation_date', 'cluster').order_by('creation_date')
+    posts = Post.objects.values(
+        'creation_date', 'cluster').order_by('creation_date')
     for post in posts:
         id = post["cluster"]
         if (id != None):
             date = int(time.mktime(post["creation_date"].timetuple())) * 1000
             try:
                 if date in lineData:
-                    lineData[date][id-1] += 1
+                    lineData[date][id - 1] += 1
                 else:
                     lineData[date] = [0] * len(lineClusterNames)
-                    lineData[date][id-1] = 1
+                    lineData[date][id - 1] = 1
                     lineDates.append(date)
             except:
                 pass
@@ -77,7 +81,8 @@ def details(request, cluster_id):
         if date in cluster_posts:
             cluster_posts[date]['numPosts'] += 1
         else:
-            cluster_posts[date] = {"numPosts": 1, "posts": [], "sentiments": []}
+            cluster_posts[date] = {
+                "numPosts": 1, "posts": [], "sentiments": []}
         try:
             body = html.document_fromstring(post['body']).text_content()
         except:
@@ -90,18 +95,21 @@ def details(request, cluster_id):
         else:
             cluster_posts[date]['sentiments'].append(post['sentiment'])
 
-    #Cluster word count
+    # Cluster word count
     wordPieData = [['Word', 'Instances']]
 
     words = ClusterWord.objects.filter(clusterid=cluster_id)[:10]
     for w in words:
         wordPieData.append([w.word, w.count])
 
-    #Sentiment Data
+    # Sentiment Data
     sentimentData = [['Sentiment', 'Number of Posts']]
-    sentimentData.append(["Positive", Post.objects.filter(cluster=cluster_id, sentiment="pos").count()])
-    sentimentData.append(["Negative", Post.objects.filter(cluster=cluster_id, sentiment="neg").count()])
-    sentimentData.append(["Neutral", Post.objects.filter(cluster=cluster_id, sentiment="neutral").count()])
+    sentimentData.append(
+        ["Positive", Post.objects.filter(cluster=cluster_id, sentiment="pos").count()])
+    sentimentData.append(
+        ["Negative", Post.objects.filter(cluster=cluster_id, sentiment="neg").count()])
+    sentimentData.append(
+        ["Neutral", Post.objects.filter(cluster=cluster_id, sentiment="neutral").count()])
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster, 'cluster_posts': cluster_posts, 'wordPieData': wordPieData, 'sentimentData': sentimentData}
@@ -113,7 +121,7 @@ def notifications(request):
     headline = "Notifications"
 
     email_list = Sift.Notification.verify()
-    context = {"headline": headline, 'email_list': email_list }
+    context = {"headline": headline, 'email_list': email_list}
 
     if request.method == 'POST':
         if 'ADD_EMAIL' in request.POST:
@@ -122,33 +130,34 @@ def notifications(request):
             Sift.Notification.remove(request.POST.get('email'))
             return HttpResponseRedirect('/notifications')
 
-
     return render(request, 'notifications.html', context)
 
 
 def clusters(request):
     headline = "Clusters"
     clusters = Cluster.objects.all()
-    top = ClusterWord.objects.raw('SELECT * FROM ClusterWord JOIN Cluster on ClusterWord.clusterid=Cluster.clusterid')
+    top = ClusterWord.objects.raw(
+        'SELECT * FROM ClusterWord JOIN Cluster on ClusterWord.clusterid=Cluster.clusterid')
     top_words = {}
     for object in top:
         if (object.name, object.clusterid.clusterid) in top_words:
-            top_words[(object.name, object.clusterid.clusterid)].append((object.word, object.id))
+            top_words[(object.name, object.clusterid.clusterid)].append(
+                (object.word, object.id))
         else:
-            top_words[(object.name, object.clusterid.clusterid)] = [(object.word, object.id)]
+            top_words[(object.name, object.clusterid.clusterid)] = [
+                (object.word, object.id)]
 
+    context = {"headline": headline, 'clusters': clusters,
+               'top_words': top_words.items()}
 
-    context = {"headline": headline, 'clusters': clusters, 'top_words': top_words.items()}
-
-    if request.method=='POST':
+    if request.method == 'POST':
         # edit the name of the cluster.
         cluster_names = request.POST.items()
         for key, value in cluster_names:
-            if(key!="csrfmiddlewaretoken"):
+            if(key != "csrfmiddlewaretoken"):
                 c = Cluster.objects.get(clusterid=key)
                 c.name = value
                 c.save()
-
 
     return render(request, 'clusters.html', context)
 
@@ -168,8 +177,9 @@ def clustering(request):
             else:
                 is_all_posts = False
             tasks.cluster_posts_with_input.delay(str(clusterForm.cleaned_data['start_date']), str(clusterForm.cleaned_data['end_date']),
-                                                         int(clusterForm.cleaned_data['num_clusters']), int(clusterForm.cleaned_data['max_features']),
-                                                         is_mini_batched, is_all_posts)
+                                                 int(clusterForm.cleaned_data['num_clusters']), int(
+                                                     clusterForm.cleaned_data['max_features']),
+                                                 is_mini_batched, is_all_posts)
     if request.method == "POST" and not clusterForm.is_valid():
         stopwordDelete = StopwordDelete(request.POST)
         if stopwordDelete.is_valid():
@@ -191,11 +201,15 @@ def clustering(request):
     runclustering = ClusterRun.objects.all()
 
     for clusterrun in runclustering:
-        clusterrun.run_date = int(time.mktime(clusterrun.run_date.timetuple())) * 1000
-        clusterrun.start_date = int(time.mktime(clusterrun.start_date.timetuple())) * 1000
-        clusterrun.end_date = int(time.mktime(clusterrun.end_date.timetuple())) * 1000
+        clusterrun.run_date = int(
+            time.mktime(clusterrun.run_date.timetuple())) * 1000
+        clusterrun.start_date = int(
+            time.mktime(clusterrun.start_date.timetuple())) * 1000
+        clusterrun.end_date = int(
+            time.mktime(clusterrun.end_date.timetuple())) * 1000
         if clusterrun.silo_score == None:
             clusterrun.silo_score = 'null'
 
-    context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(), 'runclustering': runclustering}
+    context = {'headline': headline, 'form': form, 'stopwords': stopwords, 'deleteForm':
+               StopwordDelete(), 'addForm': StopwordAdd(), 'runclustering': runclustering}
     return render(request, 'clustering.html', context)

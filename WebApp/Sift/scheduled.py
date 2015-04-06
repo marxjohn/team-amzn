@@ -19,9 +19,6 @@ except:
 from scikit_utilities import create_cluster_data
 
 
-
-
-
 try:
     import pymysql
     pymysql.install_as_MySQLdb()
@@ -71,7 +68,8 @@ def send_nightly_runner(email_text):
         return False
     else:
         topic = 'SIFT MSU Runner Notification'
-        send_message = SESMessage("siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
+        send_message = SESMessage(
+            "siftmsu15@gmail.com", "siftmsu15@gmail.com", topic)
         for i in range(1, len(email_list)):
             send_message.add_cc_address(email_list[i])
         # Create email contents with information
@@ -82,7 +80,8 @@ def send_nightly_runner(email_text):
 
 def run_clustering(data, posts):
     end_date, start_date = find_min_and_max_date(posts)
-    s_score, s_inertia = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
+    s_score, s_inertia = run_diagnostic_clustering(
+        data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
     return s_inertia, s_score
 
 
@@ -91,7 +90,8 @@ def main():
     end_date, start_date = find_min_and_max_date(test_list)
     #
 
-    train_list = Post.objects.filter(cluster_id__isnull=False, creation_date__range=('2014-01-01', '2014-01-12'))
+    train_list = Post.objects.filter(
+        cluster_id__isnull=False, creation_date__range=('2014-01-01', '2014-01-12'))
     #train_end_date, train_start_date = find_min_and_max_date(train_list)
     #
     test_data = create_cluster_data(test_list)
@@ -103,10 +103,9 @@ def main():
     data = create_cluster_data(posts)
     s_inertia, s_score = run_clustering(data, posts)
 
-
-
     # Some Magic here involving sending email alerts
-    text = "The status of the clusters are as follows: s_score: " + str(s_score) + ",  s_intertia: " + str(s_inertia)
+    text = "The status of the clusters are as follows: s_score: " + \
+        str(s_score) + ",  s_intertia: " + str(s_inertia)
     send_nightly_runner(text)
 
 if __name__ == '__main__':

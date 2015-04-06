@@ -36,14 +36,17 @@ class ClusterForm(forms.Form):
 
 
 class StopwordDelete(forms.Form):
+
     def __init__(self, *args, **kwargs):
         super(StopwordDelete, self).__init__(*args, **kwargs)
         self.fields['word'].help_text = None
         self.fields['word'].widget.attrs['size'] = '12'
-    word = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,queryset=StopWord.objects.all().order_by('word'), label="")
+    word = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple, queryset=StopWord.objects.all().order_by('word'), label="")
 
 
 class StopwordAdd(forms.Form):
+
     def __init__(self, *args, **kwargs):
         super(StopwordAdd, self).__init__(*args, **kwargs)
         self.fields['add_word'].help_text = None
