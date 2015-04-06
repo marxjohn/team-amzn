@@ -137,10 +137,10 @@ def clusters(request):
     top = ClusterWord.objects.raw('SELECT * FROM ClusterWord JOIN Cluster on ClusterWord.clusterId=Cluster.clusterId')
     top_words = {}
     for object in top:
-        if (object.name, object.cluster_id.clusterid) in top_words:
-            top_words[(object.name, object.cluster_id.clusterid)].append((object.word, object.count))
+        if (object.name, object.clusterid.clusterid) in top_words:
+            top_words[(object.name, object.clusterid.clusterid)].append((object.word, object.count))
         else:
-            top_words[(object.name, object.cluster_id.clusterid)] = [(object.word, object.count)]
+            top_words[(object.name, object.clusterid.clusterid)] = [(object.word, object.count)]
 
 
     context = {"headline": headline, 'clusters': clusters, 'top_words': top_words.items()}
