@@ -93,15 +93,15 @@ def details(request, cluster_id):
     #Cluster word count
     wordPieData = [['Word', 'Instances']]
 
-    words = ClusterWord.objects.filter(cluster_id=cluster_id)[:10]
+    words = ClusterWord.objects.filter(clusterid=cluster_id)[:10]
     for w in words:
         wordPieData.append([w.word, w.count])
 
     #Sentiment Data
     sentimentData = [['Sentiment', 'Number of Posts']]
-    sentimentData.append(["Positive", Post.objects.filter(cluster_id=cluster_id, sentiment="pos").count()])
-    sentimentData.append(["Negative", Post.objects.filter(cluster_id=cluster_id, sentiment="neg").count()])
-    sentimentData.append(["Neutral", Post.objects.filter(cluster_id=cluster_id, sentiment="neutral").count()])
+    sentimentData.append(["Positive", Post.objects.filter(cluster=cluster_id, sentiment="pos").count()])
+    sentimentData.append(["Negative", Post.objects.filter(cluster=cluster_id, sentiment="neg").count()])
+    sentimentData.append(["Neutral", Post.objects.filter(cluster=cluster_id, sentiment="neutral").count()])
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster, 'cluster_posts': cluster_posts, 'wordPieData': wordPieData, 'sentimentData': sentimentData}
