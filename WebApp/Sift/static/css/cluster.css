@@ -1,8 +1,18 @@
 .main {
     margin: 0 auto;
-    width:90%;
+    width:100%;
     position:relative;
 }
 #add, #delete {
+    display:inline-block;
+}
+.editcluster {
+    float:left;
+    display:inline-block;
+    padding:5px;
+
+}
+#editcluster_wrap {
+    width:100%;
     display:inline-block;
 }

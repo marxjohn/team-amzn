@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from Sift.models import Cluster, Post, ClusterWord, StopWord
 from django.http import HttpResponseRedirect
-from bs4 import BeautifulSoup
+# from postmarkup import render_bbcode
 from lxml import html
 from django.core.cache import cache
 
@@ -79,8 +79,8 @@ def details(request, cluster_id):
         else:
             cluster_posts[date] = {"numPosts": 1, "posts": []}
         try:
-            body = html.document_fromstring(BeautifulSoup(post['body']).getText()).text_content()
-        except :
+            body = html.document_fromstring(post['body']).text_content()
+        except:
             body = post['body']
         cluster_posts[date]['posts'].append(body)
 
@@ -117,13 +117,16 @@ def notifications(request):
 def clusters(request):
     headline = "Clusters"
     clusters = Cluster.objects.all()
-    print("IN CLUSTERS")
-    top = ClusterWord.objects.all()
-    top_words = []
+    top = ClusterWord.objects.raw('SELECT * FROM ClusterWord JOIN Cluster on ClusterWord.clusterid=Cluster.clusterid')
+    top_words = {}
     for object in top:
-        top_words.append(object.word)
+        if (object.name, object.clusterid.clusterid) in top_words:
+            top_words[(object.name, object.clusterid.clusterid)].append((object.word, object.id))
+        else:
+            top_words[(object.name, object.clusterid.clusterid)] = [(object.word, object.id)]
 
-    context = {"headline": headline, 'clusters': clusters, 'top_words': top_words}
+
+    context = {"headline": headline, 'clusters': clusters, 'top_words': top_words.items()}
 
     if request.method=='POST':
         # edit the name of the cluster.
