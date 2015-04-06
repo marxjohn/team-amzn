@@ -14,6 +14,9 @@ import Sift.tasks as tasks
 import Sift.forms
 from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
+import Stemmer
+
+english_stemmer = Stemmer.Stemmer('en')
 
 
 def general(request):
@@ -93,15 +96,15 @@ def details(request, cluster_id):
     #Cluster word count
     wordPieData = [['Word', 'Instances']]
 
-    words = ClusterWord.objects.filter(cluster_id=cluster_id)[:10]
+    words = ClusterWord.objects.filter(clusterid=cluster_id)[:10]
     for w in words:
         wordPieData.append([w.word, w.count])
 
     #Sentiment Data
     sentimentData = [['Sentiment', 'Number of Posts']]
-    sentimentData.append(["Positive", Post.objects.filter(cluster_id=cluster_id, sentiment="pos").count()])
-    sentimentData.append(["Negative", Post.objects.filter(cluster_id=cluster_id, sentiment="neg").count()])
-    sentimentData.append(["Neutral", Post.objects.filter(cluster_id=cluster_id, sentiment="neutral").count()])
+    sentimentData.append(["Positive", Post.objects.filter(cluster=cluster_id, sentiment="pos").count()])
+    sentimentData.append(["Negative", Post.objects.filter(cluster=cluster_id, sentiment="neg").count()])
+    sentimentData.append(["Neutral", Post.objects.filter(cluster=cluster_id, sentiment="neutral").count()])
 
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
                'cluster': cluster, 'cluster_posts': cluster_posts, 'wordPieData': wordPieData, 'sentimentData': sentimentData}
@@ -112,12 +115,14 @@ def details(request, cluster_id):
 def notifications(request):
     headline = "Notifications"
 
-    email_list = Sift.Notification.verify()
-    context = {"headline": headline, 'email_list': email_list }
+    nightly_list = Sift.Notification.get_nightly_list()
+    important_list = Sift.Notification.get_important_list()
+    email_list = Sift.Notification.email_verify()
 
+    context = {"headline": headline, 'nightly_list': nightly_list, 'important_list': important_list, 'email_list': email_list }
     if request.method == 'POST':
         if 'ADD_EMAIL' in request.POST:
-            Sift.Notification.main(request.POST['ADD_EMAIL'])
+            Sift.Notification.add_email(request.POST['ADD_EMAIL'])
         elif 'Remove' in request.POST:
             Sift.Notification.remove(request.POST.get('email'))
             return HttpResponseRedirect('/notifications')
@@ -183,10 +188,12 @@ def clustering(request):
                 StopWord.objects.filter(word=element).delete()
 
     if request.method == "POST" and not clusterForm.is_valid() and not stopwordDelete.is_valid():
+
         stopwordAdd = StopwordAdd(request.POST)
         if stopwordAdd.is_valid():
             addThis = stopwordAdd.cleaned_data['add_word']
-            StopWord(word=addThis).save()
+            stemmed = english_stemmer.stemWord(addThis)
+            StopWord(word=stemmed).save()
 
     form = Sift.forms.ClusterForm()
     headline = "Clustering"

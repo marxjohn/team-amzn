@@ -4,6 +4,138 @@
 {% endblock %}
 {% block body_block %}
 
+<script language="javascript" >
+      var currentSel = null;
+      function move(){
+          if(arguments.length==1){
+              moveUp(arguments[0]);
+          }else if(arguments.length==2){
+              moveRight(arguments[0],arguments[1]);
+          }
+      }
+    function moveRight(src,des){
+        if(src.selectedIndex==-1){
+            alert("Please select first!");
+            return;
+        }
+        for(var i=0;i<src.length;i++){
+            if(src[i].selected){
+                var op = document.createElement("option");
+                op.value = src.options[src.selectedIndex].value;
+                op.text = src.options[src.selectedIndex].text;
+                des.options.add(op);
+                    src.remove(i);
+                    i--;
+            }
+        }
+    }
+    function setButton(obj){
+            if(obj.length==0) return;
+            currentSel = obj;
+        if(obj.id=="leftSel"){
+            document.getElementById("btnLeft").disabled = true;
+                document.getElementById("btnRight").disabled = false;
+
+                reSelect(document.getElementById("rightSel"));
+        }else{
+            document.getElementById("btnLeft").disabled = false;
+            document.getElementById("btnRight").disabled = true;
+
+            reSelect(document.getElementById("leftSel"));
+        }
+    }
+    function reSelect(obj){
+        for(var i=0; i<obj.length; i++){
+            if(obj[i].selected) obj[i].selected = false;
+        }
+    }
+</script>
+
+<h4>Notification Subscription</h4></h4>
+<script language="javascript" >
+      var currentSel = null;
+      function move(){
+          if(arguments.length==1){
+              moveUp(arguments[0]);
+          }else if(arguments.length==2){
+              moveRight(arguments[0],arguments[1]);
+          }
+      }
+    function moveRight(src,des){
+        if(src.selectedIndex==-1){
+            alert("Please select first!");
+            return;
+        }
+        for(var i=0;i<src.length;i++){
+            if(src[i].selected){
+                var op = document.createElement("option");
+                op.value = src.options[src.selectedIndex].value;
+                op.text = src.options[src.selectedIndex].text;
+                des.options.add(op);
+                    src.remove(i);
+                    i--;
+            }
+        }
+    }
+    function setButton(obj){
+            if(obj.length==0) return;
+            currentSel = obj;
+        if(obj.id=="leftSel"){
+            document.getElementById("btnLeft").disabled = true;
+                document.getElementById("btnRight").disabled = false;
+
+                reSelect(document.getElementById("rightSel"));
+        }else{
+            document.getElementById("btnLeft").disabled = false;
+            document.getElementById("btnRight").disabled = true;
+
+            reSelect(document.getElementById("leftSel"));
+        }
+    }
+    function reSelect(obj){
+        for(var i=0; i<obj.length; i++){
+            if(obj[i].selected) obj[i].selected = false;
+        }
+    }
+</script>
+<form action ='{% url 'general:notifications' %}' name = "emails" method = "POST" >
+    {% csrf_token %}
+    <table id = "SubscriptionNotify" width="200">
+        <tr>
+            <td>
+                <table>
+                    <p>Nightly Runner</p>
+                    <select id = "nightly" name = "nightly" size = "10" style = "font-size: 11pt; width: 300px; height: 200px"
+                        multiple = 'multiple' onclick="setButton(this)" ondblclick="document.getElementById('btnRight').click()">
+                        {% for nightly in nightly_list %}
+                            <option name = "nightly" value = "{{ nightly }}" > {{ nightly }} </option>
+                        {% endfor %}
+                    </select>
+                </table>
+            </td>
+            <td>
+                <input type="button" value=" >> " id="btnRight" onClick="move(document.getElementById('nightly'),document.getElementById('important'));" style="width:30" />
+                <br/>
+                <input type="button" value=" << " id="btnLeft" onClick="move(document.getElementById('important'),document.getElementById('nightly'));" style="width:30" />
+            </td>
+            <td>
+                <table>
+                    <p>Important Changes</p>
+                    <select id = "important" name = "important" size = "10" style = "font-size: 11pt; width: 300px; height: 200px"
+                        multiple = 'multiple' onclick="setButton(this)"  ondblclick="document.getElementById('btnLeft').click()">
+                        {% for important in important_list %}
+                            <option name = "important" value = "{{ important }}" > {{ important }} </option>
+                        {% endfor %}
+                    </select>
+                </table>
+            </td>
+    </table>
+</form>
+
+<div style="font-size: 10pt;">
+    <hr />
+</div>
+
 <form action= '{% url 'general:notifications' %}' method="POST" >
 {% csrf_token %}
     <br><h4>Add Email</h4></h4>
@@ -19,18 +151,36 @@
 
 <form action ='{% url 'general:notifications' %}' name = "emails" method = "POST" >
     {% csrf_token %}
-    <table width="200">
+    <table width="150">
         <tr>
             <td>
             <select id = "email" name = "email" size = "10" style = "font-size: 11pt; width: 400px; height: 200px"
-                multiple = 'multiple' onclick = '' >
+                multiple = 'multiple' >
                 {% for email in email_list %}
                     <option name = "email" value = "{{ email }}" > {{ email }} </option>
                 {% endfor %}
             </select>
             </td>
     </table>
+
+{#    <script language="javascript">#}
+{#        function $(obj){return document.getElementById(obj);}#}
+{#        function show(objid) {$(objid).style.display='inline';}#}
+{#        function hidden(objid) {$(objid).style.display='none';}#}
+{#        function doit(){#}
+{#            var sel_val = $( 'email_action' ).value;#}
+{#            if ( sel_val == 'Remove' ) { hidden( 'ADD_EMAIL' ); }#}
+{#            if ( sel_val == 'ADD_EMAIL' ) { show( 'ADD_EMAIL' ); }#}
+{#        }#}
+{#    </script>#}
+
+{#    <select name = "email_action" id = "email_action" onchange = "javascript:doit();">#}
+{#        <option name = "ADD_EMAIL" value = "ADD_EMAIL"> Add Email </option>#}
+{#        <option name = "Remove" value = "Remove"> Remove Email </option>#}
+{#    </select>#}
+{#    <input style = "display:none;" type = "text" name = "ADD_EMAIL" id = "ADD_EMAIL" value = "ADD_EMAIL">#}
+
     <input type="submit" name = "Remove" value = "Remove">
 </form>
-{% endblock %}
 
+{% endblock %}

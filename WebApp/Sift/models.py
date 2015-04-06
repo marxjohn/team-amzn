@@ -34,7 +34,7 @@ class Cluster(models.Model):
 class ClusterWord(models.Model):
     id = models.IntegerField(db_column='Id', primary_key=True)  # Field name made lowercase.
     word = models.CharField(max_length=45)
-    cluster_id = models.ForeignKey(Cluster, db_column='clusterId', blank=True, null=True)  # Field name made lowercase.
+    clusterid = models.ForeignKey(Cluster, db_column='clusterId', blank=True, null=True)  # Field name made lowercase.
     count = models.IntegerField(blank=True, null=True)
 
     class Meta:
