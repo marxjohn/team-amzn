@@ -8,18 +8,40 @@
     $(document).ready(function(){
         $("#clusteringNav").hide();
     });
+    {% autoescape off %}
+    console.log({{ top_words }})
+        {% endautoescape %}
     </script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
 {% endblock %}
+{#{% block sidebar %}#}
+{#    {% include 'sidebar.html' %}#}
+{#{% endblock %}#}
 {% block body_block %}
 <h1>Clusters</h1>
+<p>Edit cluster names and add features to list of stopwords</p>
 <form method="POST">
 {% csrf_token %}
-{% for cluster in clusters %}
-     <div id="editClusterLine">
-     <input type="text" name="{{ cluster.clusterid }}" value="{{ cluster.name }}">
-     </div>
-     {% endfor %}
-     <input type="submit">
-     </form>
+{#{% for cluster in clusters %}#}
+{#     <div id="editClusterLine">#}
+{#     <input type="text" name="{{ cluster.clusterid }}" value="{{ cluster.name }}">#}
+{#     </div>#}
+{#     {% endfor %}#}
+{#     <input type="submit">#}
+{#     </form>#}
+<div id="editcluster_wrap">
+{% for clusterName, clusterWords in top_words %}
+    <div class="editcluster">
+        <h3><i class="fa fa-pencil"></i> {{ clusterName.0 }}</h3>
+        <input type="text" name="editcluster_{{ clusterName.1 }}">
+        {% for feature in clusterWords %}
+                <p><input type="checkbox" name="addstop_{{ feature.1 }}">
+                {{ feature.0 }}</p>
+
+    {% endfor %}
+    </div>
+{% endfor %}
+</div>
+<input type="submit">
+    </form>
 {% endblock %}

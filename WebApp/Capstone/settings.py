@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '3=v&4r_lweyxuis^kadmj@3+tety(u9sr1kkbp((o&9eh+prik'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 TEMPLATE_DEBUG = True
 
@@ -37,29 +37,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'widget_tweaks',
-    'Sift',
-    # 'pylibmc',
+    'Sift'
 )
-
-# Caching
-def get_cache():
-    try:
-        return {
-            'default': {
-                'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-                # 'BACKEND': 'django.core.cache.backends.memcached.PyLibMCCache',
-                'LOCATION': '127.0.0.1:11211',
-                'TIMEOUT': 5
-            }
-        }
-    except ImportError:
-        return {
-            'default': {
-                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'
-            }
-        }
-
-CACHES = get_cache()
 
 # CELERY SETTINGS
 BROKER_URL = 'redis://localhost:6379/0'

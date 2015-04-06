@@ -29,8 +29,11 @@ function drawSentimentPieChart(array) {
             easing: 'out',
             startup: true
           },
+        legend: {
+          position:"none"
+        },
         fontName: "Lato",
-        colors: ['#22dd22','#ff0000','#b6b0b0']
+        colors: ['#109618','#DC3912','#95a5a6']
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('sentiment_piechart_3d'));
@@ -116,8 +119,6 @@ function drawWordPieChart(array) {
  */
 function draw_dashboard1(data) {
 
-    console.log(data);
-
     var lineChartData = new google.visualization.DataTable();
 
     lineChartData.addColumn('date', 'Date');
@@ -185,14 +186,17 @@ function draw_dashboard1(data) {
  */
 function draw_dashboard2(data) {
 
+    console.log(data);
+
     var lineChartData = new google.visualization.DataTable();
 
     lineChartData.addColumn('date', 'Date');
+    lineChartData.addColumn('string', 'Sentiment');
     lineChartData.addColumn('string', 'Post');
     for (key in data) {
         for (i = 0; i < data[key]['posts'].length; i++) {
             lineChartData.addRows([
-                [new Date(parseInt(key)), data[key]['posts'][i]]
+                [new Date(parseInt(key)), data[key]['sentiments'][i], data[key]['posts'][i]]
             ]);
         }
     }
@@ -244,4 +248,22 @@ function draw_dashboard2(data) {
     myDashboard.draw(lineChartData);
     return myDateSlider;
 
+}
+
+function drawClusterSentimentPieChart(array) {
+    var data = google.visualization.arrayToDataTable(array);
+
+    var options = {
+      is3D: true,
+        animation: {
+            duration: 10000,
+            easing: 'out',
+            startup: true
+          },
+        fontName: "Lato",
+        colors: ['#109618','#DC3912','#95a5a6']
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('sentiment_piechart_3d'));
+    chart.draw(data, options);
 }

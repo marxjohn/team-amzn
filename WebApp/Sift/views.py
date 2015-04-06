@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from Sift.models import Cluster, Post, ClusterWord, StopWord
 from django.http import HttpResponseRedirect
-from bs4 import BeautifulSoup
+# from postmarkup import render_bbcode
 from lxml import html
 from django.core.cache import cache
 
@@ -30,9 +30,9 @@ def general(request):
         pieData.append([cluster.name, Post.objects.filter(cluster=cluster.clusterid).count()])
 
     sentimentData = [['Sentiment', 'Number of Posts']]
-    sentimentData.append(["Positive", Sentiment.objects.filter(label="pos").count()])
-    sentimentData.append(["Negative", Sentiment.objects.filter(label="neg").count()])
-    sentimentData.append(["Neutral", Sentiment.objects.filter(label="neutral").count()])
+    sentimentData.append(["Positive", Post.objects.filter(sentiment="pos").count()])
+    sentimentData.append(["Negative", Post.objects.filter(sentiment="neg").count()])
+    sentimentData.append(["Neutral", Post.objects.filter(sentiment="neutral").count()])
 
     lineClusterNames = []
 
@@ -74,28 +74,40 @@ def details(request, cluster_id):
     # data
     cluster_posts = {}
     posts = Post.objects.values(
-        'creation_date', 'body').filter(cluster=cluster_id)
+        'creation_date', 'sentiment', 'body').filter(cluster=cluster_id)
     for post in posts:
         date = int(time.mktime(post["creation_date"].timetuple())) * 1000
         if date in cluster_posts:
             cluster_posts[date]['numPosts'] += 1
         else:
-            cluster_posts[date] = {"numPosts": 1, "posts": []}
+            cluster_posts[date] = {"numPosts": 1, "posts": [], "sentiments": []}
         try:
-            body = html.document_fromstring(BeautifulSoup(post['body']).getText()).text_content()
-        except :
+            body = html.document_fromstring(post['body']).text_content()
+        except:
             body = post['body']
         cluster_posts[date]['posts'].append(body)
+
+        # Add sentiment
+        if post['sentiment'] is None:
+            cluster_posts[date]['sentiments'].append('null')
+        else:
+            cluster_posts[date]['sentiments'].append(post['sentiment'])
 
     #Cluster word count
     wordPieData = [['Word', 'Instances']]
 
-    words = ClusterWord.objects.filter(clusterid=cluster_id)
+    words = ClusterWord.objects.filter(clusterid=cluster_id)[:10]
     for w in words:
         wordPieData.append([w.word, w.count])
 
+    #Sentiment Data
+    sentimentData = [['Sentiment', 'Number of Posts']]
+    sentimentData.append(["Positive", Post.objects.filter(cluster=cluster_id, sentiment="pos").count()])
+    sentimentData.append(["Negative", Post.objects.filter(cluster=cluster_id, sentiment="neg").count()])
+    sentimentData.append(["Neutral", Post.objects.filter(cluster=cluster_id, sentiment="neutral").count()])
+
     context = {'pinnedClusters': pinnedClusters, 'trendingClusters': trendingClusters, "headline": headline,
-               'cluster': cluster, 'cluster_posts': cluster_posts, 'wordPieData': wordPieData}
+               'cluster': cluster, 'cluster_posts': cluster_posts, 'wordPieData': wordPieData, 'sentimentData': sentimentData}
 
     return render(request, 'details.html', context)
 
@@ -120,7 +132,17 @@ def notifications(request):
 def clusters(request):
     headline = "Clusters"
     clusters = Cluster.objects.all()
-    context = {"headline": headline, 'clusters': clusters}
+    top = ClusterWord.objects.raw('SELECT * FROM ClusterWord JOIN Cluster on ClusterWord.clusterid=Cluster.clusterid')
+    top_words = {}
+    for object in top:
+        if (object.name, object.clusterid.clusterid) in top_words:
+            top_words[(object.name, object.clusterid.clusterid)].append((object.word, object.id))
+        else:
+            top_words[(object.name, object.clusterid.clusterid)] = [(object.word, object.id)]
+
+
+    context = {"headline": headline, 'clusters': clusters, 'top_words': top_words.items()}
+
     if request.method=='POST':
         # edit the name of the cluster.
         cluster_names = request.POST.items()
