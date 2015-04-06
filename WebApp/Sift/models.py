@@ -41,6 +41,7 @@ class ClusterWord(models.Model):
     clusterid = models.ForeignKey(
         Cluster, db_column='clusterId', blank=True, null=True)
     count = models.IntegerField(blank=True, null=True)
+    rank = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False
