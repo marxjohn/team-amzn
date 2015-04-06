@@ -1,15 +1,11 @@
-from __future__ import absolute_import
-
 import os
-
-try:
-    import pymysql
-    pymysql.install_as_MySQLdb()
-
-except:
-    pass
-
 from django.conf import settings
+from Sift.models import *
+import requests
+import django
+from time import time
+import pymysql
+pymysql.install_as_MySQLdb()
 if not settings.configured:
     settings.configure(
         DATABASES={'default': {
@@ -26,15 +22,6 @@ if not settings.configured:
         }
     )
 
-try:
-    from models import *
-except:
-    from Sift.models import *
-
-from lxml import html
-import requests
-import django
-from time import time
 
 django.setup()
 
@@ -42,20 +29,21 @@ django.setup()
 def lazy_sentiment(start_date, end_date):
     t0 = time()
     print("grabbing posts from db")
-    dataset = Post.objects.filter(creation_date__range=(start_date, end_date), sentiment__isnull=True)
-
+    dataset = Post.objects.filter(
+        creation_date__range=(start_date, end_date), sentiment__isnull=True)
 
     suc = 0
     skip = 0
     print("lazy sentiment time!")
     for post in dataset:
-        if post.sentiment == None:
+        if post.sentiment is None:
             try:
                 body = html.document_fromstring(post.body).text_content()
             except:
                 body = ""
             payload = {'text': body[:80000]}
-            r = requests.post("http://text-processing.com/api/sentiment/", data=payload)
+            r = requests.post(
+                "http://text-processing.com/api/sentiment/", data=payload)
             try:
                 print(payload)
                 print(r.json())
@@ -84,10 +72,8 @@ def lazy_sentiment(start_date, end_date):
     print("done in %fs" % (time() - t0))
 
 
-
 def main():
     lazy_sentiment("2013-01-01", "2014-04-01")
-
 
 
 # Only run the main function if this code is called directly
