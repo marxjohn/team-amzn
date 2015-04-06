@@ -123,15 +123,12 @@ def details(request, cluster_id):
 def notifications(request):
     headline = "Notifications"
 
-    nightly_list = Sift.Notification.get_nightly_list()
-    important_list = Sift.Notification.get_important_list()
-    email_list = Sift.Notification.email_verify()
-
-    context = {"headline": headline, 'nightly_list': nightly_list, 'important_list': important_list, 'email_list': email_list }
+    email_list = Sift.Notification.verify()
+    context = {"headline": headline, 'email_list': email_list}
 
     if request.method == 'POST':
         if 'ADD_EMAIL' in request.POST:
-            Sift.Notification.add_email(request.POST['ADD_EMAIL'])
+            Sift.Notification.main(request.POST['ADD_EMAIL'])
         elif 'Remove' in request.POST:
             Sift.Notification.remove(request.POST.get('email'))
             return HttpResponseRedirect('/notifications')
@@ -142,18 +139,24 @@ def notifications(request):
 def clusters(request):
     headline = "Clusters"
     clusters = Cluster.objects.all()
-    top = ClusterWord.objects.raw(
-        'SELECT * FROM ClusterWord JOIN Cluster\
-                on ClusterWord.clusterId=Cluster.clusterId')
-    print(top.columns)
+
     top_words = {}
-    for object in top:
-        if (object.name, object.clusterId.clusterId) in top_words:
-            top_words[(object.name, object.clusterId.clusterId)].append(
-                (object.word, object.id))
-        else:
-            top_words[(object.name, object.clusterId.clusterId)] = [
-                (object.word, object.id)]
+    for cluster in clusters:
+        words = ClusterWord.objects.filter(clusterid=cluster.clusterid)
+        for word in words:
+            if(cluster.name, cluster.clusterid) in top_words:
+                top_words[(cluster.name, cluster.clusterid)].append((word.word, word.count))
+            else:
+                top_words[(cluster.name, cluster.clusterid)] = [(word.word, word.count)]
+
+    # top = ClusterWord.objects.raw('SELECT * FROM ClusterWord JOIN Cluster on ClusterWord.clusterid=Cluster.clusterid')
+    # for object in top:
+    #     if (object.name, object.clusterid.clusterid) in top_words:
+    #         top_words[(object.name, object.clusterid.clusterid)].append(
+    #             (object.word, object.id))
+    #     else:
+    #         top_words[(object.name, object.clusterid.clusterid)] = [
+    #             (object.word, object.id)]
 
     context = {"headline": headline, 'clusters': clusters,
                'top_words': top_words.items()}
