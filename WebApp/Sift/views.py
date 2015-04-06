@@ -198,7 +198,7 @@ def clustering(request):
             for element in deleteThese:
 
                 StopWord.objects.filter(word=element).delete()
-    bool addStopWord = request.method == "POST" and not clusterForm.is_valid()
+    addStopWord = request.method == "POST" and not clusterForm.is_valid()
     addStopWord = addStopWord and not stopwordDelete.is_valid()
     if addStopWord:
         stopwordAdd = StopwordAdd(request.POST)
