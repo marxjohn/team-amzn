@@ -38,7 +38,7 @@ $('ul.nav a').filter(function() {
             //Call Graphing Functions
             google.load('visualization', '1', {packages: ['controls']});
             google.setOnLoadCallback(draw_all_dashboards({{ cluster_posts }}));
-            drawClusterSentimentPieChart({{ sentimentData }});
+            google.setOnLoadCallback(drawClusterSentimentPieChart({{ sentimentData }}));
         </script>
 <script>
     //this allows for responsive design
