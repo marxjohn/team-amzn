@@ -3,9 +3,9 @@ from __future__ import absolute_import
 from datetime import datetime
 from Sift.models import *
 from Sift.clustering import run_diagnostic_clustering
-from Sift.classification import classify_on_date_range
+
 from Sift.scikit_utilities import create_cluster_data
-from Sift.models import Notification
+
 from Sift.Notification import *
 from scikit_utilities import create_cluster_data
 import pymysql

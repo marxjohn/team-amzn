@@ -2,21 +2,6 @@
 from django.db import models
 
 
-class Notification(models.Model):
-    # Field name made lowercase.
-    notificationid = models.IntegerField(
-        db_column='notificationId', primary_key=True)
-    # Field name made lowercase.
-    sentimentvalue = models.FloatField(db_column='sentimentValue')
-    email = models.CharField(max_length=45, blank=True)
-    clusterN = models.ForeignKey('Cluster', db_column='cluster')
-
-    class Meta:
-        managed = False
-        db_table = 'Notification'
-        app_label = 'z'
-
-
 class Cluster(models.Model):
     # Field name made lowercase.
     clusterid = models.IntegerField(db_column='clusterId', primary_key=True)
