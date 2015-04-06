@@ -360,10 +360,11 @@ def upload_clusters(data_set, data_count, km, order_centroids, terms, num_cluste
         for x in range(1, num_clusters + 1):
             c = Cluster.objects.get(clusterid=x)
             cwL = []
-            if len(order_centroids) < 100:
-                num_centroids = len(order_centroids)
+            # if len(order_centroids) < 100:
+            #     num_centroids = len(order_centroids)
 
-            for ind in order_centroids[x - 1, :num_centroids]:
+            # Save top 100 cluster words
+            for ind in order_centroids[x - 1, :100]:
                 count = len(Post.objects.filter(cluster=c, stemmed_body__contains=terms[ind]))
 
                 cw = ClusterWord(word=terms[ind], clusterid=c, count=count)
