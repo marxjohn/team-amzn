@@ -182,14 +182,11 @@ def clustering(request):
                 StopWord.objects.filter(word=element).delete()
 
     if request.method == "POST" and not clusterForm.is_valid() and not stopwordDelete.is_valid():
-        stopWords = StopWord.objects.all()
-        for s in stopWords:
-            s.word = english_stemmer.stemWords(s.word)
-            s.save()
+
         stopwordAdd = StopwordAdd(request.POST)
         if stopwordAdd.is_valid():
             addThis = stopwordAdd.cleaned_data['add_word']
-            stemmed = english_stemmer.stemWords(addThis)
+            stemmed = english_stemmer.stemWord(addThis)
             StopWord(word=stemmed).save()
 
     form = Sift.forms.ClusterForm()
