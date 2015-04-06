@@ -5,14 +5,14 @@
 {% block body_block %}
 
 <script language="javascript" >
-      var currentSel = null;
-      function move(){
-          if(arguments.length==1){
-              moveUp(arguments[0]);
-          }else if(arguments.length==2){
-              moveRight(arguments[0],arguments[1]);
-          }
-      }
+    var currentSel = null;
+    function move(){
+        if(arguments.length==1){
+            moveUp(arguments[0]);
+        }else if(arguments.length==2){
+            moveRight(arguments[0],arguments[1]);
+        }
+    }
     function moveRight(src,des){
         if(src.selectedIndex==-1){
             alert("Please select first!");
