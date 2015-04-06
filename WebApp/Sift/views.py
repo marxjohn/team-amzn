@@ -144,7 +144,7 @@ def clusters(request):
     clusters = Cluster.objects.all()
     top = ClusterWord.objects.raw(
         'SELECT * FROM ClusterWord JOIN Cluster\
-                on ClusterWord.clusterid=Cluster.clusterid')
+                on ClusterWord.clusterId=Cluster.clusterId')
     top_words = {}
     for object in top:
         if (object.name, object.clusterid.clusterid) in top_words:
