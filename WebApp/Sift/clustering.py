@@ -361,16 +361,20 @@ def upload_clusters(data_set, data_count, km, order_centroids,
         cursor.execute(query)
         cursor.close()
 
-    print("Counting Cluster Words")
-    # cwList = []
-    for x in range(1, num_clusters + 1):
-        c = Cluster.objects.get(clusterid=x)
-        cwL = []
-        # if len(order_centroids) < 100:
-        #     num_centroids = len(order_centroids)
+        print("Counting Cluster Words")
+        # cwList = []
+        for x in range(1, num_clusters + 1):
+            c = Cluster.objects.get(clusterid=x)
+            cwL = []
+
+        if len(order_centroids) < 100:
+            num_centroids = len(order_centroids)
+        else:
+            num_centroids = 100
+
 
         # Save top 100 cluster words
-        for ind in order_centroids[x - 1, :100]:
+        for ind in order_centroids[x - 1, :num_centroids]:
             count = len(
                 Post.objects.filter(cluster=c,
                                     stemmed_body__contains=terms[ind]))
