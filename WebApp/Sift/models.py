@@ -19,7 +19,7 @@ class Notification(models.Model):
 
 class Cluster(models.Model):
     # Field name made lowercase.
-    clusterid = models.IntegerField(db_column='clusterId', primary_key=True)
+    clusterId = models.IntegerField(db_column='clusterId', primary_key=True)
     name = models.CharField(unique=True, max_length=32)
     # Field name made lowercase.
     ispinned = models.IntegerField(db_column='isPinned')
@@ -38,7 +38,7 @@ class ClusterWord(models.Model):
     id = models.IntegerField(db_column='Id', primary_key=True)
     word = models.CharField(max_length=45)
     # Field name made lowercase.
-    clusterid = models.ForeignKey(
+    clusterId = models.ForeignKey(
         Cluster, db_column='clusterId', blank=True, null=True)
     count = models.IntegerField(blank=True, null=True)
 
