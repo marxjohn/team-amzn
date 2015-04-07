@@ -2,19 +2,12 @@ from __future__ import absolute_import
 
 from datetime import date
 from datetime import datetime
-try:
-    from Sift.models import *
-    from Sift.clustering import run_diagnostic_clustering
-    from Sift.classification import classify_on_date_range
-    from Sift.scikit_utilities import create_cluster_data
-    from Sift.models import Notification
-    from Sift.Notification import *
-except:
-    from clustering import run_diagnostic_clustering
-    from classification import run_classification
-    from models import *
-    from models import Notification
-    from Notification import *
+
+from Sift.models import *
+from Sift.clustering import run_diagnostic_clustering
+from Sift.classification import run_classification
+from Sift.scikit_utilities import create_cluster_data
+from Sift.Notification import *
 
 from scikit_utilities import create_cluster_data
 
@@ -107,16 +100,15 @@ def run_clustering(data, posts):
 
 def main():
     test_list = Post.objects.filter(cluster_id__isnull=True)[:10000]
-    end_date, start_date = find_min_and_max_date(test_list)
-    #
+    if len(test_list) > 0:
+        end_date, start_date = find_min_and_max_date(test_list)
 
-    train_list = Post.objects.filter(cluster_id__isnull=False, creation_date__range=('2014-01-01', '2014-01-12'))
-    #train_end_date, train_start_date = find_min_and_max_date(train_list)
-    #
-    test_data = create_cluster_data(test_list)
-    train_data = create_cluster_data(train_list)
-    #
-    run_classification(train_data, test_data, 1000, start_date, end_date)
+        train_list = Post.objects.filter(cluster_id__isnull=False, creation_date__range=('2014-01-01', '2014-01-12'))
+
+        test_data = create_cluster_data(test_list)
+        train_data = create_cluster_data(train_list)
+
+        run_classification(train_data, test_data, 1000, start_date, end_date)
 
     posts = Post.objects.all()
     data = create_cluster_data(posts)
