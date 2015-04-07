@@ -41,9 +41,15 @@ def lazy_sentiment(start_date, end_date):
                 body = html.document_fromstring(post.body).text_content()
             except:
                 body = ""
-            payload = {'text': body[:80000]}
+            payload = {
+                'X-Mashape-Key': '95BE98lwYHmshDH3PWsVP5w7CmLAp1es425jsneZYiyGW8F44P',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Accept': 'application/json',
+                'language': 'english',
+                'text': body[:80000]
+                }
             r = requests.post(
-                "http://text-processing.com/api/sentiment/", data=payload)
+                "https://japerk-text-processing.p.mashape.com/sentiment/", data=payload)
             try:
                 print(payload)
                 print(r.json())
@@ -52,6 +58,7 @@ def lazy_sentiment(start_date, end_date):
                 post.probnegative = r.json()['probability']['neg']
                 post.probneutral = r.json()['probability']['neutral']
                 post.probpositive = r.json()['probability']['pos']
+                break
                 print("saving..")
                 post.save()
                 suc += 1
