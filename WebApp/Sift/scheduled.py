@@ -109,7 +109,8 @@ def main():
     test_data = create_cluster_data(test_list)
     train_data = create_cluster_data(train_list)
     #
-    run_classification(train_data, test_data, 1000, start_date, end_date)
+    if len(test_list) > 0:
+        run_classification(train_data, test_data, 1000, start_date, end_date)
 
     posts = Post.objects.all()
     data = create_cluster_data(posts)
