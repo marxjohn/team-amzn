@@ -31,8 +31,9 @@ function drawSentimentChart(array) {
         legend: {
           position:"none"
         },
-        hAxis: {
-            textPosition:"null"
+        chartArea: {
+            width:"125%",
+            height:"100%"
         },
         isStacked: true,
         fontName: "Lato",
@@ -43,7 +44,7 @@ function drawSentimentChart(array) {
          gridlineColor: '#fff'},
         vAxis: { textPosition: 'none',
         baselineColor: '#fff',
-         gridlineColor: '#fff'}
+         gridlineColor: '#fff'},
     };
 
     var chart = new google.visualization.BarChart(document.getElementById('sentiment_barchart'));
