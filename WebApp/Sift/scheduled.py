@@ -5,6 +5,7 @@ from datetime import datetime
 
 from Sift.models import *
 from Sift.clustering import run_diagnostic_clustering
+from Sift.classification import run_classification
 from Sift.scikit_utilities import create_cluster_data
 from Sift.Notification import *
 
