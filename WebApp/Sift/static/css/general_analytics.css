@@ -485,22 +485,27 @@ label {
     width:70%;
 }
 #sentiment_bar_wrap {
-    width:60%;
+    width: 60%;
     display:inline-block;
-    margin-top:-20px;
+    margin-top: 13px;
     height:100px;
 }
 #sentiment_bar_wrap h3 {
     margin: 0;
   z-index: 1;
-  padding-left: 57px;
+  
+    padding-left: 47px;
   position: relative;
   font-size: 1.5em;
+    float: left;
+    left: 34px;
 }
 #sentiment_barchart {
     margin-top: 6em;
   position: relative;
+    display: inline-block;
 }
 #dashboard {
     width:100%;
+    margin-top: -36px;
 }
