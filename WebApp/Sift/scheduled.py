@@ -5,7 +5,6 @@ from datetime import datetime
 try:
     from Sift.models import *
     from Sift.clustering import run_diagnostic_clustering
-    from Sift.classification import classify_on_date_range
     from Sift.scikit_utilities import create_cluster_data
     from Sift.models import Notification
     from Sift.Notification import *
