@@ -7,16 +7,21 @@
     <script type="text/javascript" src="{% static 'js/draw_all_dashboards.js' %}"></script>
 {% endblock %}
 {% block body_block %}
-    <h1 id="bodyTitle">{{ cluster.name }}</h1>
+    <h1 id="bodyTitle" style="width:40%;">{{ cluster.name }}</h1>
+    <div id="sentiment_bar_wrap">
+    <h3>Sentiment Analysis</h3>
+        <div id="sentiment_barchart" style="margin-top:-41px;"></div>
+</div>
     <div id="dashboard">
-        <div id="piechart_3d"></div>
-        <div id="sentiment_barchart"></div>
-        <div id="main_slider"></div>
-        <div id="hidden_slider"></div> <!--this is hidden from page-->
-        <div id="wordPie_slider"></div>
-        <div id="line_chart"></div>
-        <div id="searchTable"></div>
 
+        <div id="left">
+            <div id="main_slider"></div>
+            <div id="hidden_slider"></div> <!--this is hidden from page-->
+            <div id="wordPie_slider"></div>
+            <div id="line_chart"></div>
+            <div id="searchTable"></div>
+        </div>
+        <div id="piechart_3d"></div>
     </div>
 <div id="table_chart"></div>
     {% autoescape off %}
@@ -25,8 +30,8 @@
              var title = "Date";
              var width = "150px !important";
              $('.google-visualization-table-th:contains(' + title + ')').css('width', width);
+             drawClusterSentimentChart({{ sentimentData }});
             drawWordPieChart({{ wordPieData }});
-            drawClusterSentimentChart({{ sentimentData }});
         });
         var url = window.location;
 // Will only work if string in href matches with location
