@@ -365,7 +365,8 @@ def upload_clusters(data_set, data_count, km, order_centroids,
         # cwList = []
         for x in range(1, num_clusters + 1):
             c = Cluster.objects.get(clusterid=x)
-            cwL = []
+            cluster_words = []
+
 
         if len(order_centroids) < 100:
             num_centroids = len(order_centroids)
@@ -373,19 +374,19 @@ def upload_clusters(data_set, data_count, km, order_centroids,
             num_centroids = 100
 
 
-        # Save top 100 cluster words
-        rank = 1;
-        for ind in order_centroids[x - 1, :num_centroids]:
-            count = len(
-                Post.objects.filter(cluster=c,
-                                    stemmed_body__icontains=terms[ind]))
+            # Save top 100 cluster words
+            rank = 1;
+            for ind in order_centroids[x - 1, :num_centroids]:
+                count = len(
+                    Post.objects.filter(cluster=c,
+                                        stemmed_body__contains=terms[ind]))
 
-            cw = ClusterWord(word=terms[ind], clusterid=c, count=count, rank=rank)
-            cwL.append(cw)
-            rank += 1
+                cw = ClusterWord(word=terms[ind], clusterid=c, count=count, rank=rank)
+                cluster_words.append(cw)
+                rank += 1
 
-        cwL = sorted(cwL, key=attrgetter('count'), reverse=True)
-        ClusterWord.objects.bulk_create(cwL)
+            cluster_words = sorted(cluster_words, key=attrgetter('count'), reverse=True)
+            ClusterWord.objects.bulk_create(cluster_words)
 
     # ClusterWord.objects.bulk_create(cwList)
 
