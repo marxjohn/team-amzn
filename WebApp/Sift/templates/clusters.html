@@ -27,7 +27,7 @@
         <h3>{{ clusterName.0 }}</h3>
         <input placeholder="Edit Name" type="text" name="{{ clusterName.1 }}">
         {% for feature in clusterWords %}
-                <p><input class="{{ feature.0 }}" type="checkbox" name="{{ feature.0 }}">
+                <p><input class="_{{ feature.0 }}" type="checkbox" name="{{ feature.0 }}">
                 <b>{{ feature.0 }}:</b> {{ feature.1 }}</p>
 
     {% endfor %}
