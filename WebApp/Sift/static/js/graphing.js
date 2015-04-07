@@ -268,7 +268,14 @@ function drawClusterSentimentChart(array) {
         isStacked: true,
         fontName: "Lato",
         colors: ['#DC3912', '#95a5a6','#109618'],
-        bar: {groupWidth: '100%'}
+        bar: {groupWidth: '30%'},
+        height: '100',
+        hAxis: { textPosition: 'none',
+        baselineColor: '#fff',
+         gridlineColor: '#fff'},
+        vAxis: { textPosition: 'none',
+        baselineColor: '#fff',
+         gridlineColor: '#fff'}
     };
 
     var chart = new google.visualization.BarChart(document.getElementById('sentiment_barchart'));
