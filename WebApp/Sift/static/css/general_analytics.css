@@ -451,7 +451,9 @@ label {
     background-color: rgb(49, 49, 49);
 }
 #sentiment_pie {
-    display:inline-block;width: 30%;
+    display:inline-block;
+    width: 30%;
+    margin-left: -7em;
 }
 #sentiment_pie h2 {
     margin:0;
@@ -496,7 +498,7 @@ label {
   font-size: 1.5em;
 }
 #sentiment_barchart {
-    margin-top: -39px;
+    margin-top: 3em;
   position: relative;
 }
 #dashboard {

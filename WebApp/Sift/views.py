@@ -32,7 +32,7 @@ def general(request):
     s_neutral = Post.objects.filter(sentiment="neutral").count()
     s_pos = Post.objects.filter(sentiment="pos").count()
     s_all = s_neg + s_neutral + s_pos
-    sentimentData.append(["All", round((s_neg/s_all)*100, 2), round((s_neutral/s_all)*100, 2), round((s_pos/s_all)*100, 2)])
+    sentimentData.append(["All Posts", round((s_neg/s_all)*100, 2), round((s_neutral/s_all)*100, 2), round((s_pos/s_all)*100, 2)])
 
     lineClusterNames = []
 
