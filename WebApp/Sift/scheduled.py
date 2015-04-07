@@ -100,16 +100,14 @@ def run_clustering(data, posts):
 
 def main():
     test_list = Post.objects.filter(cluster_id__isnull=True)[:10000]
-    end_date, start_date = find_min_and_max_date(test_list)
-    #
-
-    train_list = Post.objects.filter(cluster_id__isnull=False, creation_date__range=('2014-01-01', '2014-01-12'))
-    #train_end_date, train_start_date = find_min_and_max_date(train_list)
-    #
-    test_data = create_cluster_data(test_list)
-    train_data = create_cluster_data(train_list)
-    #
     if len(test_list) > 0:
+        end_date, start_date = find_min_and_max_date(test_list)
+
+        train_list = Post.objects.filter(cluster_id__isnull=False, creation_date__range=('2014-01-01', '2014-01-12'))
+
+        test_data = create_cluster_data(test_list)
+        train_data = create_cluster_data(train_list)
+
         run_classification(train_data, test_data, 1000, start_date, end_date)
 
     posts = Post.objects.all()
