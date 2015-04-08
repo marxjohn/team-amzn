@@ -16,6 +16,15 @@ function drawGeneralPieChart(array) {
     };
 
     var chart = new google.visualization.PieChart(document.getElementById('general_piechart_3d'));
+
+    function selectHandler() {
+        var selectItem = chart.getSelection()[0];
+        var num = selectItem.row + 1
+        var url = '/topics/' + num.toString()
+        window.location = url
+    }
+    
+    google.visualization.events.addListener(chart, 'select', selectHandler);
     chart.draw(data, options);
 }
 
