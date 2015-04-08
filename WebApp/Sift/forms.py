@@ -43,6 +43,7 @@ class StopwordDelete(forms.Form):
         super(StopwordDelete, self).__init__(*args, **kwargs)
         self.fields['word'].help_text = None
         self.fields['word'].widget.attrs['size'] = '12'
+        self.fields['word'].widget.attrs['width'] = '3'
     word = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple,
                                           queryset=StopWord.objects.all()
                                           .order_by('word'),

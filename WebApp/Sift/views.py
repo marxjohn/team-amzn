@@ -34,6 +34,14 @@ def general(request):
     s_all = s_neg + s_neutral + s_pos
     sentimentData.append(["All Posts", round((s_neg/s_all)*100, 2), round((s_neutral/s_all)*100, 2), round((s_pos/s_all)*100, 2)])
 
+    # Calculate sentiment data for each cluster
+    for cluster in trendingClusters:
+        s_neg = Post.objects.filter(cluster=cluster.clusterid, sentiment="neg").count()
+        s_neutral = Post.objects.filter(cluster=cluster.clusterid, sentiment="neutral").count()
+        s_pos = Post.objects.filter(cluster=cluster.clusterid, sentiment="pos").count()
+        s_all = s_neg + s_neutral + s_pos
+        sentimentData.append([cluster.name, round((s_neg/s_all)*100, 2), round((s_neutral/s_all)*100, 2), round((s_pos/s_all)*100, 2)])
+
     lineClusterNames = []
 
     for cluster in trendingClusters:

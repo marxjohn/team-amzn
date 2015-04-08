@@ -41,19 +41,13 @@ function drawSentimentChart(array) {
           position:"none"
         },
         chartArea: {
-            width:"125%",
+            width:"100%",
             height:"100%"
         },
         isStacked: true,
         fontName: "Lato",
         colors: ['#DC3912', '#95a5a6','#109618'],
-        bar: {groupWidth: '100%'},
-        hAxis: { textPosition: 'none',
-        baselineColor: '#fff',
-         gridlineColor: '#fff'},
-        vAxis: { textPosition: 'none',
-        baselineColor: '#fff',
-         gridlineColor: '#fff'},
+        bar: {groupWidth: '80%'}
     };
 
     var chart = new google.visualization.BarChart(document.getElementById('sentiment_barchart'));
