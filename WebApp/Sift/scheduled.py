@@ -12,9 +12,6 @@ from Sift.Notification import *
 from scikit_utilities import create_cluster_data
 
 
-
-
-
 try:
     import pymysql
     pymysql.install_as_MySQLdb()

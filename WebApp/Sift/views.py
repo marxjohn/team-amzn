@@ -160,7 +160,9 @@ def clusters(request):
         cluster_names = request.POST.items()
         for key, value in cluster_names:
             if value == "on":
-                StopWord(word=key).save()
+                # check to make sure the stop word isn't currently in the list
+                if StopWord.objects.filter(word=key).__len__() is 0:
+                    StopWord(word=key).save()
             elif key != "csrfmiddlewaretoken":
                 if value != "" or value:
                     print("updating cluster ", value)
@@ -196,15 +198,17 @@ def clustering(request):
         if stopwordDelete.is_valid():
             deleteThese = stopwordDelete.cleaned_data['word']
             for element in deleteThese:
-
                 StopWord.objects.filter(word=element).delete()
+
     addStopWord = request.method == "POST" and not clusterForm.is_valid()
     addStopWord = addStopWord and not stopwordDelete.is_valid()
     if addStopWord:
         stopwordAdd = StopwordAdd(request.POST)
         if stopwordAdd.is_valid():
             addThis = stopwordAdd.cleaned_data['add_word']
-            StopWord(word=addThis).save()
+            # check to make sure the stop word isn't currently in the list
+            if StopWord.objects.filter(word=addThis).__len__() is 0:
+                StopWord(word=addThis).save()
 
     form = Sift.forms.ClusterForm()
     headline = "Clustering"
