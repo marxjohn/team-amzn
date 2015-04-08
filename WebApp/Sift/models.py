@@ -147,6 +147,7 @@ class ClusterRun(models.Model):
     silo_score = models.DecimalField(
         db_column='SiloScore', max_digits=8, decimal_places=4,
         blank=True, null=True)
+    is_creation_run = models.IntegerField(db_column='IsCreationRun')
 
     class Meta:
         managed = False

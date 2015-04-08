@@ -66,15 +66,14 @@ english_stemmer = Stemmer.Stemmer('en')
 class ClusterParameter:
 
     def __init__(self, max_features, is_idf_used, is_upload_enabled,
-                 num_clusters, is_mini_used, is_added_to_cluster_run,
-                 max_df, batch_size_ratio, init_size_ratio, n_init,
+                 num_clusters, is_mini_used, max_df, batch_size_ratio,
+                 init_size_ratio, n_init,
                  start_date, end_date, is_visualization_enabled):
 
         self.max_features = max_features
         self.is_idf_used = is_idf_used
         self.is_upload_enabled = is_upload_enabled
         self.num_clusters = num_clusters
-        self.is_added_to_cluster_run = is_added_to_cluster_run
         self.max_df = max_df
         self.batch_size_ratio = batch_size_ratio
         self.init_size_ratio = init_size_ratio
@@ -303,8 +302,7 @@ def cluster_posts(data_set, c_param):
     if c_param.is_visualization_enabled:
         visualize_clusters(c_param.num_clusters, vectorized_data, vectorizer)
 
-    if c_param.is_added_to_cluster_run:
-        create_cluster_run(km, c_param)
+    return create_cluster_run(km, c_param)
 
 
 def upload_clusters(data_set, data_count, km, order_centroids,
@@ -409,8 +407,9 @@ def create_cluster_run(km, c_param):
                     num_posts=len(km.labels_), total_inertia=km.inertia_,
                     batch_size_ratio=1 / c_param.batch_size_ratio,
                     sample_size_ratio=1 / c_param.init_size_ratio,
-                    silo_score=c_param.s_score)
+                    silo_score=c_param.s_score, is_creation_run=c_param.is_upload_enabled)
     cr.save()
+    return cr
 
 
 def run_diagnostic_clustering(data_set, start_date, end_date, max_features,
@@ -418,7 +417,6 @@ def run_diagnostic_clustering(data_set, start_date, end_date, max_features,
                               init_size_ratio, n_init):
 
     c_param = ClusterParameter(num_clusters=num_clusters,
-                               is_added_to_cluster_run=True,
                                batch_size_ratio=batch_size_ratio,
                                is_idf_used=True, is_upload_enabled=False,
                                max_features=max_features, max_df=max_df,
@@ -426,9 +424,8 @@ def run_diagnostic_clustering(data_set, start_date, end_date, max_features,
                                start_date=start_date, end_date=end_date,
                                is_mini_used=True,
                                is_visualization_enabled=False)
-    cluster_posts(data_set, c_param)
 
-    return c_param.s_score, c_param.normalized_inertia
+    return cluster_posts(data_set, c_param)
 
 
 def run_creation_clustering(data_set, start_date, end_date, max_features,
@@ -436,7 +433,6 @@ def run_creation_clustering(data_set, start_date, end_date, max_features,
                             init_size_ratio, n_init):
 
     c_param = ClusterParameter(num_clusters=num_clusters,
-                               is_added_to_cluster_run=True,
                                batch_size_ratio=batch_size_ratio,
                                is_idf_used=True, is_upload_enabled=True,
                                max_features=max_features, max_df=max_df,
@@ -444,6 +440,5 @@ def run_creation_clustering(data_set, start_date, end_date, max_features,
                                n_init=n_init, start_date=start_date,
                                end_date=end_date, is_mini_used=True,
                                is_visualization_enabled=False)
-    cluster_posts(data_set, c_param)
 
-    return c_param.s_score, c_param.normalized_inertia
+    return cluster_posts(data_set, c_param)
