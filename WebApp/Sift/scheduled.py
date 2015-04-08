@@ -76,8 +76,8 @@ def run_clustering(data, posts):
 
 def run_clustering(data, posts):
     end_date, start_date = find_min_and_max_date(posts)
-    s_score, s_inertia = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
-    return s_inertia, s_score
+    cluster_run = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
+    return cluster_run
 
 
 def main():
@@ -94,7 +94,9 @@ def main():
 
     posts = Post.objects.all()
     data = create_cluster_data(posts)
-    s_inertia, s_score = run_clustering(data, posts)
+    cluster_run = run_clustering(data, posts)
+    s_inertia = cluster_run.normalized_inertia
+    s_score = cluster_run.silo_score
 
     # Some Magic here involving sending email alerts
     text = "The status of the clusters are as follows: s_score: " + str(s_score) + ",  s_intertia: " + str(s_inertia)
