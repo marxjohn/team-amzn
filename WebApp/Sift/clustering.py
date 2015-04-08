@@ -372,7 +372,7 @@ def upload_clusters(data_set, data_count, km, order_centroids,
 
 
         # Save top 100 cluster words
-        rank = 1;
+        rank = 1
         for ind in order_centroids[x - 1, :num_centroids]:
             count = len(
                 Post.objects.filter(cluster=c,
