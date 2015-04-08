@@ -38,8 +38,11 @@ def lazy_sentiment(start_date, end_date):
     print("lazy sentiment time!")
     for post in dataset:
         if post.sentiment is None:
-            body = html.document_fromstring(post.body).text_content()
-
+            try:
+                body = html.document_fromstring(post.body).text_content()
+            except:
+                body = post.body
+            
             payload = {
                 'language': 'english',
                 'text': body[:80000]
