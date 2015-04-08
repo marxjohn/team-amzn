@@ -5,6 +5,7 @@ from Sift.models import *
 from Sift.clustering import run_diagnostic_clustering
 
 from Sift.scikit_utilities import create_cluster_data
+from django.core.cache import cache
 
 from Sift.Notification import *
 from Sift.clustering import run_creation_clustering
@@ -56,6 +57,7 @@ def main():
     posts = Post.objects.all()
     data = create_cluster_data(posts)
     run_clustering(data, posts)
+    cache.clear()
 
 
 if __name__ == '__main__':
