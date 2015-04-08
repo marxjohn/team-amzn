@@ -46,11 +46,7 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
 
 
 def main():
-    dataset = clustering.ClusterData(
-        Post.objects.filter(creation_date__range=("2015-03-15", "2015-03-30")))
-
-    clustering.run_diagnostic_clustering(
-        dataset, "2015-03-25", "2015-03-30", 1000, 8, .85, 20, 50, 150)
+    cluster_posts_with_input("2015-03-15", "2015-03-30", 8, 1000, False, False)
 
 
 # Only run the main function if this code is called directly
