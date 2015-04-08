@@ -29,18 +29,18 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
         num_clusters, .85, 20, 50, 150)
 
     # send email
-    make_nightly_subscription = SNSNotification()
-    make_nightly_subscription.make_arn_list()
-    nightly_subscription = get_nightly_list()
+    email = SNSNotification()
+    email.make_arn_list()
+    email_list = get_nightly_list()
 
-    if nightly_subscription is not None:
-        make_nightly_subscription.set_topic_arn('Diagnostic Clustering')
-        make_nightly_subscription.set_message("Successfully completed Diagnostic Clustering in " + str(time() - t0) + " seconds! From "
+    if email_list is not None:
+        email.set_topic_arn('Diagnostic Clustering')
+        email.set_message("Successfully completed Diagnostic Clustering in " + str(time() - t0) + " seconds! From "
                           + str(start_date) + " to " + str(end_date) + " with "
                           + str(num_clusters) + " clusters and " + str(max_features)
                           + " features.")
 
-        make_nightly_subscription.publication()
+        email.publication()
 
     cache.clear()
 
