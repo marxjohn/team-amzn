@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 # from postmarkup import render_bbcode
 from lxml import html
 from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 
 import os
 
@@ -16,6 +17,7 @@ from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
 
 
+@cache_page(60*60)
 def general(request):
     headline = "General Analytics"
     trendingClusters = Cluster.objects.filter(ispinned=0)
@@ -75,6 +77,7 @@ def general(request):
     return render(request, 'general_analytics.html', context)
 
 
+@cache_page(60*60)
 def details(request, cluster_id):
     headline = "Topic Analytics"
     cluster = get_object_or_404(Cluster, pk=cluster_id)
