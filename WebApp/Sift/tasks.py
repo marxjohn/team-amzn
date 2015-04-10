@@ -34,7 +34,7 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
     email_list = get_nightly_list()
 
     if email_list is not None:
-        email.set_topic_arn('Diagnostic Clustering')
+        email.set_topic_arn('DiagnosticClustering')
         email.set_message("Successfully completed Diagnostic Clustering in " + str(time() - t0) + " seconds! From "
                           + str(start_date) + " to " + str(end_date) + " with "
                           + str(num_clusters) + " clusters and " + str(max_features)
