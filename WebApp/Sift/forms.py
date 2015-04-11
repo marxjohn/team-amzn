@@ -60,3 +60,17 @@ class StopwordAdd(forms.Form):
 
 class EditClusterName(forms.Form):
     edit_cluster = forms.CharField()
+
+
+class ExportData(forms.Form):
+    start_date = forms.DateField(label="Start Date", widget=DateInput(),
+                                 initial=monthdelta(datetime.date.today(),
+                                                    -12).strftime('%m/%d/%Y'),
+                                 required=False)
+    end_date = forms.DateField(
+        label="End Date", widget=DateInput(),
+        initial=datetime.date.today().strftime('%m/%d/%Y'), required=False)
+    all_posts = forms.BooleanField(required=False)
+    # num_clusters = forms.IntegerField(label="Number of Clusters", initial=8)
+    # all_clusters = forms.BooleanField(required=False)
+    # cluster_type = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
