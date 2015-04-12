@@ -11,6 +11,7 @@
     });
     </script>
     <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
+    <link rel="stylesheet" href="{% static 'css/exportdata.css' %}">
 {% endblock %}
 {% block body_block %}
 <div id="top">
@@ -26,6 +27,16 @@
     {{ form.end_date }}
     <br /> All Posts
     {{ form.all_posts }}
+    </div>
+    <div class="line">
+        <div class="line_obj">
+            <p>Sentiment:</p>
+            {{ form.sentiment }}
+        </div>
+        <p>Clusters:</p>
+        <div id="clusters">
+            {{ form.clusters }}
+        </div>
     </div>
     <input type="submit" name="Download"/>
 </form>

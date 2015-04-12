@@ -8,7 +8,7 @@ from django.views.decorators.cache import cache_page
 
 import os
 import csv
-from django.utils.six.moves import range
+from django.db.models import Q
 from django.http import StreamingHttpResponse
 import time
 import Sift.clustering
@@ -269,6 +269,7 @@ def exportdata(request):
 
             if is_all_posts:
                 data = Post.objects.all()[:1000]
+                # data = Post.objects.filter(Q(sentiment="pos")|Q(sentiment="neg")|Q(sentiment="neutral"))[:1000]
             else:
                 data = Post.objects.filter(creation_date__range=(start_date, end_date))[:1000]
 
