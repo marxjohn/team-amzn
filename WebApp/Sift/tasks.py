@@ -39,6 +39,7 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
                           + str(start_date) + " to " + str(end_date) + " with "
                           + str(num_clusters) + " clusters and " + str(max_features)
                           + " features.")
+        email.set_subject('DiagnosticClustering')
 
         email.publication()
 
