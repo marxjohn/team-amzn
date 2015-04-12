@@ -23,7 +23,7 @@ function drawGeneralPieChart(array) {
         var url = '/topics/' + num.toString()
         window.location = url
     }
-    
+
     google.visualization.events.addListener(chart, 'select', selectHandler);
     chart.draw(data, options);
 }
