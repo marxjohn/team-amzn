@@ -85,6 +85,7 @@ class ClusterParameter:
         self.s_score = 0
         self.inertia = 0
         self.normalized_inertia = 0
+        self.pdf_lines = []
 
 
 class StemmedTfidfVectorizer(TfidfVectorizer):
@@ -141,20 +142,23 @@ class ClusterData:
             count=inp.count())
 
 
-def print_posts_in_cluster(data_count, data_set, km, num_posts, num_clusters):
+def print_posts_in_cluster(data_count, data_set, km, num_posts, c_param):
     # Associate posts with created clusters
     posts_in_cluster = []
 
-    for x in range(0, num_clusters):
+    for x in range(0, c_param.num_clusters):
         posts_in_cluster.append([])
 
     for i in range(0, data_count - 1):
         x = km.labels_[i]
         posts_in_cluster[x].append(data_set.data[i][0])
 
-    for x in range(0, num_clusters):
+    for x in range(0, c_param.num_clusters):
         size_of_cluster = len(posts_in_cluster[x])
         print('\n' + '=' * 150 + "\n\tSample Posts in Cluster " + str(x) +
+              '\tSize: ' + str(size_of_cluster) + '\n' + '=' * 150)
+
+        c_param.pdf_lines.append('=' * 150 + "\n\tSample Posts in Cluster " + str(x) +
               '\tSize: ' + str(size_of_cluster) + '\n' + '=' * 150)
 
         if num_posts > size_of_cluster:
@@ -164,6 +168,7 @@ def print_posts_in_cluster(data_count, data_set, km, num_posts, num_clusters):
 
         for z in range(0, num_printed_posts):
             print('\n' + posts_in_cluster[x][z])
+            c_param.pdf_lines.append(posts_in_cluster[x][z])
 
 
 def fit_clusters(X, c_param):
@@ -193,27 +198,33 @@ def fit_clusters(X, c_param):
     km.fit(X)
     labels = km.labels_
     print('done with clustering, calculating silhouette score')
-    s_score = silhouette_score(
-        X, labels, metric='euclidean', sample_size=25000)
+    #s_score = silhouette_score(
+     #   X, labels, metric='euclidean', sample_size=25000)
+    s_score = 0
     print(s_score)
     print()
     return km, s_score
 
 
-def print_cluster_centroids(km, vectorizer, num_clusters):
+def print_cluster_centroids(km, vectorizer, c_param):
     print("Top terms per cluster:")
     order_centroids = km.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
-    for i in range(num_clusters):
+    for i in range(c_param.num_clusters):
         print("Cluster %d:" % i, end='')
+        c_param.pdf_lines.append("Cluster %d:" % i)
+
         for ind in order_centroids[i, :10]:
             print(' %s' % terms[ind], end='')
+            c_param.pdf_lines.append(' %s' % terms[ind])
         print()
 
     print("Total Inertia")
     print(km.inertia_)
+    c_param.pdf_lines.append("Total Inertia: " + km.inertia_.__str__())
     print("Normalized Inertia")
     print(km.inertia_ / len(km.labels_))
+    c_param.pdf_lines.append("Normalized Inertia: " + (km.inertia_ / len(km.labels_)).__str__())
 
 
 def vectorize_data(data_set, c_param):
@@ -288,8 +299,8 @@ def cluster_posts(data_set, c_param):
     # Do the actual clustering
     km, c_param.s_score = fit_clusters(vectorized_data, c_param)
 
-    print_cluster_centroids(km, vectorizer, c_param.num_clusters)
-    print_posts_in_cluster(data_count, data_set, km, 5, c_param.num_clusters)
+    print_cluster_centroids(km, vectorizer, c_param)
+    print_posts_in_cluster(data_count, data_set, km, 5, c_param)
     # Create Clusters to upload to database
     order_centroids = km.cluster_centers_.argsort()[:, ::-1]
     terms = vectorizer.get_feature_names()
@@ -409,7 +420,12 @@ def create_cluster_run(km, c_param):
                     sample_size_ratio=1 / c_param.init_size_ratio,
                     silo_score=c_param.s_score, is_creation_run=c_param.is_upload_enabled)
     cr.save()
-    return cr
+    # Django trickery with getting the id of the model (probably should be changed somehow)
+    # But it works....
+    cr_with_id = ClusterRun.objects.get(run_date=cr.run_date)
+    cr_with_id.data_dump_url = "https://s3-us-west-2.amazonaws.com/cluster-runs/" + cr_with_id.id.__str__()
+    cr_with_id.save()
+    return cr_with_id
 
 
 def run_diagnostic_clustering(data_set, start_date, end_date, max_features,
@@ -425,7 +441,8 @@ def run_diagnostic_clustering(data_set, start_date, end_date, max_features,
                                is_mini_used=True,
                                is_visualization_enabled=False)
 
-    return cluster_posts(data_set, c_param)
+    cluster_run = cluster_posts(data_set, c_param)
+    return cluster_run, c_param.pdf_lines
 
 
 def run_creation_clustering(data_set, start_date, end_date, max_features,

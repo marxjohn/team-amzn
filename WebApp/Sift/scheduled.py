@@ -8,6 +8,7 @@ from Sift.clustering import run_diagnostic_clustering
 from Sift.classification import run_classification
 from Sift.scikit_utilities import create_cluster_data
 from Sift.Notification import *
+from Sift.pdf_generator import create_pdf
 
 from scikit_utilities import create_cluster_data
 
@@ -70,14 +71,8 @@ def send_nightly_runner(email_text):
 
 def run_clustering(data, posts):
     end_date, start_date = find_min_and_max_date(posts)
-    s_score, s_inertia = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
-    return s_inertia, s_score
-
-
-def run_clustering(data, posts):
-    end_date, start_date = find_min_and_max_date(posts)
-    cluster_run = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
-    return cluster_run
+    cluster_run, pdf_lines = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
+    return cluster_run, pdf_lines
 
 
 def main():
@@ -92,11 +87,13 @@ def main():
 
         run_classification(train_data, test_data, 1000, start_date, end_date)
 
-    posts = Post.objects.all()
+    posts = Post.objects.filter(creation_date__range=("2014-01-01", "2014-02-01"))
     data = create_cluster_data(posts)
-    cluster_run = run_clustering(data, posts)
+    cluster_run, pdf_lines = run_clustering(data, posts)
     s_inertia = cluster_run.normalized_inertia
     s_score = cluster_run.silo_score
+    create_pdf(pdf_lines, cluster_run.id)
+
 
     # Some Magic here involving sending email alerts
     text = "The status of the clusters are as follows: s_score: " + str(s_score) + ",  s_intertia: " + str(s_inertia)
