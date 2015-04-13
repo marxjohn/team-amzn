@@ -51,14 +51,13 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
           <li class="nav-option"><a href="{% url 'general:general' %}"><i class="fa fa-home"></i> Home</a></li>
-{#              <li class="nav-option" id="generalNav"><a href="{% url 'general:general' %}">General Analytics</a></li>#}
-{#              <li class="nav-option" id="clusteringNav"><a href="{% url 'general:clustering' %}">Clustering</a></li>#}
             <li class="nav-option settings" id="settings_nav">
                 <a><i class="fa fa-gear"></i> Settings</a>
             </li>
             <ul id="hoverDropDown" class="nav drop settings">
           <li><a href="{% url 'general:clusters' %}"><i class="fa fa-bar-chart"></i> Clusters</a></li>
           <li><a  href="{% url 'general:clustering' %}"><i class="fa fa-refresh"></i> Clustering</a></li>
+          <li><a href="{% url 'general:exportdata' %}"><i class="fa fa-file-text-o"></i> Export Data</a></li>
           <li><a href="{% url 'general:notifications' %}"><i class="fa fa-bell-o"></i> Notifications</a></li>
     </ul>
 

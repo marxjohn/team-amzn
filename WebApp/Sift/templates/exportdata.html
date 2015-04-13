@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load widget_tweaks %}
+{% block head %}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+    <script>
+    $(document).ready(function(){
+        $("#clusteringNav").hide();
+    });
+    </script>
+    <link rel="stylesheet" href="{% static 'css/cluster.css' %}">
+    <link rel="stylesheet" href="{% static 'css/exportdata.css' %}">
+{% endblock %}
+{% block body_block %}
+<div id="top">
+<h1>Export Data</h1>
+<h3>Specify the parameters below:</h3>
+<div id="formClustering">
+<div id="runClustering">
+<form action="/csv/" method="POST">
+    {% csrf_token %}
+    <div class="line">
+    <p>Date Range:</p>
+    {{ form.start_date }}
+    {{ form.end_date }}
+    <br /> All Posts
+    {{ form.all_posts }}
+    </div>
+    <div class="line">
+        <div class="line_obj">
+            <p>Sentiment:</p>
+            {{ form.sentiment }}
+        </div>
+        <p>Clusters:</p>
+        <div id="clusters">
+            {{ form.clusters }}
+        </div>
+    </div>
+    <input type="submit" name="Download"/>
+</form>
+</div>
+</div>
+</div>
+<script>
+String.prototype.replaceWith = function(f, t) {
+    var regExp = new RegExp(f, "g");
+    return this.replace(regExp, t);
+};
+$(document).ready(function() {
+    $('.datepicker').datepicker();
+    $('#id_all_posts').change(function() {
+    if($(this).is(':checked')) {
+        $('#id_start_date').prop('disabled', true);
+        $('#id_end_date').prop('disabled', true);
+        start = $('#id_start_date').val();
+        end = $('#id_end_date').val();
+        $('#id_start_date').val("");
+        $('#id_end_date').val("");
+    } else {
+        $('#id_start_date').prop('disabled', false);
+        $('#id_end_date').prop('disabled', false);
+        $('#id_start_date').val(start);
+        $('#id_end_date').val(end);
+    }
+    });
+});
+</script>
+{% endblock %}

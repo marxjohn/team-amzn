@@ -7,7 +7,9 @@ from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 
 import os
-
+import csv
+from django.db.models import Q
+from django.http import StreamingHttpResponse
 import time
 import Sift.clustering
 import Sift.Notification
@@ -241,3 +243,56 @@ def clustering(request):
                'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(),
                'runclustering': runclustering}
     return render(request, 'clustering.html', context)
+
+
+class Echo(object):
+    """An object that implements just the write method of the file-like
+    interface.
+    """
+    def write(self, value):
+        """Write the value by returning it, instead of storing in a buffer."""
+        return value
+
+
+def exportdata(request):
+    if request.method == 'POST':
+        exportData = Sift.forms.ExportData(request.POST)
+
+        if exportData.is_valid():
+            if exportData.cleaned_data['all_posts'] == 1:
+                is_all_posts = True
+            else:
+                is_all_posts = False
+
+            start_date = exportData.cleaned_data['start_date']
+            end_date = exportData.cleaned_data['end_date']
+
+            if is_all_posts:
+                data = Post.objects.all()[:1000]
+                # data = Post.objects.filter(Q(sentiment="pos")|Q(sentiment="neg")|Q(sentiment="neutral"))[:1000]
+            else:
+                data = Post.objects.filter(creation_date__range=(start_date, end_date))[:1000]
+
+            # Generate a sequence of rows. The range is based on the maximum number of
+            # rows that can be handled by a single sheet in most spreadsheet
+            # applications.
+            rows = ([post.post_id, post.thread_id, post.message_id,
+                     post.forum_id, post.user_id, post.category_id,
+                     post.subject, post.body, post.username, post.creation_date,
+                     post.modification_date, post.stemmed_body, post.probpositive,
+                     post.probneutral, post.probnegative, post.sentiment]
+                    for post in data)
+
+            pseudo_buffer = Echo()
+            writer = csv.writer(pseudo_buffer)
+            response = StreamingHttpResponse((writer.writerow(row) for row in rows),
+                                             content_type="text/csv")
+            response['Content-Disposition'] = 'attachment; filename="sift.csv"'
+
+            return response
+
+    form = Sift.forms.ExportData()
+    headline = "Export Data"
+
+    context = {'headline': headline, 'form': form}
+    return render(request, 'exportdata.html', context)

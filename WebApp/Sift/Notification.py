@@ -286,7 +286,7 @@ class SNSNotification( object ):
 
 
     def publication( __self ):
-        __self.sns.publish( __self.arn, __self.message )
+        __self.sns.publish( __self.arn, __self.message, __self.subject )
 
 
 def add_email( email_address ):

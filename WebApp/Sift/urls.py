@@ -9,12 +9,17 @@ urlpatterns = patterns('',
                        url(r'^topics/(?P<cluster_id>\d+)/$',
                            views.details, name='details'),
                        # ex: /settings/
-                       url(r'^notifications/$', views.notifications,
+                       url(r'^settings/notifications/$', views.notifications,
                            name='notifications'),
                        # ex: /clustering/
-                       url(r'^clustering/$', views.clustering,
+                       url(r'^settings/clustering/$', views.clustering,
                            name='clustering'),
                        # ex: /cluster_running/
-                       url(r'^clusters/$', views.clusters, name='clusters')
+                       url(r'^settings/clusters/$', views.clusters,
+                           name='clusters'),
+                       # ex: /export_data/
+                       url(r'^settings/exportdata/$', views.exportdata,
+                           name='exportdata'),
+                       url(r'^csv/$', views.exportdata)
 
                        )

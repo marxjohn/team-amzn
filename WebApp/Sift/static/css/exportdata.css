@@ -1,0 +1,11 @@
+ul, ol {
+  margin-left: -2em;
+  list-style:  none;
+}
+
+#clusters {
+  height: 150px;
+  width: 180%;
+  overflow-y: scroll;
+  margin-bottom: 10px;
+}

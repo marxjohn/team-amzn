@@ -64,6 +64,7 @@ def send_nightly_runner(email_text):
     else:
         make_nightly_subscription.set_topic_arn('NightlyRun')
         make_nightly_subscription.set_message(email_text)
+        make_nightly_subscription.set_subject('NightlyRun')
 
         make_nightly_subscription.publication()
         return True
