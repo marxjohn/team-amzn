@@ -203,7 +203,7 @@ def clustering(request):
                 is_all_posts = True
             else:
                 is_all_posts = False
-            if clusterForm.clean_data['is_creation_clustering'] == 1:
+            if clusterForm.cleaned_data['is_creation_clustering'] == 1:
                 is_creation_clustering = True
             else:
                 is_creation_clustering = False
