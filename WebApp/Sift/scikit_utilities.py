@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.conf import settings
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk import word_tokenize
@@ -147,3 +148,17 @@ def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
 
             cw.count += count
             cw.save()
+
+
+def find_min_and_max_date(c_list):
+    min_date = datetime.now().date()
+    for c in c_list:
+        if c.creation_date <= min_date:
+            min_date = c.creation_date
+    max_date = datetime.min.date()
+    for c in c_list:
+        if c.creation_date >= max_date:
+            max_date = c.creation_date
+    start_date = min_date
+    end_date = max_date
+    return end_date, start_date

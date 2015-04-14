@@ -149,6 +149,7 @@ class ClusterRun(models.Model):
         blank=True, null=True)
     is_creation_run = models.IntegerField(db_column='IsCreationRun')
     data_dump_url = models.CharField(db_column='DataDumpUrl', max_length=124, blank=True)
+
     class Meta:
         managed = False
         db_table = 'ClusterRun'

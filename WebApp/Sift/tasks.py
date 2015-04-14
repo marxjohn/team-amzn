@@ -1,11 +1,16 @@
-from celery import shared_task
 from time import time
+import logging
+import datetime
+
+from celery import shared_task
+from django.core.cache import cache
+
 import Sift.clustering as clustering
 from Sift.models import Post
 from Sift.Notification import *
-import logging
-import datetime
-from django.core.cache import cache
+from WebApp.Sift.scikit_utilities import find_min_and_max_date, create_cluster_data
+from WebApp.Sift.clustering import run_creation_clustering
+
 
 __author__ = 'cse498'
 
@@ -43,6 +48,16 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
 
         email.publication()
 
+    cache.clear()
+
+
+@shared_task
+def create_new_clusters(num_clusters, max_features, max_df=.85, batch_size_ratio=20, init_size_ratio=50, n_init=150):
+    posts = Post.objects.all()
+    data = create_cluster_data(posts)
+    end_date, start_date = find_min_and_max_date(posts)
+    run_creation_clustering(
+        data, start_date, end_date, max_features, num_clusters, max_df, batch_size_ratio, init_size_ratio, n_init)
     cache.clear()
 
 

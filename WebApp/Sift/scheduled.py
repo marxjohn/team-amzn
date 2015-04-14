@@ -1,24 +1,17 @@
 from __future__ import absolute_import
 
-from datetime import date
 from datetime import datetime
-
 from Sift.models import *
-from Sift.clustering import run_diagnostic_clustering
-from Sift.classification import run_classification
-from Sift.scikit_utilities import create_cluster_data
-from Sift.Notification import *
-from Sift.pdf_generator import create_pdf
-
-from scikit_utilities import create_cluster_data
+from WebApp.Sift.clustering import run_diagnostic_clustering
+from WebApp.Sift.classification import run_classification
+from WebApp.Sift.Notification import *
+from WebApp.Sift.pdf_generator import create_pdf
+from WebApp.Sift.scikit_utilities import create_cluster_data
 
 
-try:
-    import pymysql
-    pymysql.install_as_MySQLdb()
+import pymysql
+pymysql.install_as_MySQLdb()
 
-except:
-    pass
 
 import django
 django.setup()
@@ -59,7 +52,7 @@ def send_nightly_runner(email_text):
     make_nightly_subscription.make_arn_list()
     nightly_subscription = get_nightly_list()
 
-    if nightly_subscription == None:
+    if nightly_subscription is None:
         return False
     else:
         make_nightly_subscription.set_topic_arn('NightlyRun')
@@ -77,24 +70,25 @@ def run_clustering(data, posts):
 
 
 def main():
-    test_list = Post.objects.filter(cluster_id__isnull=True)[:10000]
+    # Retrieve all posts that have not been classified / clustered
+    test_list = Post.objects.filter(cluster_id__isnull=True)
     if len(test_list) > 0:
         end_date, start_date = find_min_and_max_date(test_list)
 
-        train_list = Post.objects.filter(cluster_id__isnull=False, creation_date__range=('2014-01-01', '2014-01-12'))
+        # Take a random sampling of 10000 posts to use as the training set
+        train_list = Post.objects.filter(cluster_id__isnull=False).order_by('?')[:10000]
 
         test_data = create_cluster_data(test_list)
         train_data = create_cluster_data(train_list)
 
         run_classification(train_data, test_data, 1000, start_date, end_date)
 
-    posts = Post.objects.filter(creation_date__range=("2014-01-01", "2014-02-01"))
+    posts = Post.objects.all()
     data = create_cluster_data(posts)
     cluster_run, pdf_lines = run_clustering(data, posts)
     s_inertia = cluster_run.normalized_inertia
     s_score = cluster_run.silo_score
     create_pdf(pdf_lines, cluster_run.id)
-
 
     # Some Magic here involving sending email alerts
     text = "The status of the clusters are as follows: s_score: " + str(s_score) + ",  s_intertia: " + str(s_inertia)

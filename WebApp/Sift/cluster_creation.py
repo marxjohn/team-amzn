@@ -1,18 +1,17 @@
 from __future__ import absolute_import
 
-from datetime import datetime
-from Sift.models import *
-from Sift.clustering import run_diagnostic_clustering
-
-from Sift.scikit_utilities import create_cluster_data
 from django.core.cache import cache
-
-from Sift.Notification import *
-from Sift.clustering import run_creation_clustering
-from scikit_utilities import create_cluster_data
 import pymysql
 import django
 from django.conf import settings
+
+from Sift.models import *
+from Sift.scikit_utilities import create_cluster_data
+from Sift.Notification import *
+from Sift.clustering import run_creation_clustering
+from scikit_utilities import create_cluster_data
+from WebApp.Sift.scikit_utilities import find_min_and_max_date
+
 pymysql.install_as_MySQLdb()
 django.setup()
 if not settings.configured:
@@ -30,20 +29,6 @@ if not settings.configured:
         }
         }
     )
-
-
-def find_min_and_max_date(c_list):
-    min_date = datetime.now().date()
-    for c in c_list:
-        if c.creation_date <= min_date:
-            min_date = c.creation_date
-    max_date = datetime.min.date()
-    for c in c_list:
-        if c.creation_date >= max_date:
-            max_date = c.creation_date
-    start_date = min_date
-    end_date = max_date
-    return end_date, start_date
 
 
 def run_clustering(data, posts):
