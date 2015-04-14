@@ -37,6 +37,7 @@ class ClusterForm(forms.Form):
     max_features = forms.IntegerField(
         label="Max Number of Features", initial=1000)
     cluster_type = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
+    is_creation_clustering = forms.BooleanField(required=False)
 
 
 class StopwordDelete(forms.Form):
