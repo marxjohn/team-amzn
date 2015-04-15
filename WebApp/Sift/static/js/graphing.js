@@ -40,10 +40,10 @@ function drawSentimentChart(array) {
         legend: {
           position:"none"
         },
-        chartArea: {
-            width:"100%",
-            height:"100%"
-        },
+        //chartArea: {
+        //    width:"100%",
+        //    height:"100%"
+        //},
         isStacked: true,
         fontName: "Lato",
         colors: ['#DC3912', '#95a5a6','#109618'],
