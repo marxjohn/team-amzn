@@ -305,11 +305,6 @@ def exportdata(request):
 
             pseudo_buffer = Echo()
             writer = csv.writer(pseudo_buffer)
-            writer.writerow(['post_id', 'thread_id', 'message_id',
-                     'forum_id', 'user_id', 'category_id',
-                     'subject', 'body', 'username', 'creation_date',
-                     'stemmed_body', 'cluster_id', 'probpositive',
-                     'probneutral', 'probnegative', 'sentiment'])
             response = StreamingHttpResponse((writer.writerow(row) for row in rows),
                                              content_type="text/csv")
             response['Content-Disposition'] = 'attachment; filename="sift.csv"'
