@@ -15,7 +15,7 @@ from WebApp.Sift.clustering import run_creation_clustering
 __author__ = 'cse498'
 
 
-@shared_task
+@shared_task(bind=True)
 def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
                              isMiniBatch, isAllPosts):
     t0 = time()
@@ -25,14 +25,14 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
     if isAllPosts:
         start_date = "2000-01-01"
         end_date = datetime.date.today().strftime('%Y-%m-%d')
-
+    self.update_state(state='FETCHING_POSTS')
     dataset = clustering.ClusterData(
         Post.objects.filter(creation_date__range=(start_date, end_date)))
-
+    self.update_state(state='RUNNING_CLUSTERING')
     clustering.run_diagnostic_clustering(
         dataset, start_date, end_date, max_features,
         num_clusters, .85, 20, 50, 150)
-
+    self.update_state(state='SENDING_NOTIFICATIONS')
     # send email
     email = SNSNotification()
     email.make_arn_list()
@@ -47,17 +47,21 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
         email.set_subject('DiagnosticClustering')
 
         email.publication()
-
+    self.update_state(state='CLUSTERING_COMPLETED')
     cache.clear()
 
 
-@shared_task
+@shared_task(bind=True)
 def create_new_clusters(num_clusters, max_features, max_df=.85, batch_size_ratio=20, init_size_ratio=50, n_init=150):
+    self.update_state(state='FETCHING_POSTS')
     posts = Post.objects.all()
+    self.update_state(state='CREATING_CLUSTER_DATA')
     data = create_cluster_data(posts)
     end_date, start_date = find_min_and_max_date(posts)
+    self.update_state(state='RUNNING_CREATION_CLUSTERING')
     run_creation_clustering(
         data, start_date, end_date, max_features, num_clusters, max_df, batch_size_ratio, init_size_ratio, n_init)
+    self.update_state(state='CLUSTERING_COMPLETED')
     cache.clear()
 
 

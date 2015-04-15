@@ -18,7 +18,7 @@
 <h3>Run Clustering</h3>
 <div id="formClustering">
 <div id="runClustering">
-<form action="/clustering/" method="POST">
+<form method="POST">
     {% csrf_token %}
     <div class="line">
     <p>Date Range:</p>
@@ -132,7 +132,7 @@ $(document).ready(function() {
     tableData.addColumn('number', 'Number of Posts');
     tableData.addColumn('number', 'Normalized Inertia');
     tableData.addColumn('number', 'SiloScore');
-    tableData.addColumn('string', 'Run Output')
+    tableData.addColumn('string', 'Run Output');
 
     {% for item in runclustering %}
 
