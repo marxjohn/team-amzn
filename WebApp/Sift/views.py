@@ -213,7 +213,7 @@ def clustering(request):
                     int(clusterForm.cleaned_data['num_clusters']),
                     int(clusterForm.cleaned_data['max_features']))
             else:
-                cluster_posts_with_input(
+                cluster_posts_with_input.delay(
                     str(clusterForm.cleaned_data['start_date']),
                     str(clusterForm.cleaned_data['end_date']),
                     int(clusterForm.cleaned_data['num_clusters']),
