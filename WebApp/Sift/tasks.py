@@ -10,6 +10,7 @@ from Sift.models import Post, Cluster
 from Sift.Notification import *
 from Sift.scikit_utilities import find_min_and_max_date, create_cluster_data, ClusterData
 from Sift.clustering import run_creation_clustering
+from Sift.pdf_generator import create_pdf
 
 
 __author__ = 'cse498'
@@ -30,7 +31,7 @@ def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_featu
         Post.objects.filter(creation_date__range=(start_date, end_date)),
         Cluster.objects.all())
     self.update_state(state='RUNNING_CLUSTERING')
-    clustering.run_diagnostic_clustering(
+    cluster_run, pdf_lines = clustering.run_diagnostic_clustering(
         dataset, start_date, end_date, max_features,
         num_clusters, .85, 20, 50, 150)
     self.update_state(state='SENDING_NOTIFICATIONS')
@@ -49,6 +50,7 @@ def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_featu
 
         email.publication()
     self.update_state(state='CLUSTERING_COMPLETED')
+    create_pdf(pdf_lines, cluster_run.id)
     cache.clear()
 
 
@@ -60,9 +62,10 @@ def create_new_clusters(self, num_clusters, max_features, max_df=.85, batch_size
     data = create_cluster_data(posts)
     end_date, start_date = find_min_and_max_date(posts)
     self.update_state(state='RUNNING_CREATION_CLUSTERING')
-    run_creation_clustering(
+    cluster_run, pdf_lines = run_creation_clustering(
         data, start_date, end_date, max_features, num_clusters, max_df, batch_size_ratio, init_size_ratio, n_init)
     self.update_state(state='CLUSTERING_COMPLETED')
+    create_pdf(pdf_lines, cluster_run.id)
     cache.clear()
 
 
