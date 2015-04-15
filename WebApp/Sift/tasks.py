@@ -17,7 +17,6 @@ __author__ = 'cse498'
 
 @app.task(bind=True)
 def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
-                             isMiniBatch, isAllPosts):
     t0 = time()
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
@@ -66,7 +65,7 @@ def create_new_clusters(num_clusters, max_features, max_df=.85, batch_size_ratio
 
 
 def main():
-    cluster_posts_with_input("2015-03-15", "2015-03-30", 8, 1000, False, False)
+    cluster_posts_with_input.delay("2015-03-15", "2015-03-30", 8, 1000, False)
 
 
 # Only run the main function if this code is called directly
