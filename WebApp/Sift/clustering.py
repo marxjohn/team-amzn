@@ -334,6 +334,7 @@ def _create_cluster_run(km, c_param):
     cr.save()
     # Django trickery with getting the id of the model (probably should be changed somehow)
     # But it works....
+    print(str(cr.run_date))
     cr_with_id = ClusterRun.objects.get(run_date=cr.run_date)
     cr_with_id.data_dump_url = "https://s3-us-west-2.amazonaws.com/cluster-runs/" + cr_with_id.id.__str__()
     cr_with_id.save()
