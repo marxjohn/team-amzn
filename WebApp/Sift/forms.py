@@ -11,8 +11,9 @@ DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
 CHOICES = (('1', 'Mini-Batch'), ('2', 'K-Means'))
 SENTI_CHOICES = (('pos', 'Positive'), ('neutral', 'Neutral'), ('neg', 'Negative'))
-CLUSTER_CHOICES = (('1', 'First Cluster'), ('2', 'Second Cluster'), ('3', 'Third Cluster'))
+# CLUSTER_CHOICES = (('1', 'First Cluster'), ('2', 'Second Cluster'), ('3', 'Third Cluster'))
 # CLUSTER_CHOICES = reduce(lambda x,y: (x,y), Cluster.objects.values('clusterid'), Cluster.objects.values('name'))
+CLUSTER_CHOICES = [(i.values('clusterid'), i.values('name')) for i in Cluster.objects]
 
 
 def monthdelta(date, delta):

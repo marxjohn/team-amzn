@@ -16,7 +16,6 @@ import Sift.clustering
 import Sift.Notification
 
 from Sift.tasks import cluster_posts_with_input, create_new_clusters
-import Sift.forms
 from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
 
