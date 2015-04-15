@@ -195,10 +195,6 @@ def clustering(request):
         clusterForm = Sift.forms.ClusterForm(request.POST)
 
         if clusterForm.is_valid():
-            if clusterForm.cleaned_data['cluster_type'] == 1:
-                is_mini_batched = False
-            else:
-                is_mini_batched = True
             if clusterForm.cleaned_data['all_posts'] == 1:
                 is_all_posts = True
             else:
