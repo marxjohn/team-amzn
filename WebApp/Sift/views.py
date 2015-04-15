@@ -10,6 +10,7 @@ import os
 import csv
 from django.db.models import Q
 from django.http import StreamingHttpResponse
+from functools import reduce
 import time
 import Sift.clustering
 import Sift.Notification
@@ -249,8 +250,6 @@ def clustering(request):
             time.mktime(clusterrun.start_date.timetuple())) * 1000
         clusterrun.end_date = int(
             time.mktime(clusterrun.end_date.timetuple())) * 1000
-        if clusterrun.silo_score is None:
-            clusterrun.silo_score = 'null'
 
     context = {'headline': headline, 'form': form, 'stopwords': stopwords,
                'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(),
@@ -281,11 +280,15 @@ def exportdata(request):
             start_date = exportData.cleaned_data['start_date']
             end_date = exportData.cleaned_data['end_date']
 
+            #reduce magic
+            sentiment_filter = reduce(lambda q,senti: q|Q(sentiment=senti), exportData.cleaned_data['sentiment'], Q())
+            cluster_filter = reduce(lambda q,id: q|Q(cluster=id), exportData.cleaned_data['clusters'], Q())
+
             if is_all_posts:
-                data = Post.objects.all()[:1000]
-                # data = Post.objects.filter(Q(sentiment="pos")|Q(sentiment="neg")|Q(sentiment="neutral"))[:1000]
+                # data = Post.objects.all()
+                data = Post.objects.filter(sentiment_filter).filter(cluster_filter)[:1000]
             else:
-                data = Post.objects.filter(creation_date__range=(start_date, end_date))[:1000]
+                data = Post.objects.filter(creation_date__range=(start_date, end_date)).filter(sentiment_filter).filter(cluster_filter)[:1000]
 
             # Generate a sequence of rows. The range is based on the maximum number of
             # rows that can be handled by a single sheet in most spreadsheet
@@ -293,12 +296,17 @@ def exportdata(request):
             rows = ([post.post_id, post.thread_id, post.message_id,
                      post.forum_id, post.user_id, post.category_id,
                      post.subject, post.body, post.username, post.creation_date,
-                     post.modification_date, post.stemmed_body, post.probpositive,
+                     post.stemmed_body, post.cluster, post.probpositive,
                      post.probneutral, post.probnegative, post.sentiment]
                     for post in data)
 
             pseudo_buffer = Echo()
             writer = csv.writer(pseudo_buffer)
+            writer.writerow(['post_id', 'thread_id', 'message_id',
+                     'forum_id', 'user_id', 'category_id',
+                     'subject', 'body', 'username', 'creation_date',
+                     'stemmed_body', 'cluster_id', 'probpositive',
+                     'probneutral', 'probnegative', 'sentiment'])
             response = StreamingHttpResponse((writer.writerow(row) for row in rows),
                                              content_type="text/csv")
             response['Content-Disposition'] = 'attachment; filename="sift.csv"'
