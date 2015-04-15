@@ -292,20 +292,25 @@ def exportdata(request):
             # Generate a sequence of rows. The range is based on the maximum number of
             # rows that can be handled by a single sheet in most spreadsheet
             # applications.
+            # rows = ('post_id', 'thread_id', 'message_id',
+            #          'forum_id', 'user_id', 'category_id',
+            #          'subject', 'body', 'username', 'creation_date',
+            #          'stemmed_body', 'cluster_id', 'probpositive',
+            #          'probneutral', 'probnegative', 'sentiment')
             rows = ([post.post_id, post.thread_id, post.message_id,
                      post.forum_id, post.user_id, post.category_id,
                      post.subject, post.body, post.username, post.creation_date,
-                     post.stemmed_body, post.cluster, post.probpositive,
+                     post.stemmed_body, post.cluster.clusterid, post.probpositive,
                      post.probneutral, post.probnegative, post.sentiment]
                     for post in data)
 
             pseudo_buffer = Echo()
             writer = csv.writer(pseudo_buffer)
-            writer.writerow(['post_id', 'thread_id', 'message_id',
-                     'forum_id', 'user_id', 'category_id',
-                     'subject', 'body', 'username', 'creation_date',
-                     'stemmed_body', 'cluster_id', 'probpositive',
-                     'probneutral', 'probnegative', 'sentiment'])
+            # writer.writerow(['post_id', 'thread_id', 'message_id',
+            #          'forum_id', 'user_id', 'category_id',
+            #          'subject', 'body', 'username', 'creation_date',
+            #          'stemmed_body', 'cluster_id', 'probpositive',
+            #          'probneutral', 'probnegative', 'sentiment'])
             response = StreamingHttpResponse((writer.writerow(row) for row in rows),
                                              content_type="text/csv")
             response['Content-Disposition'] = 'attachment; filename="sift.csv"'
