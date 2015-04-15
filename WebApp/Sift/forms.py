@@ -1,7 +1,6 @@
 from Sift.models import StopWord, Cluster, Post
 from django import forms
 from functools import partial
-from functools import reduce
 import datetime
 import os
 
@@ -70,7 +69,7 @@ class ExportData(forms.Form):
 
     start_date = forms.DateField(label="Start Date", widget=DateInput(),
                                  initial=monthdelta(datetime.date.today(),
-                                                    -12).strftime('%m/%d/%Y'),
+                                                    -1).strftime('%m/%d/%Y'),
                                  required=False)
     end_date = forms.DateField(
         label="End Date", widget=DateInput(),
@@ -80,6 +79,3 @@ class ExportData(forms.Form):
                                           choices=SENTI_CHOICES)
     clusters = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"checked":""}),
                                           choices=CLUSTER_CHOICES)
-
-    # all_clusters = forms.BooleanField(required=False)
-    # cluster_type = forms.ChoiceField(widget=forms.Select, choices=CHOICES)

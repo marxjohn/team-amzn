@@ -17,8 +17,6 @@
 <div id="top">
 <h1>Export Data</h1>
 <h3>Specify the parameters below:</h3>
-<div id="formClustering">
-<div id="runClustering">
 <form action="/csv/" method="POST">
     {% csrf_token %}
     <div class="line">
@@ -38,11 +36,11 @@
             {{ form.clusters }}
         </div>
     </div>
-    <input type="submit" name="Download"/>
+    <input type="submit" value="Download" name="Download"/>
 </form>
 </div>
-</div>
-</div>
+<p>*Large Quantities of Data will take longer to download*</p>
+
 <script>
 String.prototype.replaceWith = function(f, t) {
     var regExp = new RegExp(f, "g");
