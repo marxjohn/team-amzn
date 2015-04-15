@@ -10,7 +10,7 @@ from Sift.scikit_utilities import create_cluster_data
 from Sift.Notification import *
 from Sift.clustering import run_creation_clustering
 from scikit_utilities import create_cluster_data
-from WebApp.Sift.scikit_utilities import find_min_and_max_date
+from Sift.scikit_utilities import find_min_and_max_date
 
 pymysql.install_as_MySQLdb()
 django.setup()

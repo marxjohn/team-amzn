@@ -8,8 +8,8 @@ from django.core.cache import cache
 import Sift.clustering as clustering
 from Sift.models import Post
 from Sift.Notification import *
-from WebApp.Sift.scikit_utilities import find_min_and_max_date, create_cluster_data
-from WebApp.Sift.clustering import run_creation_clustering
+from Sift.scikit_utilities import find_min_and_max_date, create_cluster_data
+from Sift.clustering import run_creation_clustering
 
 
 __author__ = 'cse498'
