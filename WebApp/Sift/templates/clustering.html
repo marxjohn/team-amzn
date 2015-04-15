@@ -139,7 +139,7 @@ $(document).ready(function() {
         tableData.addRow([new Date({{ item.run_date }}), new Date({{ item.start_date }}), new Date({{ item.end_date }}),
         {{ item.num_clusters }}, {{ item.num_features }}, {{ item.batch_size }},
         {{ item.sample_size }}, {{ item.num_posts }}, {{ item.normalized_inertia }}, {{ item.silo_score }},
-           '<a href=" {{ item.data_dump_url }} ">Hello</a>' ]);
+           '<a href=" {{ item.data_dump_url }} ">PDF</a>' ]);
     {% endfor %}
     var myTable = new google.visualization.ChartWrapper({
         'chartType': 'Table',
