@@ -24,14 +24,14 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,is
     if isAllPosts:
         start_date = "2000-01-01"
         end_date = datetime.date.today().strftime('%Y-%m-%d')
-    # self.update_state(state='FETCHING_POSTS')
+    self.update_state(state='FETCHING_POSTS')
     dataset = clustering.ClusterData(
         Post.objects.filter(creation_date__range=(start_date, end_date)))
-    # self.update_state(state='RUNNING_CLUSTERING')
+    self.update_state(state='RUNNING_CLUSTERING')
     clustering.run_diagnostic_clustering(
         dataset, start_date, end_date, max_features,
         num_clusters, .85, 20, 50, 150)
-    # self.update_state(state='SENDING_NOTIFICATIONS')
+    self.update_state(state='SENDING_NOTIFICATIONS')
     # send email
     email = SNSNotification()
     email.make_arn_list()
@@ -46,7 +46,7 @@ def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,is
         email.set_subject('DiagnosticClustering')
 
         email.publication()
-    # self.update_state(state='CLUSTERING_COMPLETED')
+    self.update_state(state='CLUSTERING_COMPLETED')
     cache.clear()
 
 
