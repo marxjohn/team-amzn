@@ -334,6 +334,7 @@ def _create_cluster_run(km, c_param):
     cr.save()
     # Django trickery with getting the id of the model (probably should be changed somehow)
     # But it works....
+    print("/n/n/n/n/n/n/n LOOK AT ME!!!!" + str(cr.run_date) + "/n" * 15)
     cr_with_id = ClusterRun.objects.get(run_date=cr.run_date)
     cr_with_id.data_dump_url = "https://s3-us-west-2.amazonaws.com/cluster-runs/" + cr_with_id.id.__str__()
     cr_with_id.save()
@@ -368,4 +369,5 @@ def run_creation_clustering(data_set, start_date, end_date, max_features,
                                end_date=end_date, is_mini_used=True,
                                is_visualization_enabled=False)
 
-    return cluster_posts(data_set, c_param)
+    cluster_run = cluster_posts(data_set, c_param)
+    return cluster_run, c_param.pdf_lines
