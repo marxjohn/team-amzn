@@ -16,7 +16,7 @@ import numpy as np
 import django
 
 from Sift.models import Post, Cluster, ClusterWord, ClusterRun, StopWord
-from WebApp.Sift.scikit_utilities import StemmedTfidfVectorizer
+from Sift.scikit_utilities import StemmedTfidfVectorizer
 
 
 pymysql.install_as_MySQLdb()

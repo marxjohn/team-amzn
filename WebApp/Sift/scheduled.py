@@ -2,11 +2,11 @@ from __future__ import absolute_import
 
 from datetime import datetime
 from Sift.models import *
-from WebApp.Sift.clustering import run_diagnostic_clustering
-from WebApp.Sift.classification import run_classification
-from WebApp.Sift.Notification import *
-from WebApp.Sift.pdf_generator import create_pdf
-from WebApp.Sift.scikit_utilities import create_cluster_data
+from Sift.clustering import run_diagnostic_clustering
+from Sift.classification import run_classification
+from Sift.Notification import *
+from Sift.pdf_generator import create_pdf
+from Sift.scikit_utilities import create_cluster_data
 
 
 import pymysql
