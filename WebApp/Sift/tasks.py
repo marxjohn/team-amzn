@@ -16,8 +16,7 @@ __author__ = 'cse498'
 
 
 @shared_task(bind=True)
-def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
-                             isMiniBatch, isAllPosts):
+def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,isAllPosts):
     t0 = time()
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
