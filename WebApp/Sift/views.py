@@ -21,7 +21,7 @@ from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
 
 
-@cache_page(60 * 60)
+# @cache_page(60 * 60)
 def general(request):
     headline = "General Analytics"
     all_clusters = Cluster.objects.all()
@@ -81,7 +81,7 @@ def general(request):
     return render(request, 'general_analytics.html', context)
 
 
-@cache_page(60 * 60)
+# @cache_page(60 * 60)
 def details(request, cluster_id):
     # start_date =
     # end_date =
@@ -103,24 +103,22 @@ def details(request, cluster_id):
             posts_count[date] = {
                 "numPosts": 1}
 
+    #grab random 500 posts for sample showing
     rand_posts = np.random.choice(posts, 500, replace=False)
     sample_posts = []
     for post in rand_posts:
         date = int(time.mktime(post["creation_date"].timetuple())) * 1000
-        # sample_posts.append(date)
         try:
             body = html.document_fromstring(post['body']).text_content()
         except:
             body = post['body']
-        # sample_posts.append(body)
         # Add sentiment
         if post['sentiment'] is None:
             sentiment ='null'
         else:
             sentiment = post['sentiment']
-        # sample_posts.append(sentiment)
         p = {"date": date, "body": body, "sentiment": sentiment}
-        # sample_posts.append(p)
+        sample_posts.append(p)
 
     # Cluster word count
     wordPieData = [['Word', 'Instances']]
@@ -139,7 +137,7 @@ def details(request, cluster_id):
                           round((s_pos / s_all) * 100, 2)])
 
     context = {'allClusters': all_clusters, "headline": headline,
-               'cluster': cluster, 'posts_count': posts_count, 'rand_posts': rand_posts,
+               'cluster': cluster, 'posts_count': posts_count, 'rand_posts': sample_posts,
                'wordPieData': wordPieData, 'sentimentData': sentimentData}
 
     return render(request, 'details.html', context)

@@ -172,15 +172,15 @@ var chart = new google.visualization.ColumnChart(document.getElementById("line_c
  * @returns {google.visualization.ControlWrapper}
  */
 function draw_table(data) {
-
+console.log(data);
     var lineChartData = new google.visualization.DataTable();
 
     lineChartData.addColumn('date', 'Date');
     lineChartData.addColumn('string', 'Sentiment');
     lineChartData.addColumn('string', 'Post');
-    for (post in data) {
+    for (key in data) {
         lineChartData.addRows([
-            [new Date(parseInt(post['date'])), post['sentiments'], post['body']]
+            [new Date(parseInt(data[key]['date'])), data[key]['sentiment'], data[key]['body']]
         ]);
     }
     // Create a dashboard.
