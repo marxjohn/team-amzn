@@ -84,9 +84,11 @@ def general(request):
 
 @cache_page(60 * 60)
 def details(request, cluster_id):
+    #default start and end date are today to 3 months before
     start_date = Sift.forms.monthdelta(datetime.date.today(),-3).strftime('%Y-%m-%d')
     end_date = datetime.date.today().strftime('%Y-%m-%d')
 
+    #if form is submitted, we grab the new specified dates
     if request.method == 'POST':
         dates = Sift.forms.ClusterDetails(request.POST)
         if dates.is_valid():

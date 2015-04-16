@@ -17,7 +17,6 @@
     <div id="dashboard">
         <div id="left">
             <div id="line_chart"></div>
-            <div id="searchTable"></div>
             <form method="POST">
                 {% csrf_token %}
                 Date Range:
@@ -25,6 +24,8 @@
                 {{ form.end_date }}
                 <input type="submit" name="Fetch Posts"/>
             </form>
+            <br>
+            <div id="searchTable"></div>
         </div>
         <div id="piechart_3d"></div>
     </div>
