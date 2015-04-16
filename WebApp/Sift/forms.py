@@ -77,3 +77,14 @@ class ExportData(forms.Form):
                                           choices=SENTI_CHOICES)
     clusters = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"checked":""}),
                                           choices=CLUSTER_CHOICES)
+
+
+class ClusterDetails(forms.Form):
+
+    start_date = forms.DateField(label="Start Date", widget=DateInput(),
+                                 initial=monthdelta(datetime.date.today(),
+                                                    -3).strftime('%m/%d/%Y'),
+                                 required=True)
+    end_date = forms.DateField(
+        label="End Date", widget=DateInput(),
+        initial=datetime.date.today().strftime('%m/%d/%Y'), required=True)

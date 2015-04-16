@@ -172,7 +172,6 @@ var chart = new google.visualization.ColumnChart(document.getElementById("line_c
  * @returns {google.visualization.ControlWrapper}
  */
 function draw_table(data) {
-console.log(data);
     var lineChartData = new google.visualization.DataTable();
 
     lineChartData.addColumn('date', 'Date');

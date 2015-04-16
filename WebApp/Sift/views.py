@@ -20,8 +20,9 @@ from Sift.tasks import cluster_posts_with_input, create_new_clusters
 from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
 
+import datetime
 
-# @cache_page(60 * 60)
+@cache_page(60 * 60)
 def general(request):
     headline = "General Analytics"
     all_clusters = Cluster.objects.all()
@@ -81,11 +82,17 @@ def general(request):
     return render(request, 'general_analytics.html', context)
 
 
-# @cache_page(60 * 60)
+@cache_page(60 * 60)
 def details(request, cluster_id):
-    # start_date =
-    # end_date =
-    # if request.method == 'POST':
+    start_date = Sift.forms.monthdelta(datetime.date.today(),-3).strftime('%Y-%m-%d')
+    end_date = datetime.date.today().strftime('%Y-%m-%d')
+
+    if request.method == 'POST':
+        dates = Sift.forms.ClusterDetails(request.POST)
+        if dates.is_valid():
+            start_date = dates.cleaned_data['start_date']
+            end_date = dates.cleaned_data['end_date']
+
 
     headline = "Topic Analytics"
     cluster = get_object_or_404(Cluster, pk=cluster_id)
@@ -94,7 +101,7 @@ def details(request, cluster_id):
     # data
     posts_count = {}
     posts = Post.objects.values(
-        'creation_date', 'sentiment', 'body').filter(cluster=cluster_id)
+        'creation_date', 'sentiment', 'body').filter(cluster=cluster_id).filter(creation_date__range=(start_date, end_date))
     for post in posts:
         date = int(time.mktime(post["creation_date"].timetuple())) * 1000
         if date in posts_count:
@@ -136,7 +143,9 @@ def details(request, cluster_id):
     sentimentData.append(["All Posts", round((s_neg / s_all) * 100, 2), round((s_neutral / s_all) * 100, 2),
                           round((s_pos / s_all) * 100, 2)])
 
-    context = {'allClusters': all_clusters, "headline": headline,
+    form = Sift.forms.ClusterDetails()
+
+    context = {'allClusters': all_clusters, "headline": headline, "form": form,
                'cluster': cluster, 'posts_count': posts_count, 'rand_posts': sample_posts,
                'wordPieData': wordPieData, 'sentimentData': sentimentData}
 

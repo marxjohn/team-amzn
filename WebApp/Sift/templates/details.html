@@ -4,6 +4,9 @@
     {% include 'sidebar.html' %}
 {% endblock %}
 {% block head %}
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 {% endblock %}
 {% block body_block %}
     <h1 id="bodyTitle" style="width:40%;">{{ cluster.name }}</h1>
@@ -15,20 +18,29 @@
         <div id="left">
             <div id="line_chart"></div>
             <div id="searchTable"></div>
+            <form method="POST">
+                {% csrf_token %}
+                Date Range:
+                {{ form.start_date }}
+                {{ form.end_date }}
+                <input type="submit" name="Fetch Posts"/>
+            </form>
         </div>
         <div id="piechart_3d"></div>
     </div>
 <div id="table_chart"></div>
-    {% autoescape off %}
-        <script>
-        $(document).ready(function() {
-             var title = "Date";
-             var width = "150px !important";
-             $('.google-visualization-table-th:contains(' + title + ')').css('width', width);
-             drawClusterSentimentChart({{ sentimentData }});
-            drawWordPieChart({{ wordPieData }});
-        });
-        var url = window.location;
+
+{% autoescape off %}
+<script>
+$(document).ready(function() {
+$('.datepicker').datepicker();
+     var title = "Date";
+     var width = "150px !important";
+     $('.google-visualization-table-th:contains(' + title + ')').css('width', width);
+     drawClusterSentimentChart({{ sentimentData }});
+    drawWordPieChart({{ wordPieData }});
+});
+var url = window.location;
 // Will only work if string in href matches with location
 $('ul.nav a[href="'+ url +'"]').parent().addClass('active');
 
@@ -40,19 +52,20 @@ $('ul.nav a').filter(function() {
             google.load('visualization', '1', {packages: ['controls']});
             google.setOnLoadCallback(draw_column_chart({{ posts_count }}));
             google.setOnLoadCallback(draw_table({{ rand_posts }}));
-        </script>
+</script>
+
 <script>
-    //this allows for responsive design
-    $(window).resize(function(){
-        {% autoescape off %}
-        console.log({{ cluster_posts }});
-            drawWordPieChart({{ wordPieData }});
-            drawClusterSentimentChart({{ sentimentData }});
-            draw_column_chart({{ posts_count }});
-            draw_table({{ rand_posts }});
-        {% endautoescape %}
-    });
-    </script>
+//this allows for responsive design
+$(window).resize(function(){
+    {% autoescape off %}
+    console.log({{ cluster_posts }});
+        drawWordPieChart({{ wordPieData }});
+        drawClusterSentimentChart({{ sentimentData }});
+        draw_column_chart({{ posts_count }});
+        draw_table({{ rand_posts }});
+    {% endautoescape %}
+});
+</script>
     {% endautoescape %}
 
 {% endblock %}
