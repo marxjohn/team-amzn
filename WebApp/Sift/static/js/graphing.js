@@ -132,9 +132,9 @@ function draw_column_chart(data) {
     var lineChartData = new google.visualization.DataTable();
 
     lineChartData.addColumn('date', 'Date');
-    lineChartData.addColumn('number', 'Negative');
-    lineChartData.addColumn('number', 'Neutral');
-    lineChartData.addColumn('number', 'Positive');
+    lineChartData.addColumn('number', 'Negative Posts');
+    lineChartData.addColumn('number', 'Neutral Posts');
+    lineChartData.addColumn('number', 'Positive Posts');
     for (key in data) {
         lineChartData.addRows([
             [new Date(parseInt(key)), data[key]['neg'], data[key]['neutral'], data[key]['pos']]
@@ -146,21 +146,16 @@ var options = {
          'ui': {
             'cssClass':'spikeGraph'
         },
-    view: {
-            columns: [0, 1]
-        },
+        view: {columns: [0, 1]},
         fontName: "Lato",
         colors: ['#DC3912', '#95a5a6','#109618'],
         'tooltip': {isHtml:true},
-        vAxis: {
-            'gridlines': {
-                color: 'transparent'
-            },
-            baselineColor: 'transparent'
-        },
-        //legend: { position: 'top', maxLines: 3 },
-        //bar: { groupWidth: '75%' },
-        isStacked: true
+        legend: { position: 'top', maxLines: 3 },
+        bar: { groupWidth: '80%' },
+        isStacked: true,
+        hAxis: {gridlineColor: '#fff'},
+        vAxis: {gridlineColor: '#fff'},
+    width: "100%"
       };
 
 var chart = new google.visualization.ColumnChart(document.getElementById("line_chart"));
