@@ -8,6 +8,7 @@ from django.views.decorators.cache import cache_page
 
 import os
 import csv
+import numpy as np
 from django.db.models import Q
 from django.http import StreamingHttpResponse
 from functools import reduce
@@ -23,11 +24,10 @@ from Sift.forms import StopwordDelete, StopwordAdd
 @cache_page(60 * 60)
 def general(request):
     headline = "General Analytics"
-    trendingClusters = Cluster.objects.filter(ispinned=0)
-    pinnedClusters = Cluster.objects.filter(ispinned=1)
+    all_clusters = Cluster.objects.all()
 
     pieData = [['Forum ID', 'Number of Posts']]
-    for cluster in trendingClusters:
+    for cluster in all_clusters:
         pieData.append(
             [cluster.name,
              Post.objects.filter(cluster=cluster.clusterid).count()])
@@ -41,7 +41,7 @@ def general(request):
                           round((s_pos / s_all) * 100, 2)])
 
     # Calculate sentiment data for each cluster
-    for cluster in trendingClusters:
+    for cluster in all_clusters:
         s_neg = Post.objects.filter(cluster=cluster.clusterid, sentiment="neg").count()
         s_neutral = Post.objects.filter(cluster=cluster.clusterid, sentiment="neutral").count()
         s_pos = Post.objects.filter(cluster=cluster.clusterid, sentiment="pos").count()
@@ -51,7 +51,7 @@ def general(request):
 
     lineClusterNames = []
 
-    for cluster in trendingClusters:
+    for cluster in all_clusters:
         lineClusterNames.append(cluster.name)
 
     lineDates = []
@@ -72,8 +72,7 @@ def general(request):
             except:
                 pass
 
-    context = {'pinnedClusters': pinnedClusters, 'trendingClusters':
-        trendingClusters, "headline": headline,
+    context = {'allClusters': all_clusters, "headline": headline,
                'pieData': pieData,
                'lineData': lineData, 'lineDates': lineDates,
                'lineClusterNames': lineClusterNames,
@@ -84,33 +83,44 @@ def general(request):
 
 @cache_page(60 * 60)
 def details(request, cluster_id):
+    # start_date =
+    # end_date =
+    # if request.method == 'POST':
+
     headline = "Topic Analytics"
     cluster = get_object_or_404(Cluster, pk=cluster_id)
-    trendingClusters = Cluster.objects.filter(ispinned=0)
-    pinnedClusters = Cluster.objects.filter(ispinned=1)
+    all_clusters = Cluster.objects.all()
 
     # data
-    cluster_posts = {}
+    posts_count = {}
     posts = Post.objects.values(
         'creation_date', 'sentiment', 'body').filter(cluster=cluster_id)
     for post in posts:
         date = int(time.mktime(post["creation_date"].timetuple())) * 1000
-        if date in cluster_posts:
-            cluster_posts[date]['numPosts'] += 1
+        if date in posts_count:
+            posts_count[date]['numPosts'] += 1
         else:
-            cluster_posts[date] = {
-                "numPosts": 1, "posts": [], "sentiments": []}
+            posts_count[date] = {
+                "numPosts": 1}
+
+    rand_posts = np.random.choice(posts, 500, replace=False)
+    sample_posts = []
+    for post in rand_posts:
+        date = int(time.mktime(post["creation_date"].timetuple())) * 1000
+        # sample_posts.append(date)
         try:
             body = html.document_fromstring(post['body']).text_content()
         except:
             body = post['body']
-        cluster_posts[date]['posts'].append(body)
-
+        # sample_posts.append(body)
         # Add sentiment
         if post['sentiment'] is None:
-            cluster_posts[date]['sentiments'].append('null')
+            sentiment ='null'
         else:
-            cluster_posts[date]['sentiments'].append(post['sentiment'])
+            sentiment = post['sentiment']
+        # sample_posts.append(sentiment)
+        p = {"date": date, "body": body, "sentiment": sentiment}
+        # sample_posts.append(p)
 
     # Cluster word count
     wordPieData = [['Word', 'Instances']]
@@ -128,9 +138,8 @@ def details(request, cluster_id):
     sentimentData.append(["All Posts", round((s_neg / s_all) * 100, 2), round((s_neutral / s_all) * 100, 2),
                           round((s_pos / s_all) * 100, 2)])
 
-    context = {'pinnedClusters': pinnedClusters,
-               'trendingClusters': trendingClusters, "headline": headline,
-               'cluster': cluster, 'cluster_posts': cluster_posts,
+    context = {'allClusters': all_clusters, "headline": headline,
+               'cluster': cluster, 'posts_count': posts_count, 'rand_posts': rand_posts,
                'wordPieData': wordPieData, 'sentimentData': sentimentData}
 
     return render(request, 'details.html', context)

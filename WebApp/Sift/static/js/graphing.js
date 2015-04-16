@@ -40,10 +40,6 @@ function drawSentimentChart(array) {
         legend: {
           position:"none"
         },
-        //chartArea: {
-        //    width:"100%",
-        //    height:"100%"
-        //},
         isStacked: true,
         fontName: "Lato",
         colors: ['#DC3912', '#95a5a6','#109618'],
@@ -131,7 +127,7 @@ function drawWordPieChart(array) {
  * @param data the js data from python views.py
  * @returns {google.visualization.ControlWrapper}
  */
-function draw_dashboard1(data) {
+function draw_column_chart(data) {
 
     var lineChartData = new google.visualization.DataTable();
 
@@ -144,89 +140,52 @@ function draw_dashboard1(data) {
 
     }
 
-    // Create a dashboard.
-    var dash_container = document.getElementById('dashboard'),
-        myDashboard = new google.visualization.Dashboard(dash_container);
-
-
-    // Create a date range slider
-    var myDateSlider = new google.visualization.ControlWrapper({
-        'controlType': 'DateRangeFilter',
-        'containerId': 'main_slider',
-        'options': {
-            'filterColumnLabel': 'Date',
-            'ui': {
-                'cssClass': 'sliderClass',
-                'label':''
-            }
-        }
-    });
-    // Line chart visualization
-    var myLine = new google.visualization.ChartWrapper({
-        'chartType': 'ColumnChart',
-        'containerId': 'line_chart',
-        'ui': {
+var options = {
+         'ui': {
             'cssClass':'spikeGraph'
         },
-        view: {
+    view: {
             columns: [0, 1]
         },
-        'options': {
             fontName: "Lato",
             'colors': ['#F5881D'],
-            'tooltip': {isHtml:true}
-        },
+            'tooltip': {isHtml:true},
         vAxis: {
             'gridlines': {
                 color: 'transparent'
             },
             baselineColor: 'transparent'
         }
-    });
+        //legend: { position: 'top', maxLines: 3 },
+        //bar: { groupWidth: '75%' },
+        //isStacked: true
+      };
+
+var chart = new google.visualization.ColumnChart(document.getElementById("line_chart"));
+      chart.draw(lineChartData, options);
 
 
-    // Bind myLine to the dashboard, and to the controls
-    // this will make sure our line chart is update when our date changes
-    myDashboard.bind(myDateSlider, myLine);
-
-    myDashboard.draw(lineChartData);
-
-    return myDateSlider;
 }
 /**
  * draws the table of posts and their dates
  * @param data from python views.py
  * @returns {google.visualization.ControlWrapper}
  */
-function draw_dashboard2(data) {
-
-    console.log(data);
+function draw_table(data) {
 
     var lineChartData = new google.visualization.DataTable();
 
     lineChartData.addColumn('date', 'Date');
     lineChartData.addColumn('string', 'Sentiment');
     lineChartData.addColumn('string', 'Post');
-    for (key in data) {
-        for (i = 0; i < data[key]['posts'].length; i++) {
-            lineChartData.addRows([
-                [new Date(parseInt(key)), data[key]['sentiments'][i], data[key]['posts'][i]]
-            ]);
-        }
+    for (post in data) {
+        lineChartData.addRows([
+            [new Date(parseInt(post['date'])), post['sentiments'], post['body']]
+        ]);
     }
     // Create a dashboard.
     var dash_container = document.getElementById('dashboard'),
         myDashboard = new google.visualization.Dashboard(dash_container);
-
-
-    // Create a date range slider
-    var myDateSlider = new google.visualization.ControlWrapper({
-        'controlType': 'DateRangeFilter',
-        'containerId': 'hidden_slider',
-        'options': {
-            'filterColumnLabel': 'Date'
-        }
-    });
 
     // Create a searchbar
     var searchBar = new google.visualization.ControlWrapper({
@@ -252,16 +211,8 @@ function draw_dashboard2(data) {
         }
     });
 
-
-    // Bind myTable to the dashboard, and to the controls
-    // this will make sure our table is update when our date changes
-    myDashboard.bind(myDateSlider, myTable);
     myDashboard.bind(searchBar, myTable);
-
-
     myDashboard.draw(lineChartData);
-    return myDateSlider;
-
 }
 
 function drawClusterSentimentChart(array) {

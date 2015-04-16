@@ -14,7 +14,6 @@
     <link rel="stylesheet" href="{% static 'css/exportdata.css' %}">
 {% endblock %}
 {% block body_block %}
-<div id="top">
 <h1>Export Data</h1>
 <h3>Specify the parameters below:</h3>
 <form action="/csv/" method="POST">
@@ -37,8 +36,7 @@
         </div>
     </div>
     <input type="submit" value="Download" name="Download"/>
-</form>
-</div>
+</form><br>
 <p>*Large Quantities of Data will take longer to download*</p>
 
 <script>
