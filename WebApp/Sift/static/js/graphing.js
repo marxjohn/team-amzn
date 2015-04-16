@@ -132,10 +132,12 @@ function draw_column_chart(data) {
     var lineChartData = new google.visualization.DataTable();
 
     lineChartData.addColumn('date', 'Date');
-    lineChartData.addColumn('number', 'Posts');
+    lineChartData.addColumn('number', 'Negative');
+    lineChartData.addColumn('number', 'Neutral');
+    lineChartData.addColumn('number', 'Positive');
     for (key in data) {
         lineChartData.addRows([
-            [new Date(parseInt(key)), data[key]['numPosts']]
+            [new Date(parseInt(key)), data[key]['neg'], data[key]['neutral'], data[key]['pos']]
         ]);
 
     }
@@ -147,18 +149,18 @@ var options = {
     view: {
             columns: [0, 1]
         },
-            fontName: "Lato",
-            'colors': ['#F5881D'],
-            'tooltip': {isHtml:true},
+        fontName: "Lato",
+        colors: ['#DC3912', '#95a5a6','#109618'],
+        'tooltip': {isHtml:true},
         vAxis: {
             'gridlines': {
                 color: 'transparent'
             },
             baselineColor: 'transparent'
-        }
+        },
         //legend: { position: 'top', maxLines: 3 },
         //bar: { groupWidth: '75%' },
-        //isStacked: true
+        isStacked: true
       };
 
 var chart = new google.visualization.ColumnChart(document.getElementById("line_chart"));

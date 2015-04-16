@@ -100,17 +100,26 @@ def details(request, cluster_id):
     cluster = get_object_or_404(Cluster, pk=cluster_id)
     all_clusters = Cluster.objects.all()
 
-    # data
+    # count posts per day
     posts_count = {}
-    posts = Post.objects.values(
-        'creation_date', 'sentiment', 'body').filter(cluster=cluster_id).filter(creation_date__range=(start_date, end_date))
+    posts = Post.objects.values('creation_date', 'sentiment', 'body').filter(cluster=cluster_id).filter(creation_date__range=(start_date, end_date))
     for post in posts:
         date = int(time.mktime(post["creation_date"].timetuple())) * 1000
         if date in posts_count:
-            posts_count[date]['numPosts'] += 1
+            if post['sentiment'] == 'neg':
+                posts_count[date]['neg'] += 1
+            if post['sentiment'] == 'pos':
+                posts_count[date]['pos'] += 1
+            if post['sentiment'] == 'neutral':
+                posts_count[date]['neutral'] += 1
         else:
-            posts_count[date] = {
-                "numPosts": 1}
+            posts_count[date] = {"neg": 0, "pos": 0, "neutral": 0}
+            if post['sentiment'] == 'neg':
+                posts_count[date]['neg'] += 1
+            if post['sentiment'] == 'pos':
+                posts_count[date]['pos'] += 1
+            if post['sentiment'] == 'neutral':
+                posts_count[date]['neutral'] += 1
 
     #grab random 500 posts for sample showing
     rand_posts = np.random.choice(posts, 500, replace=False)
