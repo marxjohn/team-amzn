@@ -1,7 +1,6 @@
 from Sift.models import StopWord, Cluster, Post
 from django import forms
 from functools import partial
-from functools import reduce
 import datetime
 import os
 
@@ -9,7 +8,6 @@ __author__ = 'cse498'
 
 DateInput = partial(forms.DateInput, {'class': 'datepicker'})
 
-CHOICES = (('1', 'Mini-Batch'), ('2', 'K-Means'))
 SENTI_CHOICES = (('pos', 'Positive'), ('neutral', 'Neutral'), ('neg', 'Negative'))
 CLUSTER_CHOICES = [(i.clusterid, i.name) for i in Cluster.objects.all()]
 
@@ -37,7 +35,6 @@ class ClusterForm(forms.Form):
     num_clusters = forms.IntegerField(label="Number of Clusters", initial=8)
     max_features = forms.IntegerField(
         label="Max Number of Features", initial=1000)
-    cluster_type = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
     is_creation_clustering = forms.BooleanField(required=False)
 
 
@@ -70,7 +67,7 @@ class ExportData(forms.Form):
 
     start_date = forms.DateField(label="Start Date", widget=DateInput(),
                                  initial=monthdelta(datetime.date.today(),
-                                                    -12).strftime('%m/%d/%Y'),
+                                                    -1).strftime('%m/%d/%Y'),
                                  required=False)
     end_date = forms.DateField(
         label="End Date", widget=DateInput(),
@@ -81,5 +78,13 @@ class ExportData(forms.Form):
     clusters = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple(attrs={"checked":""}),
                                           choices=CLUSTER_CHOICES)
 
-    # all_clusters = forms.BooleanField(required=False)
-    # cluster_type = forms.ChoiceField(widget=forms.Select, choices=CHOICES)
+
+class ClusterDetails(forms.Form):
+
+    start_date = forms.DateField(label="Start Date", widget=DateInput(),
+                                 initial=monthdelta(datetime.date.today(),
+                                                    -3).strftime('%m/%d/%Y'),
+                                 required=True)
+    end_date = forms.DateField(
+        label="End Date", widget=DateInput(),
+        initial=datetime.date.today().strftime('%m/%d/%Y'), required=True)
