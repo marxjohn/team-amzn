@@ -332,12 +332,11 @@ def _create_cluster_run(km, c_param):
                     sample_size_ratio=1 / c_param.init_size_ratio,
                     silo_score=c_param.s_score, is_creation_run=c_param.is_upload_enabled)
     cr.save()
-    # Django trickery with getting the id of the model (probably should be changed somehow)
-    # But it works....
-    print("/n/n/n/n/n/n/n LOOK AT ME!!!!" + str(cr.run_date) + "/n" * 15)
-    cr_with_id = ClusterRun.objects.get(run_date=cr.run_date)
-    cr_with_id.data_dump_url = "https://s3-us-west-2.amazonaws.com/cluster-runs/" + cr_with_id.id.__str__()
+    # Race condition... Start your engines!
+    cr_with_id = ClusterRun.objects.all().order_by("-id")[:1]
+    cr_with_id.data_dump_url = "https://s3-us-west-2.amazonaws.com/cluster-runs/" + str(cr_with_id.id)
     cr_with_id.save()
+    
     return cr_with_id
 
 
