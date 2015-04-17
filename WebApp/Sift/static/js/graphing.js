@@ -40,14 +40,15 @@ function drawSentimentChart(array) {
         legend: {
           position:"none"
         },
-        //chartArea: {
-        //    width:"100%",
-        //    height:"100%"
-        //},
+        chartArea: {
+            width:"70%",
+            left:"30%",
+            height:"90%"
+        },
         isStacked: true,
         fontName: "Lato",
         colors: ['#DC3912', '#95a5a6','#109618'],
-        bar: {groupWidth: '80%'}
+        //bar: {groupWidth: '60%'}
     };
 
     var chart = new google.visualization.BarChart(document.getElementById('sentiment_barchart'));
