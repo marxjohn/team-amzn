@@ -8,6 +8,7 @@ from django.views.decorators.cache import cache_page
 
 import os
 import csv
+import numpy as np
 from django.db.models import Q
 from django.http import StreamingHttpResponse
 from functools import reduce
@@ -19,15 +20,15 @@ from Sift.tasks import cluster_posts_with_input, create_new_clusters
 from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
 
+import datetime
 
 @cache_page(60 * 60)
 def general(request):
     headline = "General Analytics"
-    trendingClusters = Cluster.objects.filter(ispinned=0)
-    pinnedClusters = Cluster.objects.filter(ispinned=1)
+    all_clusters = Cluster.objects.all()
 
     pieData = [['Forum ID', 'Number of Posts']]
-    for cluster in trendingClusters:
+    for cluster in all_clusters:
         pieData.append(
             [cluster.name,
              Post.objects.filter(cluster=cluster.clusterid).count()])
@@ -41,7 +42,7 @@ def general(request):
                           round((s_pos / s_all) * 100, 2)])
 
     # Calculate sentiment data for each cluster
-    for cluster in trendingClusters:
+    for cluster in all_clusters:
         s_neg = Post.objects.filter(cluster=cluster.clusterid, sentiment="neg").count()
         s_neutral = Post.objects.filter(cluster=cluster.clusterid, sentiment="neutral").count()
         s_pos = Post.objects.filter(cluster=cluster.clusterid, sentiment="pos").count()
@@ -51,7 +52,7 @@ def general(request):
 
     lineClusterNames = []
 
-    for cluster in trendingClusters:
+    for cluster in all_clusters:
         lineClusterNames.append(cluster.name)
 
     lineDates = []
@@ -72,8 +73,7 @@ def general(request):
             except:
                 pass
 
-    context = {'pinnedClusters': pinnedClusters, 'trendingClusters':
-        trendingClusters, "headline": headline,
+    context = {'allClusters': all_clusters, "headline": headline,
                'pieData': pieData,
                'lineData': lineData, 'lineDates': lineDates,
                'lineClusterNames': lineClusterNames,
@@ -84,33 +84,59 @@ def general(request):
 
 @cache_page(60 * 60)
 def details(request, cluster_id):
+    #default start and end date are today to 3 months before
+    start_date = Sift.forms.monthdelta(datetime.date.today(),-3).strftime('%Y-%m-%d')
+    end_date = datetime.date.today().strftime('%Y-%m-%d')
+
+    #if form is submitted, we grab the new specified dates
+    if request.method == 'POST':
+        dates = Sift.forms.ClusterDetails(request.POST)
+        if dates.is_valid():
+            start_date = dates.cleaned_data['start_date']
+            end_date = dates.cleaned_data['end_date']
+
+
     headline = "Topic Analytics"
     cluster = get_object_or_404(Cluster, pk=cluster_id)
-    trendingClusters = Cluster.objects.filter(ispinned=0)
-    pinnedClusters = Cluster.objects.filter(ispinned=1)
+    all_clusters = Cluster.objects.all()
 
-    # data
-    cluster_posts = {}
-    posts = Post.objects.values(
-        'creation_date', 'sentiment', 'body').filter(cluster=cluster_id)
+    # count posts per day
+    posts_count = {}
+    posts = Post.objects.values('creation_date', 'sentiment', 'body').filter(cluster=cluster_id).filter(creation_date__range=(start_date, end_date))
     for post in posts:
         date = int(time.mktime(post["creation_date"].timetuple())) * 1000
-        if date in cluster_posts:
-            cluster_posts[date]['numPosts'] += 1
+        if date in posts_count:
+            if post['sentiment'] == 'neg':
+                posts_count[date]['neg'] += 1
+            if post['sentiment'] == 'pos':
+                posts_count[date]['pos'] += 1
+            if post['sentiment'] == 'neutral':
+                posts_count[date]['neutral'] += 1
         else:
-            cluster_posts[date] = {
-                "numPosts": 1, "posts": [], "sentiments": []}
+            posts_count[date] = {"neg": 0, "pos": 0, "neutral": 0}
+            if post['sentiment'] == 'neg':
+                posts_count[date]['neg'] += 1
+            if post['sentiment'] == 'pos':
+                posts_count[date]['pos'] += 1
+            if post['sentiment'] == 'neutral':
+                posts_count[date]['neutral'] += 1
+
+    #grab random 500 posts for sample showing
+    rand_posts = np.random.choice(posts, 500, replace=False)
+    sample_posts = []
+    for post in rand_posts:
+        date = int(time.mktime(post["creation_date"].timetuple())) * 1000
         try:
             body = html.document_fromstring(post['body']).text_content()
         except:
             body = post['body']
-        cluster_posts[date]['posts'].append(body)
-
         # Add sentiment
         if post['sentiment'] is None:
-            cluster_posts[date]['sentiments'].append('null')
+            sentiment ='null'
         else:
-            cluster_posts[date]['sentiments'].append(post['sentiment'])
+            sentiment = post['sentiment']
+        p = {"date": date, "body": body, "sentiment": sentiment}
+        sample_posts.append(p)
 
     # Cluster word count
     wordPieData = [['Word', 'Instances']]
@@ -128,9 +154,10 @@ def details(request, cluster_id):
     sentimentData.append(["All Posts", round((s_neg / s_all) * 100, 2), round((s_neutral / s_all) * 100, 2),
                           round((s_pos / s_all) * 100, 2)])
 
-    context = {'pinnedClusters': pinnedClusters,
-               'trendingClusters': trendingClusters, "headline": headline,
-               'cluster': cluster, 'cluster_posts': cluster_posts,
+    form = Sift.forms.ClusterDetails()
+
+    context = {'allClusters': all_clusters, "headline": headline, "form": form,
+               'cluster': cluster, 'posts_count': posts_count, 'rand_posts': sample_posts,
                'wordPieData': wordPieData, 'sentimentData': sentimentData}
 
     return render(request, 'details.html', context)
@@ -195,10 +222,6 @@ def clustering(request):
         clusterForm = Sift.forms.ClusterForm(request.POST)
 
         if clusterForm.is_valid():
-            if clusterForm.cleaned_data['cluster_type'] == 1:
-                is_mini_batched = False
-            else:
-                is_mini_batched = True
             if clusterForm.cleaned_data['all_posts'] == 1:
                 is_all_posts = True
             else:
@@ -284,20 +307,19 @@ def exportdata(request):
             cluster_filter = reduce(lambda q,id: q|Q(cluster=id), exportData.cleaned_data['clusters'], Q())
 
             if is_all_posts:
-                # data = Post.objects.all()
-                data = Post.objects.filter(sentiment_filter).filter(cluster_filter)[:1000]
+                data = Post.objects.filter(sentiment_filter).filter(cluster_filter)
             else:
-                data = Post.objects.filter(creation_date__range=(start_date, end_date)).filter(sentiment_filter).filter(cluster_filter)[:1000]
+                data = Post.objects.filter(creation_date__range=(start_date, end_date)).filter(sentiment_filter).filter(cluster_filter)
 
             # Generate a sequence of rows. The range is based on the maximum number of
             # rows that can be handled by a single sheet in most spreadsheet
             # applications.
-            # rows = ('post_id', 'thread_id', 'message_id',
-            #          'forum_id', 'user_id', 'category_id',
-            #          'subject', 'body', 'username', 'creation_date',
-            #          'stemmed_body', 'cluster_id', 'probpositive',
-            #          'probneutral', 'probnegative', 'sentiment')
-            rows = ([post.post_id, post.thread_id, post.message_id,
+            rows = [['post_id', 'thread_id', 'message_id',
+                     'forum_id', 'user_id', 'category_id',
+                     'subject', 'body', 'username', 'creation_date',
+                     'stemmed_body', 'cluster_id', 'probpositive',
+                     'probneutral', 'probnegative', 'sentiment']]
+            rows += ([post.post_id, post.thread_id, post.message_id,
                      post.forum_id, post.user_id, post.category_id,
                      post.subject, post.body, post.username, post.creation_date,
                      post.stemmed_body, post.cluster.clusterid, post.probpositive,
@@ -306,11 +328,6 @@ def exportdata(request):
 
             pseudo_buffer = Echo()
             writer = csv.writer(pseudo_buffer)
-            # writer.writerow(['post_id', 'thread_id', 'message_id',
-            #          'forum_id', 'user_id', 'category_id',
-            #          'subject', 'body', 'username', 'creation_date',
-            #          'stemmed_body', 'cluster_id', 'probpositive',
-            #          'probneutral', 'probnegative', 'sentiment'])
             response = StreamingHttpResponse((writer.writerow(row) for row in rows),
                                              content_type="text/csv")
             response['Content-Disposition'] = 'attachment; filename="sift.csv"'

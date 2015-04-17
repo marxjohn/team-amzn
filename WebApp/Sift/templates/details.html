@@ -4,36 +4,44 @@
     {% include 'sidebar.html' %}
 {% endblock %}
 {% block head %}
-    <script type="text/javascript" src="{% static 'js/draw_all_dashboards.js' %}"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 {% endblock %}
 {% block body_block %}
     <h1 id="bodyTitle" style="width:40%;">{{ cluster.name }}</h1>
     <div id="sentiment_bar_wrap">
-    <h3>Sentiment Analysis</h3>
+    <h3>Overall Sentiment</h3>
         <div id="sentiment_barchart" style="margin-top:-37px;width:calc(100% - 220px);"></div>
 </div>
     <div id="dashboard">
-
         <div id="left">
-            <div id="main_slider"></div>
-            <div id="hidden_slider"></div> <!--this is hidden from page-->
-            <div id="wordPie_slider"></div>
             <div id="line_chart"></div>
+            <form method="POST">
+                {% csrf_token %}
+                Date Range:
+                {{ form.start_date }}
+                {{ form.end_date }}
+                <input type="submit" value="Fetch Posts"/>
+            </form>
+            <br>
             <div id="searchTable"></div>
         </div>
         <div id="piechart_3d"></div>
     </div>
 <div id="table_chart"></div>
-    {% autoescape off %}
-        <script>
-        $(document).ready(function() {
-             var title = "Date";
-             var width = "150px !important";
-             $('.google-visualization-table-th:contains(' + title + ')').css('width', width);
-             drawClusterSentimentChart({{ sentimentData }});
-            drawWordPieChart({{ wordPieData }});
-        });
-        var url = window.location;
+
+{% autoescape off %}
+<script>
+$(document).ready(function() {
+$('.datepicker').datepicker();
+     var title = "Date";
+     var width = "150px !important";
+     $('.google-visualization-table-th:contains(' + title + ')').css('width', width);
+     drawClusterSentimentChart({{ sentimentData }});
+    drawWordPieChart({{ wordPieData }});
+});
+var url = window.location;
 // Will only work if string in href matches with location
 $('ul.nav a[href="'+ url +'"]').parent().addClass('active');
 
@@ -43,20 +51,22 @@ $('ul.nav a').filter(function() {
 }).parent().addClass('active');
             //Call Graphing Functions
             google.load('visualization', '1', {packages: ['controls']});
-            google.setOnLoadCallback(draw_all_dashboards({{ cluster_posts }}));
-        </script>
+            google.setOnLoadCallback(draw_column_chart({{ posts_count }}));
+            google.setOnLoadCallback(draw_table({{ rand_posts }}));
+</script>
+
 <script>
-    //this allows for responsive design
-    $(window).resize(function(){
-        {% autoescape off %}
-        console.log({{ cluster_posts }});
-            drawWordPieChart({{ wordPieData }});
-            drawClusterSentimentChart({{ sentimentData }});
-            draw_dashboard1({{ cluster_posts }});
-            draw_dashboard2({{ cluster_posts }});
-        {% endautoescape %}
-    });
-    </script>
+//this allows for responsive design
+$(window).resize(function(){
+    {% autoescape off %}
+    console.log({{ cluster_posts }});
+        drawWordPieChart({{ wordPieData }});
+        drawClusterSentimentChart({{ sentimentData }});
+        draw_column_chart({{ posts_count }});
+        draw_table({{ rand_posts }});
+    {% endautoescape %}
+});
+</script>
     {% endautoescape %}
 
 {% endblock %}
