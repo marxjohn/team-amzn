@@ -46,23 +46,6 @@ def find_min_and_max_date(c_list):
     end_date = max_date
     return end_date, start_date
 
-
-def send_nightly_runner(email_text):
-    make_nightly_subscription = SNSNotification()
-    make_nightly_subscription.make_arn_list()
-    nightly_subscription = get_nightly_list()
-
-    if nightly_subscription is None:
-        return False
-    else:
-        make_nightly_subscription.set_topic_arn('NightlyRun')
-        make_nightly_subscription.set_message(email_text)
-        make_nightly_subscription.set_subject('NightlyRun')
-
-        make_nightly_subscription.publication()
-        return True
-
-
 def run_clustering(data, posts):
     end_date, start_date = find_min_and_max_date(posts)
     cluster_run, pdf_lines = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
@@ -91,9 +74,7 @@ def main():
     create_pdf(pdf_lines, cluster_run.id)
 
     # Some Magic here involving sending email alerts
-    text = "The status of the clusters are as follows: s_score: " + str(s_score) + ",  s_intertia: " + str(s_inertia)
-    send_nightly_runner(text)
-
+    Notification.Nightly_email( s_score, s_inersia )
 
 if __name__ == '__main__':
     main()
