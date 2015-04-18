@@ -306,36 +306,36 @@ def email_verify():
     email_list = subscription_list.make_verify_email_list()
 
     return( email_list )
-#
-# def get_nightly_list():
-#     subscription_list = SNSNotification()
-#     subscription_list.make_arn_list()
-#     temp = subscription_list.get_arn_list()
-#     nightly_list = []
-#     temp_list = []
-#
-#     for i in temp:
-#         if 'NightlyRun' == i.get_topic():
-#             temp_list = i.get_endpoint()
-#     for i in temp_list:
-#         nightly_list.append(i[0])
-#
-#     return ( nightly_list )
-#
-# def get_important_list():
-#     subscription_list = SNSNotification()
-#     subscription_list.make_arn_list()
-#     temp = subscription_list.get_arn_list()
-#     important_list = []
-#     temp_list = []
-#
-#     for i in temp:
-#         if 'ImportantChanges' == i.get_topic():
-#             temp_list = i.get_endpoint()
-#     for i in temp_list:
-#         important_list.append(i[0])
-#
-#     return ( important_list )
+
+def get_nightly_list():
+    subscription_list = SNSNotification()
+    subscription_list.make_arn_list()
+    temp = subscription_list.get_arn_list()
+    nightly_list = []
+    temp_list = []
+
+    for i in temp:
+        if 'NightlyRun' == i.get_topic():
+            temp_list = i.get_endpoint()
+    for i in temp_list:
+        nightly_list.append(i[0])
+
+    return ( nightly_list )
+
+def get_important_list():
+    subscription_list = SNSNotification()
+    subscription_list.make_arn_list()
+    temp = subscription_list.get_arn_list()
+    important_list = []
+    temp_list = []
+
+    for i in temp:
+        if 'ImportantChanges' == i.get_topic():
+            temp_list = i.get_endpoint()
+    for i in temp_list:
+        important_list.append(i[0])
+
+    return ( important_list )
 
 
 def remove( email_address ):
