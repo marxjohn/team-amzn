@@ -114,16 +114,16 @@ $(document).ready(function() {
     });
     // Table visualization
     var tableData = new google.visualization.DataTable();
-    tableData.addColumn('date', 'RunDate');
-    tableData.addColumn('date', 'StartDate');
-    tableData.addColumn('date', 'EndDate');
+    tableData.addColumn('date', 'Run Date');
+    tableData.addColumn('date', 'Start Date');
+    tableData.addColumn('date', 'End Date');
     tableData.addColumn('number', 'Clusters');
     tableData.addColumn('number', 'Features');
-    tableData.addColumn('number', 'BatchSize');
-    tableData.addColumn('number', 'SampleSize');
+    tableData.addColumn('number', 'Batch Size');
+    tableData.addColumn('number', 'Sample Size');
     tableData.addColumn('number', 'Number of Posts');
     tableData.addColumn('number', 'Normalized Inertia');
-    tableData.addColumn('number', 'SiloScore');
+    tableData.addColumn('number', 'Silhoutte Score');
     tableData.addColumn('string', 'Run Output');
 
     {% for item in runclustering %}
