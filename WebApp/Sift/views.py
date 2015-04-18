@@ -84,6 +84,8 @@ def general(request):
 
 @cache_page(60 * 60)
 def details(request, cluster_id):
+    form = Sift.forms.ClusterDetails()
+
     #default start and end date are today to 3 months before
     start_date = Sift.forms.monthdelta(datetime.date.today(),-3).strftime('%Y-%m-%d')
     end_date = datetime.date.today().strftime('%Y-%m-%d')
@@ -94,6 +96,8 @@ def details(request, cluster_id):
         if dates.is_valid():
             start_date = dates.cleaned_data['start_date']
             end_date = dates.cleaned_data['end_date']
+            form.fields['start_date'].initial = start_date.strftime('%m/%d/%Y')
+            form.fields['end_date'].initial = end_date.strftime('%m/%d/%Y')
 
 
     headline = "Topic Analytics"
@@ -122,7 +126,10 @@ def details(request, cluster_id):
                 posts_count[date]['neutral'] += 1
 
     #grab random 500 posts for sample showing
-    rand_posts = np.random.choice(posts, 500, replace=False)
+    if(posts.count() > 500):
+        rand_posts = np.random.choice(posts, 500, replace=False)
+    else:
+        rand_posts = posts
     sample_posts = []
     for post in rand_posts:
         date = int(time.mktime(post["creation_date"].timetuple())) * 1000
@@ -154,7 +161,7 @@ def details(request, cluster_id):
     sentimentData.append(["All Posts", round((s_neg / s_all) * 100, 2), round((s_neutral / s_all) * 100, 2),
                           round((s_pos / s_all) * 100, 2)])
 
-    form = Sift.forms.ClusterDetails()
+
 
     context = {'allClusters': all_clusters, "headline": headline, "form": form,
                'cluster': cluster, 'posts_count': posts_count, 'rand_posts': sample_posts,
