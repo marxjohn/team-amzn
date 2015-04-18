@@ -32,8 +32,9 @@ class SESMessage( object ):
         __self._bcc_addresses = []
 
         __self.subject = subject
-        __self.text = ''
-        __self.html = None
+        __self.format = 'html'
+        __self.text_body = ''
+        __self.html_body = ''
         __self.attachments = []
 
     def set_source ( __self, source ):
@@ -47,6 +48,9 @@ class SESMessage( object ):
 
     def set_text( __self, text):
         __self.text = __self.text + text
+
+    def set_html( __self, html_text):
+        __self.html_body += html_text
 
     def add_bcc_addresses( __self, bcc_address ):
         if bcc_address in __self._bcc_addresses:
@@ -96,7 +100,7 @@ class SESMessage( object ):
             __self.ses
             if not __self.attachments:
 
-                __self.ses.send_email( __self._source, __self.subject, __self.text or __self.html,
+                __self.ses.send_email( __self._source, __self.subject, __self.text_body or __self.html_body,
                                        __self._to_addresses, __self._cc_addresses,
                                        __self._bcc_addresses, format = 'text' if __self.text else 'html')
 
@@ -290,61 +294,52 @@ class SNSNotification( object ):
 
 
 def add_email( email_address ):
-    subscription_list = SNSNotification()
-    subscription_list.make_arn_list()
-    subscription_list.subscribe( 'NightlyRun', 'email', email_address )
+    subscription_list = SESVerifyEmail()
+    subscription_list.make_verify_email_list()
+    subscription_list.verify_email( email_address )
 
 def email_verify():
-    subscription_list = SNSNotification()
-    subscription_list.make_arn_list()
-    temp = subscription_list.get_arn_list()
-    email_list = []
-    temp_list = []
-
-    for i in temp:
-        for j in i.get_endpoint():
-            temp_list.append( j )
-    for i in temp_list:
-        email_list.append(i[0])
+    subscription_list = SESVerifyEmail()
+    email_list = subscription_list.make_verify_email_list()
 
     return( email_list )
-
-def get_nightly_list():
-    subscription_list = SNSNotification()
-    subscription_list.make_arn_list()
-    temp = subscription_list.get_arn_list()
-    nightly_list = []
-    temp_list = []
-
-    for i in temp:
-        if 'NightlyRun' == i.get_topic():
-            temp_list = i.get_endpoint()
-    for i in temp_list:
-        nightly_list.append(i[0])
-
-    return ( nightly_list )
-
-def get_important_list():
-    subscription_list = SNSNotification()
-    subscription_list.make_arn_list()
-    temp = subscription_list.get_arn_list()
-    important_list = []
-    temp_list = []
-
-    for i in temp:
-        if 'ImportantChanges' == i.get_topic():
-            temp_list = i.get_endpoint()
-    for i in temp_list:
-        important_list.append(i[0])
-
-    return ( important_list )
+#
+# def get_nightly_list():
+#     subscription_list = SNSNotification()
+#     subscription_list.make_arn_list()
+#     temp = subscription_list.get_arn_list()
+#     nightly_list = []
+#     temp_list = []
+#
+#     for i in temp:
+#         if 'NightlyRun' == i.get_topic():
+#             temp_list = i.get_endpoint()
+#     for i in temp_list:
+#         nightly_list.append(i[0])
+#
+#     return ( nightly_list )
+#
+# def get_important_list():
+#     subscription_list = SNSNotification()
+#     subscription_list.make_arn_list()
+#     temp = subscription_list.get_arn_list()
+#     important_list = []
+#     temp_list = []
+#
+#     for i in temp:
+#         if 'ImportantChanges' == i.get_topic():
+#             temp_list = i.get_endpoint()
+#     for i in temp_list:
+#         important_list.append(i[0])
+#
+#     return ( important_list )
 
 
 def remove( email_address ):
-    subscription_list = SNSNotification()
-    subscription_list.make_arn_list()
-    subscription_list.unsubscribe( email_address )
+    # subscription_list = SNSNotification()
+    # subscription_list.make_arn_list()
+    # subscription_list.unsubscribe( email_address )
 
-    # email_list = SESVerifyEmail()
-    # email_list.make_verify_email_list()
-    # email_list.delete_verified_email( email_address )
+    email_list = SESVerifyEmail()
+    email_list.make_verify_email_list()
+    email_list.delete_verified_email( email_address )

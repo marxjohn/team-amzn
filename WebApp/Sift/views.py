@@ -177,7 +177,7 @@ def notifications(request):
             Sift.Notification.add_email(request.POST['ADD_EMAIL'])
         elif 'Remove' in request.POST:
             Sift.Notification.remove(request.POST.get('email'))
-            return HttpResponseRedirect('/notifications')
+            return HttpResponseRedirect('/settings/notifications')
 
     return render(request, 'notifications.html', context)
 
