@@ -410,12 +410,12 @@ def Diagnostic_email( time, start_date, end_date, num_clusters, max_features):
     text += '</td>'
     text += '<tr>'
     text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">Successfully completed Diagnostic Clustering in '
-    text += time + '!'
+    text += "{0:.2f}".format( round( time, 2 ) )
     text += '</td>'
     text += '</tr>'
     text += '<tr>'
     text += '<td align="left" bgcolor="aqua" style="padding: 10px 10px 10px 10px;" >'
-    text += start_date + ' - ' + end_date
+    text += start_date + ' to ' + end_date
     text += '</td>'
     text += '</tr>'
 
