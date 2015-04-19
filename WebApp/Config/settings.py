@@ -1,5 +1,5 @@
 """
-Django settings for Capstone project.
+Django settings for Config project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -59,9 +59,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 )
 
-ROOT_URLCONF = 'Capstone.urls'
+ROOT_URLCONF = 'Config.urls'
 
-WSGI_APPLICATION = 'Capstone.wsgi.application'
+WSGI_APPLICATION = 'Config.wsgi.application'
 
 
 try:
