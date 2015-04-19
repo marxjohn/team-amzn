@@ -292,7 +292,7 @@ def clustering(request):
 
     context = {'headline': headline, 'form': form, 'stopwords': stopwords,
                'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(),
-               'runclustering': runclustering, 'taskStatus': status}
+               'runclustering': runclustering, 'taskStatus': status if status is not None else ""}
     return render(request, 'clustering.html', context)
 
 
