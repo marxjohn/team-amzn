@@ -355,10 +355,12 @@ def Nightly_email( s_score, s_inertia ):
     text += '<meta name="viewport" content="width=device-width, initial-scale=1.0"/></head></html>'
 
     text += '<body yahoo bgcolor="#f6f8f1">'
+    text += '<tr>'
     text += '<td align="left" bgcolor="black" >'
     text += '<a href="http://siftmsu.com">'
     text += '<img src="http://siftmsu.com/static/img/sift-logo.png" alt="Sift-Logo" width="70" height="50" style="display: block;" />'
     text += '</td>'
+    text += '</tr>'
     text += '<tr>'
     text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">The status of the clusters are as follows: </td>'
     text += '</tr>'
@@ -404,10 +406,12 @@ def Diagnostic_email( time, start_date, end_date, num_clusters, max_features):
     text += '<meta name="viewport" content="width=device-width, initial-scale=1.0"/></head></html>'
 
     text += '<body yahoo bgcolor="#f6f8f1">'
+    text += '<tr>'
     text += '<td align="left" bgcolor="black" >'
     text += '<a href="http://siftmsu.com">'
     text += '<img src="http://siftmsu.com/static/img/sift-logo.png" alt="Sift-Logo" width="70" height="50" style="display: block;" />'
     text += '</td>'
+    text += '</tr>'
     text += '<tr>'
     text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">Successfully completed Diagnostic Clustering in '
     text += "{0:.2f}".format( round( time, 2 ) )
