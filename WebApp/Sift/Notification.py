@@ -421,10 +421,10 @@ def Diagnostic_email( time, start_date, end_date, num_clusters, max_features):
 
     text += '<table border="1" cellpadding="0" cellspacing="0" width="100%">'
     text += '<tr>'
-    text += '<td bgcolor="#70bbd9" style="padding: 10px 10px 10px 10px;">s_score = '
+    text += '<td bgcolor="#70bbd9" style="padding: 10px 10px 10px 10px;">Number of Clusters = '
     text += '{0}'.format( num_clusters  )
     text += '</td>'
-    text += '<td bgcolor="ee4c50" style="padding: 10px 10px 10px 10px;">s_inertia = '
+    text += '<td bgcolor="ee4c50" style="padding: 10px 10px 10px 10px;">Max Features = '
     text += '{0}'.format( max_features )
     text += '</td>'
 
@@ -445,3 +445,5 @@ def Diagnostic_email( time, start_date, end_date, num_clusters, max_features):
         return True
     else:
         return False
+
+Night
