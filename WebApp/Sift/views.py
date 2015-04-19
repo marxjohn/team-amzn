@@ -287,7 +287,7 @@ def clustering(request):
     i = app.control.inspect()
     tasks = i.active()
     html = '<input type="submit" name="Clustering" value="Run" />'
-    if tasks is not None:
+    if len(tasks) > 0:
         status = "Current Job Status: " + AsyncResult(tasks[0].id).state
         html = '<div id="jobId">' + status + '</div>'
 
