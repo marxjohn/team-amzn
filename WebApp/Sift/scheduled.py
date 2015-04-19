@@ -72,10 +72,14 @@ def main():
     cluster_run, pdf_lines = run_clustering(data, posts)
     s_inertia = cluster_run.normalized_inertia
     s_score = cluster_run.silo_score
-    create_pdf(pdf_lines, cluster_run.id)
+    # so we still send the email even if create pdf doesn't work
+    try:
+        create_pdf(pdf_lines, cluster_run.id)
+    except:
+        print("broke creating pdf")
 
     # Some Magic here involving sending email alerts
-    Notification.Nightly_email( s_score, s_inersia )
+    Notification.Nightly_email( s_score, s_inertia )
 
 if __name__ == '__main__':
     main()
