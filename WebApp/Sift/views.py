@@ -284,12 +284,16 @@ def clustering(request):
             time.mktime(clusterrun.end_date.timetuple())) * 1000
 
     # Celery task stuff
-    i = app.control.inspect()
-    tasks = i.active()
+    tasks = app.control.inspect().active()
+    
     html = '<input type="submit" name="Clustering" value="Run" />'
-    if tasks is not None and len(tasks) > 0:
-        status = "Current Job Status: " + AsyncResult(tasks[0].id).state
-        html = '<div id="jobId">' + status + '</div>'
+    if tasks is not None:
+        key = list(tasks.keys())[0]
+        tasks = tasks[key]
+        if len(tasks) > 0:
+            task = tasks[0]
+            status = "Current Job Status: " + app.AsyncResult(task['id']).state
+            html = '<div id="jobId">' + status + '</div>'
 
     context = {'headline': headline, 'form': form, 'stopwords': stopwords,
                'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(),
