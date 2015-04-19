@@ -37,7 +37,7 @@ def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_featu
         num_clusters, .85, 20, 50, 150)
     self.update_state(state='SENDING_NOTIFICATIONS')
     # send email
-    Notification.Diagnostic_email( str(time()-t0), str(start_date), str(end_date), num_clusters, max_features )
+    Notification.Diagnostic_email( (time()-t0), str(start_date), str(end_date), num_clusters, max_features )
 
     self.update_state(state='CLUSTERING_COMPLETED')
     create_pdf(pdf_lines, cluster_run.id)
