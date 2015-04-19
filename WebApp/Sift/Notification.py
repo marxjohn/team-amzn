@@ -32,9 +32,13 @@ class SESMessage( object ):
         __self._bcc_addresses = []
 
         __self.subject = subject
-        __self.text = ''
-        __self.html = None
+        __self.email_format = 'html'
+        __self.text_body = []
+        __self.html_body = ''
         __self.attachments = []
+        __self.reply_addresses = []
+        __self.return_path = []
+        __self.body = None
 
     def set_source ( __self, source ):
         __self._source = source
@@ -47,6 +51,9 @@ class SESMessage( object ):
 
     def set_text( __self, text):
         __self.text = __self.text + text
+
+    def set_html( __self, html_text):
+        __self.html_body += html_text
 
     def add_bcc_addresses( __self, bcc_address ):
         if bcc_address in __self._bcc_addresses:
@@ -92,13 +99,13 @@ class SESMessage( object ):
 
     def send( __self ):
         try:
-
             __self.ses
             if not __self.attachments:
 
-                __self.ses.send_email( __self._source, __self.subject, __self.text or __self.html,
+                __self.ses.send_email( __self._source, __self.subject, __self.html_body,
                                        __self._to_addresses, __self._cc_addresses,
-                                       __self._bcc_addresses, format = 'text' if __self.text else 'html')
+                                       __self._bcc_addresses, __self.email_format, __self.reply_addresses,
+                                       __self.return_path, __self.text_body, __self.body )
 
             else:
                 message = MIMEMultipart()
@@ -290,22 +297,13 @@ class SNSNotification( object ):
 
 
 def add_email( email_address ):
-    subscription_list = SNSNotification()
-    subscription_list.make_arn_list()
-    subscription_list.subscribe( 'NightlyRun', 'email', email_address )
+    subscription_list = SESVerifyEmail()
+    subscription_list.make_verify_email_list()
+    subscription_list.verify_email( email_address )
 
 def email_verify():
-    subscription_list = SNSNotification()
-    subscription_list.make_arn_list()
-    temp = subscription_list.get_arn_list()
-    email_list = []
-    temp_list = []
-
-    for i in temp:
-        for j in i.get_endpoint():
-            temp_list.append( j )
-    for i in temp_list:
-        email_list.append(i[0])
+    subscription_list = SESVerifyEmail()
+    email_list = subscription_list.make_verify_email_list()
 
     return( email_list )
 
@@ -341,10 +339,109 @@ def get_important_list():
 
 
 def remove( email_address ):
-    subscription_list = SNSNotification()
-    subscription_list.make_arn_list()
-    subscription_list.unsubscribe( email_address )
+    # subscription_list = SNSNotification()
+    # subscription_list.make_arn_list()
+    # subscription_list.unsubscribe( email_address )
 
-    # email_list = SESVerifyEmail()
-    # email_list.make_verify_email_list()
-    # email_list.delete_verified_email( email_address )
+    email_list = SESVerifyEmail()
+    email_list.make_verify_email_list()
+    email_list.delete_verified_email( email_address )
+
+def Nightly_email( s_score, s_inertia ):
+    text = '<html>'
+    text += '<head>'
+    text += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'
+    text += '<title>Sift Notification</title>'
+    text += '<meta name="viewport" content="width=device-width, initial-scale=1.0"/></head></html>'
+
+    text += '<body yahoo bgcolor="#f6f8f1">'
+    text += '<td align="left" bgcolor="black" >'
+    text += '<a href="http://siftmsu.com">'
+    text += '<img src="http://siftmsu.com/static/img/sift-logo.png" alt="Sift-Logo" width="70" height="50" style="display: block;" />'
+    text += '</td>'
+    text += '<tr>'
+    text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">The status of the clusters are as follows: </td>'
+    text += '</tr>'
+    text += '<table border="1" cellpadding="0" cellspacing="0" width="100%">'
+    text += '<tr>'
+    text += '<td bgcolor="#70bbd9" style="padding: 10px 10px 10px 10px;">s_score = '
+    text += '{0:.4f}'.format( round( s_score, 4 ) )
+    text += '</td>'
+    text += '<td bgcolor="ee4c50" style="padding: 10px 10px 10px 10px;">s_inertia = '
+    text += '{0:.4f}'.format( round( s_inertia, 4 ) )
+    text += '</td>'
+
+    text += '</tr></table></td>'
+
+    text += '<td style="color: #ffffff; font-family: Arial, sans-serif; font-size: 14px;">SIFT MSU 2015<br/>'
+    text += '<a href="#" style="color: #ffffff;"><font color="#ffffff"></font></a></td>'
+    text += '</body>'
+
+    temp = SESVerifyEmail()
+    source = 'siftmsu15@gmail.com'
+    subject = 'SIFT Notification: NightlyRun'
+    email_list = temp.make_verify_email_list()
+    to_address = 'siftmsu15@gmail.com'
+    send_email = SESMessage(source, to_address, subject)
+    send_email.set_html( text )
+    send_email.send()
+    if email_list != '':
+        email_list.remove('siftmsu15@gmail.com')
+        send_email.set_to_address( email_list[0] )
+        for i in range( 1, len(email_list) ):
+            send_email.add_bcc_addresses( email_list[i] )
+        send_email.send()
+        return True
+    else:
+        return False
+
+
+def Diagnostic_email( time, start_date, end_date, num_clusters, max_features):
+    text = '<html>'
+    text += '<head>'
+    text += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'
+    text += '<title>Sift Notification</title>'
+    text += '<meta name="viewport" content="width=device-width, initial-scale=1.0"/></head></html>'
+
+    text += '<body yahoo bgcolor="#f6f8f1">'
+    text += '<td align="left" bgcolor="black" >'
+    text += '<a href="http://siftmsu.com">'
+    text += '<img src="http://siftmsu.com/static/img/sift-logo.png" alt="Sift-Logo" width="70" height="50" style="display: block;" />'
+    text += '</td>'
+    text += '<tr>'
+    text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">Successfully completed Diagnostic Clustering in '
+    text += time + '!'
+    text += '</td>'
+    text += '</tr>'
+    text += '<tr>'
+    text += '<td align="left" bgcolor="aqua" style="padding: 10px 10px 10px 10px;" >'
+    text += start_date + ' - ' + end_date
+    text += '</td>'
+    text += '</tr>'
+
+    text += '<table border="1" cellpadding="0" cellspacing="0" width="100%">'
+    text += '<tr>'
+    text += '<td bgcolor="#70bbd9" style="padding: 10px 10px 10px 10px;">s_score = '
+    text += '{0}'.format( num_clusters  )
+    text += '</td>'
+    text += '<td bgcolor="ee4c50" style="padding: 10px 10px 10px 10px;">s_inertia = '
+    text += '{0}'.format( max_features )
+    text += '</td>'
+
+    temp = SESVerifyEmail()
+    source = 'siftmsu15@gmail.com'
+    subject = 'SIFT Notification: Diagnostic Clustering'
+    email_list = temp.make_verify_email_list()
+    to_address = 'siftmsu15@gmail.com'
+    send_email = SESMessage(source, to_address, subject)
+    send_email.set_html( text )
+    send_email.send()
+    if email_list != '':
+        email_list.remove('siftmsu15@gmail.com')
+        send_email.set_to_address( email_list[0] )
+        for i in range( 1, len(email_list) ):
+            send_email.add_bcc_addresses( email_list[i] )
+        send_email.send()
+        return True
+    else:
+        return False

@@ -19,6 +19,7 @@ import Sift.Notification
 from Sift.tasks import cluster_posts_with_input, create_new_clusters
 from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
+from Sift._celery import app
 
 import datetime
 
@@ -84,6 +85,8 @@ def general(request):
 
 @cache_page(60 * 60)
 def details(request, cluster_id):
+    form = Sift.forms.ClusterDetails()
+
     #default start and end date are today to 3 months before
     start_date = Sift.forms.monthdelta(datetime.date.today(),-3).strftime('%Y-%m-%d')
     end_date = datetime.date.today().strftime('%Y-%m-%d')
@@ -94,6 +97,8 @@ def details(request, cluster_id):
         if dates.is_valid():
             start_date = dates.cleaned_data['start_date']
             end_date = dates.cleaned_data['end_date']
+            form.fields['start_date'].initial = start_date.strftime('%m/%d/%Y')
+            form.fields['end_date'].initial = end_date.strftime('%m/%d/%Y')
 
 
     headline = "Topic Analytics"
@@ -122,7 +127,10 @@ def details(request, cluster_id):
                 posts_count[date]['neutral'] += 1
 
     #grab random 500 posts for sample showing
-    rand_posts = np.random.choice(posts, 500, replace=False)
+    if(posts.count() > 500):
+        rand_posts = np.random.choice(posts, 500, replace=False)
+    else:
+        rand_posts = posts
     sample_posts = []
     for post in rand_posts:
         date = int(time.mktime(post["creation_date"].timetuple())) * 1000
@@ -154,7 +162,7 @@ def details(request, cluster_id):
     sentimentData.append(["All Posts", round((s_neg / s_all) * 100, 2), round((s_neutral / s_all) * 100, 2),
                           round((s_pos / s_all) * 100, 2)])
 
-    form = Sift.forms.ClusterDetails()
+
 
     context = {'allClusters': all_clusters, "headline": headline, "form": form,
                'cluster': cluster, 'posts_count': posts_count, 'rand_posts': sample_posts,
@@ -177,7 +185,7 @@ def notifications(request):
             Sift.Notification.add_email(request.POST['ADD_EMAIL'])
         elif 'Remove' in request.POST:
             Sift.Notification.remove(request.POST.get('email'))
-            return HttpResponseRedirect('/notifications')
+            return HttpResponseRedirect('/settings/notifications')
 
     return render(request, 'notifications.html', context)
 
@@ -218,6 +226,7 @@ def clusters(request):
 
 def clustering(request):
     deleteThese = ""
+    task = None
     if request.method == 'POST':
         clusterForm = Sift.forms.ClusterForm(request.POST)
 
@@ -232,16 +241,17 @@ def clustering(request):
                 is_creation_clustering = False
 
             if is_creation_clustering:
-                create_new_clusters.delay(
+                task = create_new_clusters.delay(
                     int(clusterForm.cleaned_data['num_clusters']),
                     int(clusterForm.cleaned_data['max_features']))
             else:
-                cluster_posts_with_input.delay(
+                task = cluster_posts_with_input.delay(
                     str(clusterForm.cleaned_data['start_date']),
                     str(clusterForm.cleaned_data['end_date']),
                     int(clusterForm.cleaned_data['num_clusters']),
                     int(clusterForm.cleaned_data['max_features']),
                     is_all_posts)
+
     if request.method == "POST" and not clusterForm.is_valid():
         stopwordDelete = StopwordDelete(request.POST)
         if stopwordDelete.is_valid():
@@ -256,7 +266,7 @@ def clustering(request):
         if stopwordAdd.is_valid():
             addThis = stopwordAdd.cleaned_data['add_word']
             # check to make sure the stop word isn't currently in the list
-            if StopWord.objects.filter(word=addThis).__len__() is 0:
+            if len(StopWord.objects.filter(word=addThis)) == 0:
                 StopWord(word=addThis).save()
 
     form = Sift.forms.ClusterForm()
@@ -275,7 +285,7 @@ def clustering(request):
 
     context = {'headline': headline, 'form': form, 'stopwords': stopwords,
                'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(),
-               'runclustering': runclustering}
+               'runclustering': runclustering, 'task_id': task.id if task is not None else 0}
     return render(request, 'clustering.html', context)
 
 
