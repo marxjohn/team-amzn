@@ -356,7 +356,7 @@ def Nightly_email( s_score, s_inertia ):
 
     text += '<body yahoo bgcolor="#f6f8f1">'
     text += '<tr>'
-    text += '<td align="left" bgcolor="black" >'
+    text += '<td align="left" bgcolor="black" width="200">'
     text += '<a href="http://siftmsu.com">'
     text += '<img src="http://siftmsu.com/static/img/sift-logo.png" alt="Sift-Logo" width="70" height="50" style="display: block;" />'
     text += '</td>'
