@@ -333,10 +333,10 @@ def _create_cluster_run(km, c_param):
                     silo_score=c_param.s_score, is_creation_run=c_param.is_upload_enabled)
     cr.save()
     # Race condition... Start your engines!
-    cr_with_id = ClusterRun.objects.all().order_by("-id")[:1]
+    cr_with_id = ClusterRun.objects.all().order_by("-id")[:1][0]
     cr_with_id.data_dump_url = "https://s3-us-west-2.amazonaws.com/cluster-runs/" + str(cr_with_id.id)
     cr_with_id.save()
-    
+
     return cr_with_id
 
 
