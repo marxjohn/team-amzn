@@ -221,6 +221,7 @@ def clusters(request):
                     c = Cluster.objects.get(clusterid=key)
                     c.name = value
                     c.save()
+                    cache.clear()
 
     return render(request, 'clusters.html', context)
 
