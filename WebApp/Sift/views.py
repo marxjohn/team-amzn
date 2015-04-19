@@ -20,6 +20,7 @@ from Sift.tasks import cluster_posts_with_input, create_new_clusters
 from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
 from Sift._celery import app
+from celery import task
 
 import datetime
 
@@ -226,7 +227,6 @@ def clusters(request):
 
 def clustering(request):
     deleteThese = ""
-    task = None
     if request.method == 'POST':
         clusterForm = Sift.forms.ClusterForm(request.POST)
 
@@ -241,11 +241,11 @@ def clustering(request):
                 is_creation_clustering = False
 
             if is_creation_clustering:
-                task = create_new_clusters.delay(
+                create_new_clusters.delay(
                     int(clusterForm.cleaned_data['num_clusters']),
                     int(clusterForm.cleaned_data['max_features']))
             else:
-                task = cluster_posts_with_input.delay(
+                cluster_posts_with_input.delay(
                     str(clusterForm.cleaned_data['start_date']),
                     str(clusterForm.cleaned_data['end_date']),
                     int(clusterForm.cleaned_data['num_clusters']),
@@ -283,9 +283,16 @@ def clustering(request):
         clusterrun.end_date = int(
             time.mktime(clusterrun.end_date.timetuple())) * 1000
 
+    # Celery task stuff
+    i = app.control.inspect()
+    tasks = i.active()
+    status = None
+    if tasks is not None:
+        status = "Current Job Status: " + task.AsyncResult(tasks[0].id).state
+
     context = {'headline': headline, 'form': form, 'stopwords': stopwords,
                'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(),
-               'runclustering': runclustering, 'task_id': task.id if task is not None else 0}
+               'runclustering': runclustering, 'taskStatus': status}
     return render(request, 'clustering.html', context)
 
 
