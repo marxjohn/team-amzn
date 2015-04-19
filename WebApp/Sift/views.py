@@ -19,6 +19,7 @@ import Sift.Notification
 from Sift.tasks import cluster_posts_with_input, create_new_clusters
 from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
+from Sift._celery import app
 
 import datetime
 
@@ -225,6 +226,7 @@ def clusters(request):
 
 def clustering(request):
     deleteThese = ""
+    task = None
     if request.method == 'POST':
         clusterForm = Sift.forms.ClusterForm(request.POST)
 
@@ -239,16 +241,17 @@ def clustering(request):
                 is_creation_clustering = False
 
             if is_creation_clustering:
-                create_new_clusters.delay(
+                task = create_new_clusters.delay(
                     int(clusterForm.cleaned_data['num_clusters']),
                     int(clusterForm.cleaned_data['max_features']))
             else:
-                cluster_posts_with_input.delay(
+                task = cluster_posts_with_input.delay(
                     str(clusterForm.cleaned_data['start_date']),
                     str(clusterForm.cleaned_data['end_date']),
                     int(clusterForm.cleaned_data['num_clusters']),
                     int(clusterForm.cleaned_data['max_features']),
                     is_all_posts)
+
     if request.method == "POST" and not clusterForm.is_valid():
         stopwordDelete = StopwordDelete(request.POST)
         if stopwordDelete.is_valid():
@@ -263,7 +266,7 @@ def clustering(request):
         if stopwordAdd.is_valid():
             addThis = stopwordAdd.cleaned_data['add_word']
             # check to make sure the stop word isn't currently in the list
-            if StopWord.objects.filter(word=addThis).__len__() is 0:
+            if len(StopWord.objects.filter(word=addThis)) == 0:
                 StopWord(word=addThis).save()
 
     form = Sift.forms.ClusterForm()
@@ -282,7 +285,7 @@ def clustering(request):
 
     context = {'headline': headline, 'form': form, 'stopwords': stopwords,
                'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(),
-               'runclustering': runclustering}
+               'runclustering': runclustering, 'task_id': task.id if task is not None else 0}
     return render(request, 'clustering.html', context)
 
 
