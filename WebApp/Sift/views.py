@@ -20,7 +20,7 @@ from Sift.tasks import cluster_posts_with_input, create_new_clusters
 from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
 from Sift._celery import app
-from celery import task
+from celery.result import AsyncResult
 
 import datetime
 
@@ -286,13 +286,14 @@ def clustering(request):
     # Celery task stuff
     i = app.control.inspect()
     tasks = i.active()
-    status = None
+    html = '<input type="submit" name="Clustering" value="Run" />'
     if tasks is not None:
-        status = "Current Job Status: " + task.AsyncResult(tasks[0].id).state
+        status = "Current Job Status: " + AsyncResult(tasks[0].id).state
+        html = '<div id="jobId">' + status + '</div>'
 
     context = {'headline': headline, 'form': form, 'stopwords': stopwords,
                'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(),
-               'runclustering': runclustering, 'taskStatus': status if status is not None else ""}
+               'runclustering': runclustering, 'clusterhtml': html}
     return render(request, 'clustering.html', context)
 
 
