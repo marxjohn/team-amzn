@@ -11,6 +11,7 @@ from Sift.Notification import *
 from Sift.scikit_utilities import find_min_and_max_date, create_cluster_data, ClusterData
 from Sift.clustering import run_creation_clustering
 from Sift.pdf_generator import create_pdf
+from Sift import Notification
 
 
 __author__ = 'cse498'
@@ -36,20 +37,8 @@ def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_featu
         num_clusters, .85, 20, 50, 150)
     self.update_state(state='SENDING_NOTIFICATIONS')
     # send email
-    Notification.Diagnostic_email( str(time()-t0), str(start_date), str(end_date), num_clusters, max_features )
-    # email = SNSNotification()
-    # email.make_arn_list()
-    # email_list = get_nightly_list()
-    #
-    # if email_list is not None:
-    #     email.set_topic_arn('DiagnosticClustering')
-    #     email.set_message("Successfully completed Diagnostic Clustering in " + str(time() - t0) + " seconds! From "
-    #                       + str(start_date) + " to " + str(end_date) + " with "
-    #                       + str(num_clusters) + " clusters and " + str(max_features)
-    #                       + " features.")
-    #     email.set_subject('DiagnosticClustering')
-    #
-    #     email.publication()
+    Notification.Diagnostic_email( (time()-t0), str(start_date), str(end_date), num_clusters, max_features )
+
     self.update_state(state='CLUSTERING_COMPLETED')
     create_pdf(pdf_lines, cluster_run.id)
     cache.clear()

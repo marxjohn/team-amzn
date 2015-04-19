@@ -7,6 +7,7 @@ from Sift.classification import run_classification
 from Sift.Notification import *
 from Sift.pdf_generator import create_pdf
 from Sift.scikit_utilities import create_cluster_data
+from Sift import Notification
 
 
 import pymysql

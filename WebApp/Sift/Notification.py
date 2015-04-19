@@ -355,10 +355,12 @@ def Nightly_email( s_score, s_inertia ):
     text += '<meta name="viewport" content="width=device-width, initial-scale=1.0"/></head></html>'
 
     text += '<body yahoo bgcolor="#f6f8f1">'
-    text += '<td align="left" bgcolor="black" >'
+    text += '<tr>'
+    text += '<td align="left" bgcolor="black" width="200">'
     text += '<a href="http://siftmsu.com">'
     text += '<img src="http://siftmsu.com/static/img/sift-logo.png" alt="Sift-Logo" width="70" height="50" style="display: block;" />'
     text += '</td>'
+    text += '</tr>'
     text += '<tr>'
     text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">The status of the clusters are as follows: </td>'
     text += '</tr>'
@@ -404,27 +406,31 @@ def Diagnostic_email( time, start_date, end_date, num_clusters, max_features):
     text += '<meta name="viewport" content="width=device-width, initial-scale=1.0"/></head></html>'
 
     text += '<body yahoo bgcolor="#f6f8f1">'
-    text += '<td align="left" bgcolor="black" >'
+    text += '<tr>'
+    text += '<td align="left" bgcolor="black" width="200">'
     text += '<a href="http://siftmsu.com">'
     text += '<img src="http://siftmsu.com/static/img/sift-logo.png" alt="Sift-Logo" width="70" height="50" style="display: block;" />'
     text += '</td>'
+    text += '</tr>'
     text += '<tr>'
     text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">Successfully completed Diagnostic Clustering in '
-    text += time + '!'
+    text += "{0:.2f}".format( round( time, 2 ) )
+    text += ' seconds.'
     text += '</td>'
     text += '</tr>'
     text += '<tr>'
     text += '<td align="left" bgcolor="aqua" style="padding: 10px 10px 10px 10px;" >'
-    text += start_date + ' - ' + end_date
+    text += 'Date Range: '
+    text += start_date + ' to ' + end_date
     text += '</td>'
     text += '</tr>'
 
     text += '<table border="1" cellpadding="0" cellspacing="0" width="100%">'
     text += '<tr>'
-    text += '<td bgcolor="#70bbd9" style="padding: 10px 10px 10px 10px;">s_score = '
+    text += '<td bgcolor="#70bbd9" style="padding: 10px 10px 10px 10px;">Number of Clusters = '
     text += '{0}'.format( num_clusters  )
     text += '</td>'
-    text += '<td bgcolor="ee4c50" style="padding: 10px 10px 10px 10px;">s_inertia = '
+    text += '<td bgcolor="ee4c50" style="padding: 10px 10px 10px 10px;">Max Features = '
     text += '{0}'.format( max_features )
     text += '</td>'
 
@@ -445,3 +451,5 @@ def Diagnostic_email( time, start_date, end_date, num_clusters, max_features):
         return True
     else:
         return False
+
+

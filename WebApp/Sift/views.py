@@ -20,6 +20,7 @@ from Sift.tasks import cluster_posts_with_input, create_new_clusters
 from Sift.models import *
 from Sift.forms import StopwordDelete, StopwordAdd
 from Sift._celery import app
+from celery.result import AsyncResult
 
 import datetime
 
@@ -226,7 +227,6 @@ def clusters(request):
 
 def clustering(request):
     deleteThese = ""
-    task = None
     if request.method == 'POST':
         clusterForm = Sift.forms.ClusterForm(request.POST)
 
@@ -241,11 +241,11 @@ def clustering(request):
                 is_creation_clustering = False
 
             if is_creation_clustering:
-                task = create_new_clusters.delay(
+                create_new_clusters.delay(
                     int(clusterForm.cleaned_data['num_clusters']),
                     int(clusterForm.cleaned_data['max_features']))
             else:
-                task = cluster_posts_with_input.delay(
+                cluster_posts_with_input.delay(
                     str(clusterForm.cleaned_data['start_date']),
                     str(clusterForm.cleaned_data['end_date']),
                     int(clusterForm.cleaned_data['num_clusters']),
@@ -283,9 +283,21 @@ def clustering(request):
         clusterrun.end_date = int(
             time.mktime(clusterrun.end_date.timetuple())) * 1000
 
+    # Celery task stuff
+    tasks = app.control.inspect().active()
+    
+    html = '<input type="submit" name="Clustering" value="Run" />'
+    if tasks is not None:
+        key = list(tasks.keys())[0]
+        tasks = tasks[key]
+        if len(tasks) > 0:
+            task = tasks[0]
+            status = "Current Job Status: " + app.AsyncResult(task['id']).state
+            html = '<div id="jobId">' + status + '</div>'
+
     context = {'headline': headline, 'form': form, 'stopwords': stopwords,
                'deleteForm': StopwordDelete(), 'addForm': StopwordAdd(),
-               'runclustering': runclustering, 'task_id': task.id if task is not None else 0}
+               'runclustering': runclustering, 'clusterhtml': html}
     return render(request, 'clustering.html', context)
 
 

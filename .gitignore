@@ -15,7 +15,7 @@ pickle-email-*.html
 .idea/workspace.xml
 WebApp/.idea/
 WebApp/pycache/
-WebApp/Capstone/__pycache__/
+WebApp/Config/__pycache__/
 WebApp/Sift/__pycache/
 
 # TODO Comment out these rules if you are OK with secrets being uploaded to the repo
