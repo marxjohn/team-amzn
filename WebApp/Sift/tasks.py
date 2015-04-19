@@ -18,7 +18,7 @@ __author__ = 'cse498'
 
 
 # @app.task(bind=True)
-def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_features,
+def cluster_posts_with_input(start_date, end_date, num_clusters, max_features,
                              isAllPosts):
     t0 = time()
     logging.basicConfig(level=logging.INFO,
@@ -27,19 +27,19 @@ def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_featu
     if isAllPosts:
         start_date = "2000-01-01"
         end_date = datetime.date.today().strftime('%Y-%m-%d')
-    self.update_state(state='FETCHING_POSTS')
+    # self.update_state(state='FETCHING_POSTS')
     dataset = ClusterData(
         Post.objects.filter(creation_date__range=(start_date, end_date)),
         Cluster.objects.all())
-    self.update_state(state='RUNNING_CLUSTERING')
+    # self.update_state(state='RUNNING_CLUSTERING')
     cluster_run, pdf_lines = clustering.run_diagnostic_clustering(
         dataset, start_date, end_date, max_features,
         num_clusters, .85, 20, 50, 150)
-    self.update_state(state='SENDING_NOTIFICATIONS')
+    # self.update_state(state='SENDING_NOTIFICATIONS')
     # send email
     Notification.Diagnostic_email( str(time()-t0), str(start_date), str(end_date), num_clusters, max_features )
 
-    self.update_state(state='CLUSTERING_COMPLETED')
+    # self.update_state(state='CLUSTERING_COMPLETED')
     create_pdf(pdf_lines, cluster_run.id)
     cache.clear()
 
