@@ -17,7 +17,7 @@ from Sift import Notification
 __author__ = 'cse498'
 
 
-@app.task(bind=True)
+# @app.task(bind=True)
 def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_features,
                              isAllPosts):
     t0 = time()
@@ -60,7 +60,7 @@ def create_new_clusters(self, num_clusters, max_features, max_df=.85, batch_size
 
 
 def main():
-    cluster_posts_with_input.delay("2015-03-15", "2015-03-30", 8, 1000, False)
+    cluster_posts_with_input("2015-03-15", "2015-03-30", 8, 1000, False)
 
 
 # Only run the main function if this code is called directly
