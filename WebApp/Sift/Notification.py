@@ -446,4 +446,4 @@ def Diagnostic_email( time, start_date, end_date, num_clusters, max_features):
     else:
         return False
 
-Night
+
