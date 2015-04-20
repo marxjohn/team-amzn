@@ -148,6 +148,7 @@ def _vectorize_data(data_set, c_param):
                                         min_df=1,
                                         use_idf=c_param.is_idf_used,
                                         analyzer='word',
+                                        preprocessor=StemmedTfidfVectorizer.analyze,
                                         ngram_range=(1, 1))
 
     vectorized_data = vectorizer.fit_transform(data_set.data)
