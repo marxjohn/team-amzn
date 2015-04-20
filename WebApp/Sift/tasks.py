@@ -18,43 +18,56 @@ __author__ = 'cse498'
 
 
 @app.task(bind=True)
-def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_features,
-                             isAllPosts):
+def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_features, is_all_posts,
+                        max_df=.85, batch_size_ratio=20, init_size_ratio=50, n_init=150):
     t0 = time()
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
 
-    if isAllPosts:
-        start_date = "2000-01-01"
-        end_date = datetime.date.today().strftime('%Y-%m-%d')
     self.update_state(state='FETCHING_POSTS')
-    dataset = ClusterData(
-        Post.objects.filter(creation_date__range=(start_date, end_date)),
-        Cluster.objects.all())
+    if is_all_posts:
+        posts = Post.objects.all()
+        end_date, start_date = find_min_and_max_date(posts)
+    else:
+        posts = Post.objects.filter(creation_date__range=(start_date, end_date))
+
+    self.update_state(state='CREATING_CLUSTER_DATA')
+    data = create_cluster_data(posts)
+
     self.update_state(state='RUNNING_CLUSTERING')
     cluster_run, pdf_lines = clustering.run_diagnostic_clustering(
-        dataset, start_date, end_date, max_features,
-        num_clusters, .85, 20, 50, 150)
-    self.update_state(state='SENDING_NOTIFICATIONS')
-    # send email
-    Notification.Diagnostic_email( (time()-t0), str(start_date), str(end_date), num_clusters, max_features )
+        data, start_date, end_date, max_features,
+        num_clusters, max_df, batch_size_ratio, init_size_ratio, n_init)
 
-    self.update_state(state='CLUSTERING_COMPLETED')
+    self.update_state(state='SENDING_NOTIFICATIONS')
+    Notification.Diagnostic_email((time()-t0), str(start_date), str(end_date), num_clusters, max_features)
     create_pdf(pdf_lines, cluster_run.id)
     cache.clear()
 
 
 @app.task(bind=True)
-def create_new_clusters(self, num_clusters, max_features, max_df=.85, batch_size_ratio=20, init_size_ratio=50, n_init=150):
+def create_new_clusters(self, start_date, end_date, num_clusters, max_features, is_all_posts,
+                        max_df=.85, batch_size_ratio=20, init_size_ratio=50, n_init=150):
+    t0 = time()
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s %(levelname)s %(message)s')
+
     self.update_state(state='FETCHING_POSTS')
-    posts = Post.objects.all()
+    if is_all_posts:
+        posts = Post.objects.all()
+        end_date, start_date = find_min_and_max_date(posts)
+    else:
+        posts = Post.objects.filter(creation_date__range=(start_date, end_date))
+
     self.update_state(state='CREATING_CLUSTER_DATA')
     data = create_cluster_data(posts)
-    end_date, start_date = find_min_and_max_date(posts)
+
     self.update_state(state='RUNNING_CREATION_CLUSTERING')
     cluster_run, pdf_lines = run_creation_clustering(
         data, start_date, end_date, max_features, num_clusters, max_df, batch_size_ratio, init_size_ratio, n_init)
-    self.update_state(state='CLUSTERING_COMPLETED')
+
+    self.update_state(state='SENDING_NOTIFICATIONS')
+    Notification.ClusterCreation_email((time()-t0), str(start_date), str(end_date), num_clusters, max_features)
     create_pdf(pdf_lines, cluster_run.id)
     cache.clear()
 
