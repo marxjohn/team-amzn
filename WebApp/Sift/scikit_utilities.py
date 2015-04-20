@@ -90,6 +90,7 @@ class ClusterData:
             map(ClusterData.stemmed_body, inp),
             dtype=[("body", "|U5000"), ("stemmed", "b"), ("id", "i")],
             count=inp.count())
+        self.string_data = [p.stemmed_body for p in inp]
 
 
 def get_cluster_data(start_date, end_date):
