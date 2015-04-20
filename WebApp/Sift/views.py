@@ -243,8 +243,11 @@ def clustering(request):
 
             if is_creation_clustering:
                 create_new_clusters.delay(
+                    str(clusterForm.cleaned_data['start_date']),
+                    str(clusterForm.cleaned_data['end_date']),
                     int(clusterForm.cleaned_data['num_clusters']),
-                    int(clusterForm.cleaned_data['max_features']))
+                    int(clusterForm.cleaned_data['max_features']),
+                    is_all_posts)
             else:
                 cluster_posts_with_input.delay(
                     str(clusterForm.cleaned_data['start_date']),

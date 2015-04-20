@@ -453,3 +453,56 @@ def Diagnostic_email( time, start_date, end_date, num_clusters, max_features):
         return False
 
 
+def ClusterCreation_email( time, start_date, end_date, num_clusters, max_features):
+    text = '<html>'
+    text += '<head>'
+    text += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'
+    text += '<title>Sift Notification</title>'
+    text += '<meta name="viewport" content="width=device-width, initial-scale=1.0"/></head></html>'
+
+    text += '<body yahoo bgcolor="#f6f8f1">'
+    text += '<tr>'
+    text += '<td align="left" bgcolor="black" width="200">'
+    text += '<a href="http://siftmsu.com">'
+    text += '<img src="http://siftmsu.com/static/img/sift-logo-email.png" alt="Sift-Logo" width="70" height="50" style="display: block;" />'
+    text += '</td>'
+    text += '</tr>'
+    text += '<tr>'
+    text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">Successfully completed Diagnostic Clustering in '
+    text += "{0:.2f}".format( round( time, 2 ) )
+    text += ' seconds.'
+    text += '</td>'
+    text += '</tr>'
+    text += '<tr>'
+    text += '<td align="left" bgcolor="aqua" style="padding: 10px 10px 10px 10px;" >'
+    text += 'Date Range: '
+    text += start_date + ' to ' + end_date
+    text += '</td>'
+    text += '</tr>'
+
+    text += '<table border="1" cellpadding="0" cellspacing="0" width="100%">'
+    text += '<tr>'
+    text += '<td bgcolor="#70bbd9" style="padding: 10px 10px 10px 10px;">Number of Clusters = '
+    text += '{0}'.format( num_clusters  )
+    text += '</td>'
+    text += '<td bgcolor="ee4c50" style="padding: 10px 10px 10px 10px;">Max Features = '
+    text += '{0}'.format( max_features )
+    text += '</td>'
+
+    temp = SESVerifyEmail()
+    source = 'siftmsu15@gmail.com'
+    subject = 'SIFT Notification: Cluster Creation'
+    email_list = temp.make_verify_email_list()
+    to_address = 'siftmsu15@gmail.com'
+    send_email = SESMessage(source, to_address, subject)
+    send_email.set_html( text )
+    send_email.send()
+    if email_list != '':
+        email_list.remove('siftmsu15@gmail.com')
+        send_email.set_to_address( email_list[0] )
+        for i in range( 1, len(email_list) ):
+            send_email.add_bcc_addresses( email_list[i] )
+        send_email.send()
+        return True
+    else:
+        return False
