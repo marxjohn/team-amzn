@@ -16,7 +16,7 @@ import numpy as np
 import django
 
 from Sift.models import Post, Cluster, ClusterWord, ClusterRun, StopWord
-from Sift.scikit_utilities import StemmedTfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 pymysql.install_as_MySQLdb()
@@ -143,13 +143,13 @@ def _print_cluster_centroids(km, vectorizer, c_param):
 
 
 def _vectorize_data(data_set, c_param):
-    vectorizer = StemmedTfidfVectorizer(max_df=c_param.max_df,
-                                        max_features=c_param.max_features,
-                                        min_df=1,
-                                        use_idf=c_param.is_idf_used,
-                                        analyzer='word',
-                                        preprocessor=StemmedTfidfVectorizer.analyze,
-                                        ngram_range=(1, 1))
+    vectorizer = TfidfVectorizer(max_df=c_param.max_df,
+                                 max_features=c_param.max_features,
+                                 min_df=1,
+                                 use_idf=c_param.is_idf_used,
+                                 analyzer='word',
+                                 stop_words=STOP_WORDS,
+                                 ngram_range=(1, 1))
 
     vectorized_data = vectorizer.fit_transform(data_set.data)
 
