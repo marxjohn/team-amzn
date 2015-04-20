@@ -468,7 +468,7 @@ def ClusterCreation_email( time, start_date, end_date, num_clusters, max_feature
     text += '</td>'
     text += '</tr>'
     text += '<tr>'
-    text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">Successfully completed Diagnostic Clustering in '
+    text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">Successfully completed Cluster Creation in '
     text += "{0:.2f}".format( round( time, 2 ) )
     text += ' seconds.'
     text += '</td>'
