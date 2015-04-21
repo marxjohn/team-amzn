@@ -42,11 +42,14 @@ def main(start_date, end_date):
     print("Stemming posts...")
 
     for post in posts:
-        stemmed = post.body.split(' ')
-        post.stemmed_body = ' '.join(stemmed)
+        # stemmed = post.body.split(' ')
+        # post.stemmed_body = ' '.join(stemmed)
+        post.stemmed_body = ' '.join(english_stemmer.stemWords(post.body.split(' ')))
         post.save()
         i += 1
-        print("Stemmed ", str(i), " posts")
+        if (i - j == 0):
+            j += 500
+            print("Stemmed ", str(i), " posts")
 
     print("Completed stemming ", str(i), " posts in ", str((time() - t0)), " seconds.")
 
