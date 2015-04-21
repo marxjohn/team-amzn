@@ -30,3 +30,6 @@ def create_pdf(pdf_lines, cluster_run_id):
     k.key = cluster_run_id
     k.set_metadata("Content-Type", "application/pdf")
     k.set_contents_from_filename(full_file_path)
+
+
+    os.remove(full_file_path)
