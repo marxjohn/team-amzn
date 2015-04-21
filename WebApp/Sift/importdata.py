@@ -3,6 +3,8 @@ import logging
 from time import time
 from datetime import datetime
 import pymysql
+from nltk.stem import WordNetLemmatizer
+import Stemmer
 pymysql.install_as_MySQLdb()
 
 __author__ = 'MaxGoovaerts'
@@ -10,7 +12,7 @@ __author__ = 'MaxGoovaerts'
 
 DATA_FILES = ['data/expSForums' + str(i) + '.cvs' for i in range(1, 11)]
 
-
+english_stemmer = Stemmer.Stemmer('en')
 def get_post_count(conn):
     cur = conn.cursor()
     cur.execute("SELECT Count(*) FROM sellerforums.Post")
@@ -22,16 +24,17 @@ def commitPost(post, conn):
     query = "INSERT INTO Post (threadId, messageId, forumId, userId,\
             categoryId, subject, body, postedByModerator," \
             " resolutionState, helpfulAnswer, correctAnswer, userName,\
-            userPoints, creationDate, modificationDate, locale) VALUES "
+            userPoints, creationDate, modificationDate, locale, stemmedBody) VALUES "
     query += "(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
     try:
         # posts need to be encoded to avoid weird character breaking errors
+        stemmed_body = ' '.join(english_stemmer.stemWords(post[6].split(' ')))
         cur.execute(query, (post[0], post[1], post[2], post[3], post[4],
                     post[5].encode('utf-8', 'ignore'),
                     post[6].encode('utf-8', 'ignore'),
                     post[7], post[8], post[9], post[10],
                     post[11].encode('utf-8', 'ignore'), post[12],
-                    post[13], post[14], post[15]))
+                    post[13], post[14], post[15], post[16]))
         conn.commit()
         return 0
     except:
