@@ -87,10 +87,9 @@ class ClusterData:
         self.cluster_of_posts = [p.cluster_id for p in inp]
         self.cluster_list = [c.clusterid for c in cluster_inp]
         self.data = np.fromiter(
-            map(ClusterData.stemmed_body, inp),
-            dtype=[("body", "|U5000"), ("stemmed", "b"), ("id", "i")],
+            ((i.stemmed_body, i.post_id) for i in inp),
+            dtype=[("body", "|U5000"), ("id", "i")],
             count=inp.count())
-        self.string_data = [p.stemmed_body for p in inp]
 
 
 def get_cluster_data(start_date, end_date):

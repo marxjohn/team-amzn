@@ -151,7 +151,7 @@ def _vectorize_data(data_set, c_param):
                                  stop_words=STOP_WORDS,
                                  ngram_range=(1, 1))
 
-    vectorized_data = vectorizer.fit_transform(data_set.string_data)
+    vectorized_data = vectorizer.fit_transform(data_set.data["body"])
 
     return vectorized_data, vectorizer
 
