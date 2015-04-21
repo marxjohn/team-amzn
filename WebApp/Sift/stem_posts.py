@@ -34,22 +34,24 @@ def main(start_date, end_date):
     # set up variables
     t0 = time()
     i = 0
-    j = 500
+    j = 1000
 
     print("Fetching posts...")
     posts = Post.objects.filter(creation_date__range=(start_date, end_date))
+    # posts = Post.objects.all()
 
     print("Stemming posts...")
 
     for post in posts:
         # stemmed = post.body.split(' ')
         # post.stemmed_body = ' '.join(stemmed)
-        post.stemmed_body = ' '.join(english_stemmer.stemWords(post.body.split(' ')))
+        post.stemmed_body = ' '.join(english_stemmer.stemWords(post.body.lower().split(' ')))
+
         post.save()
         i += 1
         if (i - j == 0):
-            j += 500
-            print("Stemmed ", str(i), " posts")
+            j += 1000
+            print("Stemmed ", str(i), " posts, ", str(i/posts.count()), " of total posts")
 
     print("Completed stemming ", str(i), " posts in ", str((time() - t0)), " seconds.")
 
