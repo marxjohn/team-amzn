@@ -4,10 +4,9 @@ from __future__ import absolute_import
 import pymysql
 import django
 from django.conf import settings
+from time import time
 import Stemmer
 from Sift.models import *
-
-
 
 
 pymysql.install_as_MySQLdb()
@@ -31,14 +30,26 @@ if not settings.configured:
 english_stemmer = Stemmer.Stemmer('en')
 
 
-def main():
-    posts = Post.objects.all()
+def main(start_date, end_date):
+    # set up variables
+    t0 = time()
+    i = 0
+    j = 500
+
+    print("Fetching posts...")
+    posts = Post.objects.filter(creation_date__range=(start_date, end_date))
+
+    print("Stemming posts...")
 
     for post in posts:
         stemmed = post.body.split(' ')
         post.stemmed_body = ' '.join(stemmed)
         post.save()
+        i += 1
+        print("Stemmed ", str(i), " posts")
+
+    print("Completed stemming ", str(i), " posts in ", str((time() - t0)), " seconds.")
 
 if __name__ == '__main__':
-    main()
+    main("2015-01-11", "2015-01-21")
 
