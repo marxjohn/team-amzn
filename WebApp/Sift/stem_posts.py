@@ -37,8 +37,8 @@ def main(start_date, end_date):
     j = 1000
 
     print("Fetching posts...")
-    posts = Post.objects.filter(creation_date__range=(start_date, end_date))
-    # posts = Post.objects.all()
+    # posts = Post.objects.filter(creation_date__range=(start_date, end_date))
+    posts = Post.objects.all()
 
     print("Stemming posts...")
 
@@ -51,7 +51,7 @@ def main(start_date, end_date):
         i += 1
         if (i - j == 0):
             j += 1000
-            print("Stemmed ", str(i), " posts, ", str(round((i/posts.count())*100, 5)), " of total posts")
+            print("Stemmed ", str(i), " posts, ", str(round((i/posts.count())*100, 5)), "% of total posts")
 
     print("Completed stemming ", str(i), " posts in ", str((time() - t0)), " seconds.")
 
