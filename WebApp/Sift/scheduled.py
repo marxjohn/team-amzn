@@ -4,10 +4,10 @@ from datetime import datetime
 from Sift.models import *
 from Sift.clustering import run_diagnostic_clustering
 from Sift.classification import run_classification
-from Sift.Notification import *
+from Sift.notification import *
 from Sift.pdf_generator import create_pdf
 from Sift.scikit_utilities import create_cluster_data
-from Sift import Notification
+from Sift import notification
 
 
 import pymysql
@@ -79,7 +79,7 @@ def main():
         print("broke creating pdf")
 
     # Some Magic here involving sending email alerts
-    Notification.Nightly_email( s_score, s_inertia )
+    notification.Nightly_email( s_score, s_inertia )
 
 if __name__ == '__main__':
     main()

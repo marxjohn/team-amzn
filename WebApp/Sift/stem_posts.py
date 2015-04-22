@@ -46,8 +46,9 @@ def main(start_date, end_date):
         # stemmed = post.body.split(' ')
         # post.stemmed_body = ' '.join(stemmed)
         post.stemmed_body = ' '.join(english_stemmer.stemWords(post.body.lower().split(' ')))
-
         post.save()
+
+        # print progress indicator
         i += 1
         if (i - j == 0):
             j += 1000

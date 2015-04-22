@@ -7,11 +7,11 @@ from django.core.cache import cache
 
 import Sift.clustering as clustering
 from Sift.models import Post, Cluster
-from Sift.Notification import *
+from Sift.notification import *
 from Sift.scikit_utilities import find_min_and_max_date, create_cluster_data, ClusterData
 from Sift.clustering import run_creation_clustering
 from Sift.pdf_generator import create_pdf
-from Sift import Notification
+from Sift import notification
 
 
 __author__ = 'cse498'
@@ -40,7 +40,7 @@ def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_featu
         num_clusters, max_df, batch_size_ratio, init_size_ratio, n_init)
 
     self.update_state(state='SENDING_NOTIFICATIONS')
-    Notification.Diagnostic_email((time()-t0), str(start_date), str(end_date), num_clusters, max_features)
+    notification.Diagnostic_email((time()-t0), str(start_date), str(end_date), num_clusters, max_features)
     create_pdf(pdf_lines, cluster_run.id)
     cache.clear()
 
@@ -67,7 +67,7 @@ def create_new_clusters(self, start_date, end_date, num_clusters, max_features, 
         data, start_date, end_date, max_features, num_clusters, max_df, batch_size_ratio, init_size_ratio, n_init)
 
     self.update_state(state='SENDING_NOTIFICATIONS')
-    Notification.ClusterCreation_email((time()-t0), str(start_date), str(end_date), num_clusters, max_features)
+    notification.ClusterCreation_email((time()-t0), str(start_date), str(end_date), num_clusters, max_features)
     create_pdf(pdf_lines, cluster_run.id)
     cache.clear()
 

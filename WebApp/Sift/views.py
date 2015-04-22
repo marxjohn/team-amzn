@@ -14,7 +14,7 @@ from django.http import StreamingHttpResponse
 from functools import reduce
 import time
 import Sift.clustering
-import Sift.Notification
+import Sift.notification
 
 from Sift.tasks import cluster_posts_with_input, create_new_clusters
 from Sift.models import *

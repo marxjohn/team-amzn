@@ -7,7 +7,7 @@ from django.conf import settings
 
 from Sift.models import *
 from Sift.scikit_utilities import create_cluster_data
-from Sift.Notification import *
+from Sift.notification import *
 from Sift.clustering import run_creation_clustering
 from scikit_utilities import create_cluster_data
 from Sift.scikit_utilities import find_min_and_max_date
