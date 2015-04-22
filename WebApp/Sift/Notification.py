@@ -414,8 +414,8 @@ def Diagnostic_email( time, start_date, end_date, num_clusters, max_features):
     text += '</tr>'
     text += '<tr>'
     text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">Successfully completed Diagnostic Clustering in '
-    text += "{0:.2f}".format( round( time, 2 ) )
-    text += ' seconds.'
+    text += "{0:.2f}".format( round( time/60, 2 ) )
+    text += ' minutes.'
     text += '</td>'
     text += '</tr>'
     text += '<tr>'
@@ -469,8 +469,8 @@ def ClusterCreation_email( time, start_date, end_date, num_clusters, max_feature
     text += '</tr>'
     text += '<tr>'
     text += '<td align="left" bgcolor="#f6f8f1" style="padding: 10px 10px 10px 10px;">Successfully completed Cluster Creation in '
-    text += "{0:.2f}".format( round( time, 2 ) )
-    text += ' seconds.'
+    text += "{0:.2f}".format( round( time/60, 2 ) )
+    text += ' minutes.'
     text += '</td>'
     text += '</tr>'
     text += '<tr>'
