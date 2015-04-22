@@ -79,7 +79,7 @@ def main():
         print("broke creating pdf")
 
     # Some Magic here involving sending email alerts
-    notification.Nightly_email( s_score, s_inertia )
+    notification.Routine_email( s_score, s_inertia )
 
 if __name__ == '__main__':
     main()
