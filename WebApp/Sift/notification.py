@@ -347,7 +347,7 @@ def remove( email_address ):
     email_list.make_verify_email_list()
     email_list.delete_verified_email( email_address )
 
-def Nightly_email( s_score, s_inertia ):
+def Routine_email( s_score, s_inertia ):
     text = '<html>'
     text += '<head>'
     text += '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />'
@@ -381,7 +381,7 @@ def Nightly_email( s_score, s_inertia ):
 
     temp = SESVerifyEmail()
     source = 'siftmsu15@gmail.com'
-    subject = 'SIFT Notification: NightlyRun'
+    subject = 'SIFT Notification: Cluster Status'
     email_list = temp.make_verify_email_list()
     to_address = 'siftmsu15@gmail.com'
     send_email = SESMessage(source, to_address, subject)
