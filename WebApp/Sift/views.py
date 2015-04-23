@@ -108,7 +108,7 @@ def details(request, cluster_id):
 
     # count posts per day
     posts_count = {}
-    posts = Post.objects.values('creation_date', 'sentiment', 'body').filter(cluster=cluster_id).filter(creation_date__range=(start_date, end_date))
+    posts = Post.objects.values('creation_date', 'sentiment', 'body', 'message_id').filter(cluster=cluster_id).filter(creation_date__range=(start_date, end_date))
     for post in posts:
         date = int(time.mktime(post["creation_date"].timetuple())) * 1000
         if date in posts_count:
@@ -144,7 +144,7 @@ def details(request, cluster_id):
             sentiment ='null'
         else:
             sentiment = post['sentiment']
-        p = {"date": date, "body": body, "sentiment": sentiment}
+        p = {"date": date, "body": body, "sentiment": sentiment, "messageId": post['message_id']}
         sample_posts.append(p)
 
     # Cluster word count

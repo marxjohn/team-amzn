@@ -178,10 +178,14 @@ function draw_table(data) {
 
     lineChartData.addColumn('date', 'Date');
     lineChartData.addColumn('string', 'Sentiment');
+    lineChartData.addColumn('string', 'ASF');
     lineChartData.addColumn('string', 'Post');
+
     for (key in data) {
+        var link = '<a href="https://sellercentral.amazon.com/forums/thread.jspa?messageID='
+            + data[key]['messageId'] + "#" + data[key]['messageId'] + '">Link</a>';
         lineChartData.addRows([
-            [new Date(parseInt(data[key]['date'])), data[key]['sentiment'], data[key]['body']]
+            [new Date(parseInt(data[key]['date'])), data[key]['sentiment'], link, data[key]['body']]
         ]);
     }
     // Create a dashboard.
@@ -208,7 +212,8 @@ function draw_table(data) {
             'page': 'enable',
             'pageSize': 50,
             'sortColumn': 0,
-            'fontName': "Lato"
+            'fontName': "Lato",
+            'allowHtml': true
         }
     });
 
