@@ -204,6 +204,8 @@ def clusters(request):
             else:
                 top_words[(cluster.name, cluster.clusterid)] = [(word.word, word.count)]
 
+        list(top_words.items()).sort(key=lambda x: x[1])
+
     context = {"headline": headline, 'clusters': clusters,
                'top_words': top_words.items()}
 
