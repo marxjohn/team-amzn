@@ -41,9 +41,9 @@ function drawSentimentChart(array) {
           position:"none"
         },
         chartArea: {
-            width:"70%",
+            width:"100%",
             left:"30%",
-            height:"90%"
+            height:"150%"
         },
         isStacked: true,
         fontName: "Lato",
@@ -185,7 +185,7 @@ function draw_table(data) {
         var link = '<a href="https://sellercentral.amazon.com/forums/thread.jspa?messageID='
             + data[key]['messageId'] + "#" + data[key]['messageId'] + '">Link</a>';
         lineChartData.addRows([
-            [new Date(parseInt(data[key]['date'])), data[key]['sentiment'], link, data[key]['body']]
+            [new Date(Date.UTC(parseInt(data[key]['date']))), data[key]['sentiment'], link, data[key]['body']]
         ]);
     }
     // Create a dashboard.
