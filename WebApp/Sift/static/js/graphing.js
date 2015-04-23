@@ -2,6 +2,10 @@
  * Created by MaxGoovaerts and CJ on 2/8/2015.
  */
 
+function convertDateToUTC(date) {
+    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+    }
+
 function drawGeneralPieChart(array) {
     var data = google.visualization.arrayToDataTable(array);
 
@@ -64,7 +68,7 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
     }
 
     for(i=0; i< lineDates.length; i++) {
-        row = [new Date(lineDates[i])];
+        row = [convertDateToUTC(new Date(lineDates[i]))];
 
         for(j=0; j<clusterNames.length; j++) {
             row.push(array[lineDates[i]][j]);
@@ -142,7 +146,7 @@ function draw_column_chart(data) {
     lineChartData.addColumn('number', 'Positive Posts');
     for (key in data) {
         lineChartData.addRows([
-            [new Date(parseInt(key)), data[key]['neg'], data[key]['neutral'], data[key]['pos']]
+            [convertDateToUTC(new Date(parseInt(key))), data[key]['neg'], data[key]['neutral'], data[key]['pos']]
         ]);
 
     }
@@ -168,6 +172,7 @@ var chart = new google.visualization.ColumnChart(document.getElementById("line_c
 
 
 }
+
 /**
  * draws the table of posts and their dates
  * @param data from python views.py
@@ -182,10 +187,12 @@ function draw_table(data) {
     lineChartData.addColumn('string', 'Post');
 
     for (key in data) {
-        var link = '<a href="https://sellercentral.amazon.com/forums/thread.jspa?messageID='
+        var link = '<a href="https://sellercentral.amazon.com/forums/three.jspa?messageID='
             + data[key]['messageId'] + "#" + data[key]['messageId'] + '">Link</a>';
+        var date = new Date((parseInt(data[key]['date'])));
+        var utcdate = convertDateToUTC(date);
         lineChartData.addRows([
-            [new Date(Date.UTC(parseInt(data[key]['date']))), data[key]['sentiment'], link, data[key]['body']]
+            [utcdate, data[key]['sentiment'], link, data[key]['body']]
         ]);
     }
     // Create a dashboard.
@@ -247,6 +254,6 @@ function drawClusterSentimentChart(array) {
          gridlineColor: '#fff'}
     };
 
-    var chart = new google.visualization.BarChart(document.getElementById('sentiment_barchart'));
+    var chart = new google.visualization.BarChart(document.getElementById('sentiment_cluster_barchart'));
     chart.draw(data, options);
 }

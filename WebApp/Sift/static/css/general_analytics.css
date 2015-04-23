@@ -506,6 +506,11 @@ label {
   position: relative;
     display: inline-block;
 }
+#sentiment_cluster_barchart {
+    margin-top: 4em;
+  position: relative;
+    display: inline-block;
+}
 #dashboard {
     width:100%;
     margin-top: -36px;
