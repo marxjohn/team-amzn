@@ -204,10 +204,10 @@ def clusters(request):
             else:
                 top_words[(cluster.name, cluster.clusterid)] = [(word.word, word.count)]
 
-        list(top_words.items()).sort(key=lambda x: x[1])
-
+    top_words = list(top_words.items())
+    top_words.sort(key=lambda x: x[0][1])
     context = {"headline": headline, 'clusters': clusters,
-               'top_words': top_words.items()}
+               'top_words': top_words}
 
     if request.method == 'POST':
         # edit the name of the cluster.
