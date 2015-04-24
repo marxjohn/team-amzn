@@ -453,7 +453,7 @@ label {
 #sentiment_pie {
     display:inline-block;
     width: 30%;
-    margin-left: -7em;
+    float:left;
 }
 #sentiment_pie h2 {
     margin:0;
