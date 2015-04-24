@@ -187,7 +187,7 @@ function draw_table(data) {
     lineChartData.addColumn('string', 'Post');
 
     for (key in data) {
-        var link = '<a href="https://sellercentral.amazon.com/forums/three.jspa?messageID='
+        var link = '<a href="https://sellercentral.amazon.com/forums/thread.jspa?messageID='
             + data[key]['messageId'] + "#" + data[key]['messageId'] + '">Link</a>';
         var date = new Date((parseInt(data[key]['date'])));
         var utcdate = convertDateToUTC(date);
