@@ -5,7 +5,7 @@ ul, ol {
 
 #clusters {
   height: 150px;
-  width: 180%;
-  overflow-y: scroll;
+  width: 100%;
+  overflow: hidden;
   margin-bottom: 10px;
 }
