@@ -183,12 +183,12 @@ function draw_table(data) {
 
     lineChartData.addColumn('date', 'Date');
     lineChartData.addColumn('string', 'Sentiment');
-    lineChartData.addColumn('string', 'ASF');
+    lineChartData.addColumn('string', 'Link');
     lineChartData.addColumn('string', 'Post');
 
     for (key in data) {
         var link = '<a href="https://sellercentral.amazon.com/forums/thread.jspa?messageID='
-            + data[key]['messageId'] + "#" + data[key]['messageId'] + '">Link</a>';
+            + data[key]['messageId'] + "#" + data[key]['messageId'] + '">ASF</a>';
         var date = new Date((parseInt(data[key]['date'])));
         var utcdate = convertDateToUTC(date);
         lineChartData.addRows([
