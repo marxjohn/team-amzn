@@ -175,17 +175,17 @@ def details(request, cluster_id):
 def notifications(request):
     headline = "Notifications"
 
-    nightly_list = Sift.Notification.get_nightly_list()
-    important_list = Sift.Notification.get_important_list()
-    email_list = Sift.Notification.email_verify()
+    nightly_list = Sift.notification.get_nightly_list()
+    important_list = Sift.notification.get_important_list()
+    email_list = Sift.notification.email_verify()
 
     context = {"headline": headline, 'nightly_list': nightly_list, 'important_list': important_list,
                'email_list': email_list}
     if request.method == 'POST':
         if 'ADD_EMAIL' in request.POST:
-            Sift.Notification.add_email(request.POST['ADD_EMAIL'])
+            Sift.notification.add_email(request.POST['ADD_EMAIL'])
         elif 'Remove' in request.POST:
-            Sift.Notification.remove(request.POST.get('email'))
+            Sift.notification.remove(request.POST.get('email'))
             return HttpResponseRedirect('/settings/notifications')
 
     return render(request, 'notifications.html', context)
