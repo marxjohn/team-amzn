@@ -82,6 +82,13 @@
         <p>The max features attributes indicates how many unique words should be considered when clustering;
          additional (lower-frequency) words will be ignored by the clustering algorithm.</p>
       </li>
+      <li>
+        <p>Health Metrics </p>
+        <p>The <a href="http://scikit-learn.org/stable/modules/clustering.html#k-means">inertia score</a>
+            is the sum of squared distances of each post to it's cluster centroid.</p>
+        <p>The <a href="http://scikit-learn.org/stable/modules/clustering.html#silhouette-coefficient">silhouette coefficient</a>
+            is a distanced based metric that takes into account both the distance to hte posts cluster and the posts nearest cluster</p>
+      </li>
     </ul>
     </p>
 
@@ -124,7 +131,7 @@ $(document).ready(function() {
     tableData.addColumn('number', 'Sample Size');
     tableData.addColumn('number', 'Number of Posts');
     tableData.addColumn('number', 'Normalized Inertia');
-    tableData.addColumn('number', 'Silhouette Score');
+    tableData.addColumn('number', 'Silhouette Coefficient');
     tableData.addColumn('string', 'Run Output');
 
     {% for item in runclustering %}

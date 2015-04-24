@@ -14,9 +14,6 @@ urlpatterns = patterns('',
                        # ex: /clustering/
                        url(r'^settings/clustering/$', views.clustering,
                            name='clustering'),
-                       # ex: /clustering/
-                       url(r'^clustering/$', views.clustering,
-                           name='clustering'),
                        # ex: /cluster_running/
                        url(r'^settings/clusters/$', views.clusters,
                            name='clusters'),
