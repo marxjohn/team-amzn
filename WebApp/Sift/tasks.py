@@ -19,7 +19,7 @@ __author__ = 'cse498'
 
 @app.task(bind=True)
 def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_features, is_all_posts,
-                        max_df=.85, batch_size_ratio=20, init_size_ratio=50, n_init=150):
+                        max_df=.5, batch_size_ratio=20, init_size_ratio=10, n_init=150):
     t0 = time()
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')
@@ -47,7 +47,7 @@ def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_featu
 
 @app.task(bind=True)
 def create_new_clusters(self, start_date, end_date, num_clusters, max_features, is_all_posts,
-                        max_df=.8, batch_size_ratio=20, init_size_ratio=50, n_init=150):
+                        max_df=.8, batch_size_ratio=20, init_size_ratio=10, n_init=150):
     t0 = time()
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(levelname)s %(message)s')

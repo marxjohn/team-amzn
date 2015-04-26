@@ -201,7 +201,7 @@ def _visualize_clusters(num_clusters, vectorized_data, vectorizer):
     _print_cluster_centroids(k_means, vectorizer, num_clusters)
 
 
-def cluster_posts(data_set, c_param):
+def _cluster_posts(data_set, c_param):
     data_count = len(data_set.data)
     print(
         "Extracting features from the training dataset\

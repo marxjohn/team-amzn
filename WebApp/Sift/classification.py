@@ -91,7 +91,7 @@ def run_classification(data_train, data_test, num_features, start_date,
             data_test, len(categories), start_date, end_date)
 
 
-def vectorize(data_test, data_train, c_params):
+def _vectorize(data_test, data_train, c_params):
     # list of cluster associated with each posts
     y_train = data_train.cluster_of_posts
     print(
@@ -110,7 +110,7 @@ def vectorize(data_test, data_train, c_params):
     return X_test, X_train, vectorizer, y_train
 
 
-def chi_squared_transformer(X_test, X_train, y_train, c_params):
+def _chi_squared_transformer(X_test, X_train, y_train, c_params):
     t0 = time()
     ch2 = SelectKBest(chi2, k=c_params.num_features)
     X_train = ch2.fit_transform(X_train, y_train)
@@ -118,12 +118,12 @@ def chi_squared_transformer(X_test, X_train, y_train, c_params):
     print()
 
 
-def trim(s):
+def _trim(s):
     """Trim string to fit on terminal (assuming 80-column display)"""
     return s if len(s) <= 80 else s[:77] + "..."
 
 
-def classify(clf, cluster_data, X_train, y_train, X_test, feature_names,
+def _classify(clf, cluster_data, X_train, y_train, X_test, feature_names,
              categories, c_params):
     print('_' * 80)
     print("Training: ")
