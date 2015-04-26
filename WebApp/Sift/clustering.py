@@ -353,7 +353,7 @@ def run_diagnostic_clustering(data_set, start_date, end_date, max_features,
                                is_mini_used=True,
                                is_visualization_enabled=False)
 
-    cluster_run = cluster_posts(data_set, c_param)
+    cluster_run = _cluster_posts(data_set, c_param)
     return cluster_run, c_param.pdf_lines
 
 
@@ -369,5 +369,5 @@ def run_creation_clustering(data_set, start_date, end_date, max_features,
                                end_date=end_date, is_mini_used=True,
                                is_visualization_enabled=False)
 
-    cluster_run = cluster_posts(data_set, c_param)
+    cluster_run = _cluster_posts(data_set, c_param)
     return cluster_run, c_param.pdf_lines
