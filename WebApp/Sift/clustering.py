@@ -344,6 +344,25 @@ def _create_cluster_run(km, c_param):
 def run_diagnostic_clustering(data_set, start_date, end_date, max_features,
                               num_clusters, max_df, batch_size_ratio,
                               init_size_ratio, n_init):
+    """Cluster Posts over the given date range without effect
+    Uploads a pdf to the website, and creates a row in the cluster run table
+
+    Arguments:
+    data_set -- The ClusterData object containing the posts
+    start_date -- "YYYY-MM-DD" format start date
+    end_date -- "YYYY-MM-DD" format end date
+    max_features -- Maximum allowed words on which to base clustering
+    num_clusters -- The number of cluster centroids to fit posts on
+    max_df -- The maxium ratio a word can have in terms of frequency of appearance
+    in posts / total number of posts
+    batch_size_ratio -- The ratio of posts that will be the size of a batch. Represented as the divisor of the ratio
+    under 1.
+
+    init_size_ratio -- The ratio of posts that will be used as the inital sampling to speed up processing,
+    Represented as the divisor of the ratio under 1.
+
+    n_init -- The number of times the algorithm will re-run
+    """
     c_param = ClusterParameter(num_clusters=num_clusters,
                                batch_size_ratio=batch_size_ratio,
                                is_idf_used=True, is_upload_enabled=False,
@@ -360,6 +379,25 @@ def run_diagnostic_clustering(data_set, start_date, end_date, max_features,
 def run_creation_clustering(data_set, start_date, end_date, max_features,
                             num_clusters, max_df, batch_size_ratio,
                             init_size_ratio, n_init):
+    """Cluster Posts over the given date range and reflect clustering on the website
+    Uploads a pdf to the website, and creates a row in the cluster run table
+
+    Arguments:
+    data_set -- The ClusterData object containing the posts
+    start_date -- "YYYY-DD-MM" format start date
+    end_date -- "YYYY-DD-MM" format end date
+    max_features -- Maximum allowed words on which to base clustering
+    num_clusters -- The number of cluster centroids to fit posts on
+    max_df -- The maxium ratio a word can have in terms of frequency of appearance
+    in posts / total number of posts
+    batch_size_ratio -- The ratio of posts that will be the size of a batch. Represented as the divisor of the ratio
+    under 1.
+
+    init_size_ratio -- The ratio of posts that will be used as the inital sampling to speed up processing,
+    Represented as the divisor of the ratio under 1.
+
+    n_init -- The number of times the algorithm will re-run
+    """
     c_param = ClusterParameter(num_clusters=num_clusters,
                                batch_size_ratio=batch_size_ratio,
                                is_idf_used=True, is_upload_enabled=True,

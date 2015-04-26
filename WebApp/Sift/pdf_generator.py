@@ -1,6 +1,5 @@
 __author__ = 'cse498'
 
-from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
@@ -10,6 +9,11 @@ import os
 
 
 def create_pdf(pdf_lines, cluster_run_id):
+    """Creates a pdf and uploads it to s3
+    Arguments:
+    pdf_lines -- A list of strings containing lines to place into the pdf
+    cluster_run_idf -- The ID of the ClusterRun
+    """
     style = getSampleStyleSheet()
     story = []
     filename = str(cluster_run_id) + ".pdf"

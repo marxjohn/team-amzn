@@ -5,9 +5,6 @@ from time import time
 from sklearn.feature_selection import SelectKBest, chi2
 from sklearn.svm import LinearSVC
 from sklearn.utils.extmath import density
-
-from scikit_utilities import StemmedTfidfVectorizer
-from scikit_utilities import get_cluster_data
 from scikit_utilities import associate_post_with_cluster
 
 import django
@@ -29,11 +26,6 @@ if not settings.configured:
         }
     )
 
-# NUM_FEATURES = 1000
-# IS_REPORT_PRINTED = True
-# IS_CONFUSION_MATRIX_PRINTED = True
-# IS_CHI_SQUARED_USED = True
-# IS_IDF_USED = True
 IS_UPLOAD_ENABLED = True
 IS_PLOTTING_ON = False
 
@@ -67,6 +59,16 @@ class L1LinearSVC(LinearSVC):
 
 def run_classification(data_train, data_test, num_features, start_date,
                        end_date):
+    """Classifies posts based on a train set of data
+
+    Arguments:
+    data_train -- A ClusterRun object containing the train data
+    data_test -- A ClusterRun object containing posts to be clustered
+    num_features -- The number of words to base clustering on
+    start_date -- "YYYY-DD-MM" format start date
+    end_date -- "YYYY-DD-MM" format end date
+
+    """
     c_params = ClassificationParams(num_features=num_features,
                                     is_report_printed=False,
                                     is_chi_squared_used=False,
@@ -98,7 +100,7 @@ def _vectorize(data_test, data_train, c_params):
         "Extracting features from the training dataset \
                 using a sparse vectorizer")
     t0 = time()
-    vectorizer = StemmedTfidfVectorizer(max_df=.8,
+    vectorizer = TfidfVectorizer(max_df=.8,
                                         max_features=c_params.num_features,
                                         min_df=1,
                                         use_idf=c_params.is_idf_used,
