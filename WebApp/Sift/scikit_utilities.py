@@ -35,27 +35,6 @@ REMOVE_LIST = set(StopWord.objects.all().values_list("word", flat=True))
 STOP_WORDS = list(REMOVE_LIST.union(stopwords.words('english')))
 
 
-class StemmedTfidfVectorizer(TfidfVectorizer):
-
-    def build_analyzer(self):
-        analyzer = super(TfidfVectorizer, self).build_analyzer()
-
-        def analyze(doc):
-            if doc[1]:
-                temp = ' '.join(
-                    [i for i in doc[0].split(' ')
-                        if i not in STOP_WORDS]).split(' ')
-                temp2 = list(filter(''.__ne__, temp))
-                return temp2
-            else:
-                stemmed = english_stemmer.stemWords(analyzer(doc[0]))
-                post = Post.objects.get(post_id=doc[2])
-                post.stemmedbody = ' '.join(stemmed)
-                post.save()
-                return stemmed
-        return analyze
-
-
 class ClusterData:
 
     '''Represents a group of posts as a numpy array of strings,
@@ -99,7 +78,7 @@ def get_cluster_data(start_date, end_date):
     return data_set
 
 
-def create_cluster_data(post_list):
+def _create_cluster_data(post_list):
     return ClusterData(post_list, Cluster.objects.all())
 
 
@@ -150,7 +129,7 @@ def associate_post_with_cluster(data_set, num_clusters, start_date, end_date):
             cw.save()
 
 
-def find_min_and_max_date(c_list):
+def _find_min_and_max_date(c_list):
     min_date = datetime.now().date()
     for c in c_list:
         if c.creation_date <= min_date:

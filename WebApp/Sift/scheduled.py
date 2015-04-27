@@ -34,7 +34,7 @@ if not settings.configured:
     )
 
 
-def find_min_and_max_date(c_list):
+def _find_min_and_max_date(c_list):
     min_date = datetime.now().date()
     for c in c_list:
         if c.creation_date <= min_date:
@@ -47,17 +47,22 @@ def find_min_and_max_date(c_list):
     end_date = max_date
     return end_date, start_date
 
-def run_clustering(data, posts):
-    end_date, start_date = find_min_and_max_date(posts)
+
+def _run_clustering(data, posts):
+    end_date, start_date = _find_min_and_max_date(posts)
     cluster_run, pdf_lines = run_diagnostic_clustering(data, start_date, end_date, 1000, 5, .85, 20, 50, 150)
     return cluster_run, pdf_lines
 
 
 def main():
+    """Classifies all uncategorized posts in the database
+    Performs diagnostic clustering over all posts following this,
+    sends an email with the results and generates a pdf
+    """
     # Retrieve all posts that have not been classified / clustered
     test_list = Post.objects.filter(cluster_id__isnull=True)
     if len(test_list) > 0:
-        end_date, start_date = find_min_and_max_date(test_list)
+        end_date, start_date = _find_min_and_max_date(test_list)
 
         # Take a random sampling of 10000 posts to use as the training set
         train_list = Post.objects.filter(cluster_id__isnull=False).order_by('?')[:10000]
@@ -69,7 +74,7 @@ def main():
 
     posts = Post.objects.all()
     data = create_cluster_data(posts)
-    cluster_run, pdf_lines = run_clustering(data, posts)
+    cluster_run, pdf_lines = _run_clustering(data, posts)
     s_inertia = cluster_run.normalized_inertia
     s_score = cluster_run.silo_score
     # so we still send the email even if create pdf doesn't work

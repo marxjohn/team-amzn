@@ -44,6 +44,8 @@ english_stemmer = Stemmer.Stemmer('en')
 
 
 class ClusterParameter:
+    """Holds the data needed to perform clustering
+    """
     def __init__(self, max_features, is_idf_used, is_upload_enabled,
                  num_clusters, is_mini_used, max_df, batch_size_ratio,
                  init_size_ratio, n_init,

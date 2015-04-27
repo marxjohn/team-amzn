@@ -6,7 +6,6 @@ from datetime import datetime
 import pymysql
 import django
 from django.conf import settings
-from nltk.stem import WordNetLemmatizer
 import Stemmer
 from Sift.models import *
 import requests
