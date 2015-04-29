@@ -8,7 +8,7 @@ from django.core.cache import cache
 import Sift.clustering as clustering
 from Sift.models import Post, Cluster
 from Sift.notification import *
-from Sift.scikit_utilities import find_min_and_max_date, create_cluster_data, ClusterData
+from Sift.scikit_utilities import _find_min_and_max_date, _create_cluster_data, ClusterData
 from Sift.clustering import run_creation_clustering
 from Sift.pdf_generator import create_pdf
 from Sift import notification
