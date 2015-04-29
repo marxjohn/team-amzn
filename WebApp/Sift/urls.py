@@ -2,6 +2,8 @@ from django.conf.urls import patterns, url
 
 from Sift import views
 
+
+# Specifies URLs for the Django project
 urlpatterns = patterns('',
                        # general analytics is the index
                        url(r'^$', views.general, name='general'),

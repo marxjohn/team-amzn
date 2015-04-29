@@ -29,7 +29,8 @@ if not settings.configured:
 
 english_stemmer = Stemmer.Stemmer('en')
 
-
+# This script stems all of the posts in the database
+# Stemming should be done as posts are uploaded
 def main(start_date, end_date):
     # set up variables
     t0 = time()
@@ -43,8 +44,6 @@ def main(start_date, end_date):
     print("Stemming posts...")
 
     for post in posts:
-        # stemmed = post.body.split(' ')
-        # post.stemmed_body = ' '.join(stemmed)
         post.stemmed_body = ' '.join(english_stemmer.stemWords(post.body.lower().split(' ')))
         post.save()
 

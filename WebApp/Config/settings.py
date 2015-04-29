@@ -20,9 +20,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = '3=v&4r_lweyxuis^kadmj@3+tety(u9sr1kkbp((o&9eh+prik'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-TEMPLATE_DEBUG = False
+TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -48,7 +48,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'redis://'
 CELERYD_MAX_TASKS_PER_CHILD = 1
 
-CACHE_MIDDLEWARE_SECONDS = 1
+CACHE_MIDDLEWARE_SECONDS = 1    # increase seconds for caching everywhere
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.cache.UpdateCacheMiddleware',

@@ -2,10 +2,12 @@
  * Created by MaxGoovaerts and CJ on 2/8/2015.
  */
 
+//Convert date into UTC to avoid Javascript misconverting
 function convertDateToUTC(date) {
     return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
     }
 
+//Draw Pie chart on home page
 function drawGeneralPieChart(array) {
     var data = google.visualization.arrayToDataTable(array);
 
@@ -32,6 +34,7 @@ function drawGeneralPieChart(array) {
     chart.draw(data, options);
 }
 
+//Draw Sentiment Chart on main page
 function drawSentimentChart(array) {
     var data = google.visualization.arrayToDataTable(array);
 
@@ -59,6 +62,7 @@ function drawSentimentChart(array) {
     chart.draw(data, options);
 }
 
+//Draw Line Chart on main page
 function drawGeneralLineChart(array, lineDates, clusterNames) {
     var data = new google.visualization.DataTable();
     data.addColumn('date', 'Day');
@@ -107,8 +111,9 @@ function drawGeneralLineChart(array, lineDates, clusterNames) {
     var chart = new google.visualization.LineChart(document.getElementById('general_line_chart'));
     chart.draw(data, options);
 }
+
 /**
- * draw a word count pie chart on details page
+ * draw word count pie chart on details page
  * @param array
  */
 function drawWordPieChart(array) {
@@ -130,7 +135,7 @@ function drawWordPieChart(array) {
 }
 
 /**
- * draws the line chart
+ * draws the column chart on the details page
  * y axis is number of posts
  * x axis is date
  * @param data the js data from python views.py
@@ -228,6 +233,7 @@ function draw_table(data) {
     myDashboard.draw(lineChartData);
 }
 
+//Draw sentiment chart on the details page
 function drawClusterSentimentChart(array) {
     var data = google.visualization.arrayToDataTable(array);
 

@@ -27,6 +27,10 @@ if not settings.configured:
 django.setup()
 
 
+
+# Grabs posts saved in database without sentiment
+# Uses 3rd party API to analyze sentiment
+# Saves sentiment in DB
 def lazy_sentiment(start_date, end_date):
     t0 = time()
     print("grabbing posts from db")

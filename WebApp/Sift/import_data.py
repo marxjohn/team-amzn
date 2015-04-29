@@ -37,13 +37,13 @@ english_stemmer = Stemmer.Stemmer('en')
 
 # this function converts the provided time format to the mysql date format
 # necessary for storing properly
-
-
 def convertTime(input):
     date_obj = datetime.strptime(input, '%m/%d/%y')
     return date_obj.strftime('%Y/%m/%d')
 
 
+# Run this main function with the csv files put in the specified folder
+# It'll iterate through all the files and save the posts
 def main():
     # Display progress logs on stdout
     logging.basicConfig(level=logging.INFO,

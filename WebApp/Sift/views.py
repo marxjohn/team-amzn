@@ -1,7 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from Sift.models import Cluster, Post, ClusterWord, StopWord
 from django.http import HttpResponseRedirect
-# from postmarkup import render_bbcode
 from lxml import html
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
@@ -24,6 +22,7 @@ from celery.result import AsyncResult
 
 import datetime
 
+# Home page set to be cached for 60 minutes, with djangos per page caching
 @cache_page(60 * 60)
 def general(request):
     headline = "General Analytics"
@@ -84,6 +83,7 @@ def general(request):
     return render(request, 'general_analytics.html', context)
 
 
+# Details page set to be cached for 60 minutes, with djangos per page caching
 @cache_page(60 * 60)
 def details(request, cluster_id):
     form = Sift.forms.ClusterDetails()
