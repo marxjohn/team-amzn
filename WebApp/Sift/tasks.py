@@ -27,12 +27,12 @@ def cluster_posts_with_input(self, start_date, end_date, num_clusters, max_featu
     self.update_state(state='FETCHING_POSTS')
     if is_all_posts:
         posts = Post.objects.all()
-        end_date, start_date = find_min_and_max_date(posts)
+        end_date, start_date = _find_min_and_max_date(posts)
     else:
         posts = Post.objects.filter(creation_date__range=(start_date, end_date))
 
     self.update_state(state='CREATING_CLUSTER_DATA')
-    data = create_cluster_data(posts)
+    data = _create_cluster_data(posts)
 
     self.update_state(state='RUNNING_CLUSTERING')
     cluster_run, pdf_lines = clustering.run_diagnostic_clustering(
@@ -55,12 +55,12 @@ def create_new_clusters(self, start_date, end_date, num_clusters, max_features, 
     self.update_state(state='FETCHING_POSTS')
     if is_all_posts:
         posts = Post.objects.all()
-        end_date, start_date = find_min_and_max_date(posts)
+        end_date, start_date = _find_min_and_max_date(posts)
     else:
         posts = Post.objects.filter(creation_date__range=(start_date, end_date))
 
     self.update_state(state='CREATING_CLUSTER_DATA')
-    data = create_cluster_data(posts)
+    data = _create_cluster_data(posts)
 
     self.update_state(state='RUNNING_CREATION_CLUSTERING')
     cluster_run, pdf_lines = run_creation_clustering(

@@ -9,6 +9,7 @@ from scikit_utilities import associate_post_with_cluster
 
 import django
 from django.conf import settings
+
 django.setup()
 if not settings.configured:
     settings.configure(
